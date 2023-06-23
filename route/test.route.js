@@ -30,5 +30,12 @@ router.get('/', testController.TestMessage);
 
 
 
+
+
+
+
+
+
+
 //Exports the test router
 module.exports = router;
