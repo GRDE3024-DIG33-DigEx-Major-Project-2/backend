@@ -1,3 +1,4 @@
 /node_modules
+/.vs
 npm-debug.log
-.DS_Store
+/config.json
