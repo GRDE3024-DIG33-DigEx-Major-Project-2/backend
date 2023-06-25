@@ -1,4 +1,4 @@
-# BACKEND Gigney
+# GIGNEY BACKEND
 Backend REST API for Gigeny
 
 
@@ -32,13 +32,14 @@ https://sequelize.org/docs/v6/
 1. Registration endpoint 
 2. Login endpoint
 3. Password encryption/decryption
-4. Delete account endpoint (not final)
-5. Update account endpoint (skeleton code)
-6. Test routes for all possible S3 actions
-7. More secure AWS/DB credential handling during development
-8. More secure AWS/DB credential handling on live site
-9. Use dev/prod environment variables
-10. Update database tables and fine-tune constraints
+4. JWT config
+5. Delete account endpoint (not final)
+6. Update account endpoint (skeleton code)
+7. Test routes for all possible S3 actions
+8. More secure AWS/DB credential handling during development
+9. More secure AWS/DB credential handling on live site
+10. Use dev/prod environment variables
+11. Update database tables and fine-tune constraints
 
 
 # OTHER NOTES AND REMINDERS
