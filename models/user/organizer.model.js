@@ -3,6 +3,7 @@
  */
 
   const { DataTypes } = require('sequelize');
+  const AuthUtil = require("../../util/auth.util");
 
 
 module.exports = (sequelize) => {
@@ -14,6 +15,12 @@ module.exports = (sequelize) => {
       lastName: {
         type: DataTypes.STRING,
         allowNull:false
+      },
+      fullName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.firstName} ${this.lastName}`;
+        }
       },
       dob: {
         type:DataTypes.DATEONLY,
@@ -33,14 +40,13 @@ module.exports = (sequelize) => {
     password: {
       type: DataTypes.STRING,
       allowNull:false,
-            //TODO PASSWORD HASHING ON SET HOOK METHOD
-            /**
-             * Hash and salt password before saving to database
-             * @param {*} value Unencrypted password
-             */
-            set(value) {
-              this.setDataValue('password', hash(this.username + value));
-            }
+      /**
+       * Hash password
+       * @param {*} value Unencrypted password
+       */
+      set(value) {
+        this.setDataValue('password', AuthUtil.generateHash(value));
+      }
     }
     })
 };

@@ -8,14 +8,14 @@
 
 //IMPORT DEPENDENCIES ---------------------------------------------------------------------------
 //Configure .env file support
-require("dotenv").config();
+require('dotenv').config();
 const express = require("express");
 //Enables CORS
 const cors = require("cors");
-bodyParser = require("body-paser");
+//const bodyParser = require("body-paser");
 //Swagger docs
-swaggerJsdoc = require("swagger-jsdoc");
-swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 //Set port number for app to listen to
 const port = process.env.PORT || 3000;
 
@@ -78,7 +78,12 @@ app.use('*', cors());
 //Setup test route
 const testRouter = require('./route/test.route');
 app.use('/test', testRouter);
-
+//Setup auth route
+const authRouter = require('./route/auth.route');
+app.use('/auth', authRouter);
+//Setup user route
+const userRouter = require('./route/user.route');
+app.use('/user', userRouter);
 
 
 

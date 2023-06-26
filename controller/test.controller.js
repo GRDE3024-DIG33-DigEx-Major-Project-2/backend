@@ -14,7 +14,7 @@ class TestController {
      * Test endpoint
      * @param {*} req 
      * @param {*} res 
-     * @returns 
+     * @returns Hello World!
      */
     TestMessage = async(req, res) => {
         console.log("Inside TestMessage controller");
