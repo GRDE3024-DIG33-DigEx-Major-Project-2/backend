@@ -8,6 +8,19 @@
 //Link to Sequelize documentation README
 //https://sequelize.org/docs/v6/
 
+    // //Defined models in Sequelize instance
+    // const { 
+    //     Organizer, 
+    //     Attendee,
+    //     Act,
+    //     Article,
+    //     Blog,
+    //     Event,
+    //     ArticleImage,
+    //     EventImage,
+    //     Performer, 
+    //   } = sequelize.models;
+
 
 
 //Import dependencies

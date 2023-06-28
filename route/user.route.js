@@ -4,9 +4,6 @@
  */
 
 
-
-
-
 //Import dependencies
 require("dotenv").config();
 const express = require("express");
@@ -15,10 +12,20 @@ const router = express.Router();
 const UserController = require('../controller/user.controller');
 const userController = new UserController();
 
-/**
- * POST - Register a new user
- */
 
+
+/**
+ * @swagger
+ * /user/register:
+ *  post:
+ *      description: Register a new user
+ *      responses:
+ *          '201':
+ *              description: User created, returns user in JSON
+ *          '400':
+ *              description: A problem occured when trying to register a new user
+ *              
+ */
 router.post('/register', userController.Create);
 
 

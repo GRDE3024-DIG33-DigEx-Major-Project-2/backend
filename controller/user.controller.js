@@ -5,27 +5,15 @@
 
 
 
-
 //Import dependencies
-//const path = require('path');
 const enumUtil = require("../util/enum.util");
 const { db } = require("../config/db");
+//Load required db models for querying
 const {Organizer, Attendee} = db.models;
 
-    // //Defined models in Sequelize instance
-    // const { 
-    //     Organizer, 
-    //     Attendee,
-    //     Act,
-    //     Article,
-    //     Blog,
-    //     Event,
-    //     ArticleImage,
-    //     EventImage,
-    //     Performer, 
-    //   } = sequelize.models;
 
 
+//Endpoint actions for user routers
 class UserController {
 
 

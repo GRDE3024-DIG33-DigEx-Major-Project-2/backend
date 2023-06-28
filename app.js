@@ -12,14 +12,11 @@ require('dotenv').config();
 const express = require("express");
 //Enables CORS
 const cors = require("cors");
-//const bodyParser = require("body-paser");
 //Swagger docs
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 //Set port number for app to listen to
 const port = process.env.PORT || 3000;
-
-
 
 
 //DATABASE SETUP ---------------------------------------------------------------------------
@@ -31,28 +28,33 @@ db.sync({force: true});
 
 
 
-//AWS SETUP ---------------------------------------------------------------------------
-var AWS = require('aws-sdk');
-//Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE
-AWS.config.loadFromPath('./config.json');
-//S3 client instance. Use for object storage (images, files...)
-var s3 = new AWS.S3();
+// //AWS SETUP ---------------------------------------------------------------------------
+// var AWS = require('aws-sdk');
+// //Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE
+// AWS.config.loadFromPath('../config.json');
+// //S3 client instance. Use for object storage (images, files...)
+// var s3 = new AWS.S3();
 
-/**
- * Simple temporary test for s3 connection and permissions. Not complete.
- */
-async function s3Test() {
 
-  //S3 test example
-s3.listBuckets(function(err, data) {
-  if (err) {
-    console.log("Error", err);
-  } else {
-    console.log("Success", data.Buckets);
-  }
-});
 
-}
+
+// /**
+//  * Simple temporary test for s3 connection and permissions. Not complete.
+//  */
+// async function s3Test() {
+
+//     //S3 test example
+//   s3.listBuckets(function(err, data) {
+//     if (err) {
+//       console.log("Error", err);
+//     } else {
+//       console.log("Success", data.Buckets);
+//     }
+//   });
+  
+//   }
+
+
 //Run the S3 test function
 //s3Test();
 
@@ -120,7 +122,7 @@ const options = {
 
 
 
-//RUN APP ---------------------------------------------------------------------------
+//LAUNCH ---------------------------------------------------------------------------
 //Run the app. Listen on specified port
 app.listen(port, () => {
 	console.log("App is running on port " + port);
