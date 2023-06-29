@@ -3,6 +3,7 @@
  */
 
   const { DataTypes } = require('sequelize');
+  const AuthUtil = require("../../util/auth.util");
 
 
 module.exports = (sequelize) => {
@@ -15,6 +16,12 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull:false
       },
+      fullName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.firstName} ${this.lastName}`;
+        }
+      },
       dob: {
         type:DataTypes.DATEONLY,
         allowNull:false
@@ -23,7 +30,6 @@ module.exports = (sequelize) => {
       type:DataTypes.STRING,
       allowNull:false
     },
-    //TODO email will need additional logic for unique validation
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -33,14 +39,13 @@ module.exports = (sequelize) => {
     password: {
       type: DataTypes.STRING,
       allowNull:false,
-            //TODO PASSWORD HASHING ON SET HOOK METHOD
-            /**
-             * Hash and salt password before saving to database
-             * @param {*} value Unencrypted password
-             */
-            set(value) {
-              this.setDataValue('password', hash(this.username + value));
-            }
+      /**
+       * Hash password
+       * @param {*} value Unencrypted password
+       */
+      set(value) {
+        this.setDataValue('password', AuthUtil.generateHash(value));
+      }
     }
     })
 };
