@@ -90,10 +90,14 @@ const options = {
         },
       },
       servers: [
+        //Development on localhost using same host and port as server
         {
-          url: "http://localhost:3000",
-          url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com"
+          url: `http://localhost:${port}`,       
         },
+        //Live API
+        {
+          url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com",
+        }
       ],
     },
     apis: ["./route/*.route.js"],

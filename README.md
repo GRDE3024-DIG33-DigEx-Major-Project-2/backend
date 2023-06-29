@@ -5,6 +5,8 @@ Backend REST API for Gigeny
 # RESOURCES
 Sequelize Docs for ORM:
 https://sequelize.org/docs/v6/
+Open API Docs for Swagger UI:
+https://swagger.io/docs/specification/about/
 
 
 # FOLDERS
@@ -29,10 +31,10 @@ https://sequelize.org/docs/v6/
 
 
 # NEXT TASKS - RYAN
-1. Registration endpoint 
-2. Login endpoint
-3. Password encryption/decryption
-4. JWT config
+1. ~~Registration endpoint ~~
+2. ~~Login endpoint~~
+3. ~~Password encryption/decryption~~
+4. ~~JWT config~~
 5. Delete account endpoint (not final)
 6. Update account endpoint (skeleton code)
 7. Test routes for all possible S3 actions
