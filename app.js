@@ -92,7 +92,7 @@ const options = {
       servers: [
         {
           url: "http://localhost:3000",
-          url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com",
+          url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com"
         },
       ],
     },
