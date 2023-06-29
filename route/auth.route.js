@@ -71,7 +71,7 @@ router.post('/login', authController.Login);
  *          '500':
  *              description: Server-side failed to verify access token
  *      security:
- *          - bearerAuth: []
+ *          - BearerAuth: []
  *              
  */
 router.get('/validate', authController.Validate);

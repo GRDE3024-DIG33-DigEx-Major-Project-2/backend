@@ -92,7 +92,7 @@ const options = {
       servers: [
         //Development on localhost using same host and port as server
         {
-          url: `http://localhost:${port}`,       
+          url: `http://localhost:3000`,       
         },
         //Live API
         {
@@ -103,7 +103,7 @@ const options = {
     apis: ["./route/*.route.js"],
     components: {
       securitySchemes: {
-      bearerAuth:  {
+      BearerAuth:  {
       type: "http",
       scheme: "bearer",
       bearerFormat: "JWT",
