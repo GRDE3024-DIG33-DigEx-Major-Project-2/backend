@@ -12,11 +12,42 @@ const router = express.Router();
 const AuthController = require('../controller/auth.controller');
 const authController = new AuthController();
 
+
+
+
+//Swagger UI schemas
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          LoginReq:
+ *              type: object
+ *              properties:
+ *                  email:
+ *                      type: string
+ *                  password:
+ *                      type: string
+ *                  userType:
+ *                      type: string
+ *              required:
+ *                  - email
+ *                  - password
+ *                  - userType
+ */
+
+
+
 /**
  * @swagger
  * /auth/login:
  *  post:
- *      description: Attempts to log a user in
+ *      description: Attempts to log a user in. userType can equal organizer or attendee
+ *      requestBody:
+ *         required: true
+ *         content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/LoginReq'
  *      responses: 
  *          '201':
  *              description: Login successful, new access token sent back as JSON
@@ -31,7 +62,7 @@ router.post('/login', authController.Login);
  * @swagger
  * /auth/validate:
  *  get:
- *      description: Checks if the sender is authorized
+ *      description: Checks if the sender is authorized through the token in the request Authorization header
  *      responses: 
  *          '200':
  *              description: Token was valid, token data sent back as JSON
@@ -39,6 +70,8 @@ router.post('/login', authController.Login);
  *              description: Token was INVALID or not provided in request authorization header
  *          '500':
  *              description: Server-side failed to verify access token
+ *      security:
+ *          - bearerAuth: []
  *              
  */
 router.get('/validate', authController.Validate);

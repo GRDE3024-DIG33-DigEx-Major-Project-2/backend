@@ -104,6 +104,12 @@ class AuthController {
                 });
             });
         }
+        //Invalid user type specified
+        else {
+            return res.status(400).json({
+                msg: "Invalid User Type"
+            });
+        }
 
 
     }

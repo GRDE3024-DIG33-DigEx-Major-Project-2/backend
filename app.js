@@ -27,17 +27,12 @@ db.sync({force: true});
 
 
 
-
 // //AWS SETUP ---------------------------------------------------------------------------
 // var AWS = require('aws-sdk');
 // //Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE
 // AWS.config.loadFromPath('../config.json');
 // //S3 client instance. Use for object storage (images, files...)
 // var s3 = new AWS.S3();
-
-
-
-
 // /**
 //  * Simple temporary test for s3 connection and permissions. Not complete.
 //  */
@@ -51,16 +46,9 @@ db.sync({force: true});
 //       console.log("Success", data.Buckets);
 //     }
 //   });
-  
 //   }
-
-
 //Run the S3 test function
 //s3Test();
-
-
-
-
 
 
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
@@ -77,9 +65,6 @@ app.use('*', cors());
 
 
 //ROUTING SETUP ---------------------------------------------------------------------------
-//Setup test route
-const testRouter = require('./route/test.route');
-app.use('/test', testRouter);
 //Setup auth route
 const authRouter = require('./route/auth.route');
 app.use('/auth', authRouter);
@@ -111,6 +96,35 @@ const options = {
       ],
     },
     apis: ["./route/*.route.js"],
+    components: {
+      securitySchemes: {
+      bearerAuth:  {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+      },          
+    },
+    requestBodies: {
+      // Organizer: {
+      //   description:"Organizer instance",
+      //   required:true,
+      //   content: {
+      //     schema: {
+      //       $ref: swaggerSchemas.organizer,
+      //     }
+      //   },
+      // },
+      // Attendee: {
+      //   description:"Attendee instance",
+      //   required:true,
+      //   content: {
+      //     schema: {
+      //       $ref: swaggerSchemas.attendee,
+      //     }
+      //   },
+      // },
+    }
+    },
   };
   const specs = swaggerJsdoc(options);
   app.use(

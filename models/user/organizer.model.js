@@ -30,7 +30,6 @@ module.exports = (sequelize) => {
       type:DataTypes.STRING,
       allowNull:false
     },
-    //TODO email will need additional logic for unique validation
     email: {
       type: DataTypes.STRING,
       allowNull: false,
