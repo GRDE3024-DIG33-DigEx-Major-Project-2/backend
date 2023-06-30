@@ -45,7 +45,11 @@ module.exports = (sequelize) => {
        */
       set(value) {
         this.setDataValue('password', AuthUtil.generateHash(value));
-      }
+      }, 
+    },
+    imgUrl: {
+      type: DataTypes.STRING,
+      allowNull:true
     }
     })
 };

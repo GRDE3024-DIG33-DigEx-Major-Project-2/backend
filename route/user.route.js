@@ -70,5 +70,21 @@ const userController = new UserController();
 router.post('/register', userController.Create);
 
 
+
+
+
+
+
+router.delete('/organizer/:id', userController.DeleteOrganizer);
+
+
+
+
+router.delete('/attendee/:id', userController.DeleteAttendee);
+
+
+
+
+
 //Exports the user router
 module.exports = router;
