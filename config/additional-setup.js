@@ -23,6 +23,7 @@ AddAssociations(sequelize) {
       ArticleImage,
       EventImage,
       Performer, 
+      TicketType,
     } = sequelize.models;
   
   
@@ -54,8 +55,21 @@ AddAssociations(sequelize) {
     //Article-Images
     Article.hasMany(ArticleImage);
     ArticleImage.belongsTo(Article);
+    //Event-TicketType
+    Event.hasMany(TicketType);
+    TicketType.belongsTo(Event);
+
   
   }
+
+
+
+  // AddEventHandling() {
+    
+  // }
+
+
+
 
 
 }

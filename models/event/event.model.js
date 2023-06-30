@@ -35,6 +35,9 @@ module.exports = (sequelize) => {
         type:DataTypes.STRING,
         allowNull:false
     },
-
+    isFree: {
+      type:DataTypes.BOOLEAN,
+      allowNull:false
+    }
   });
 };

@@ -103,6 +103,79 @@ class UserController {
 
 
 
+
+    /**
+     * Delete Attendee and relevant entities
+     * @param {*} req 
+     * @param {*} res 
+     */
+    DeleteAttendee = async(req, res) => {
+
+        //Get id from request params
+        const id = req.params.id;
+
+        //Attempt to delete user
+        let result = await Attendee.destroy({where:{id:id}});
+
+        //No user was deleted
+        if (result == 0) {
+            let msg = "Failed to delete Attendee";
+            console.log(msg);
+            return res.status(400).json({
+                msg: msg
+            });
+        }
+        //User was deleted
+        else {
+            return res.status(200).json({
+                msg: msg
+            });
+        }
+
+
+
+        //TODO delete profile image
+
+    }
+
+
+
+    /**
+     * Delete Organizer and relevant entities
+     * @param {*} req 
+     * @param {*} res 
+     */
+    DeleteOrganizer = async(req, res) => {
+
+                //Get id from request params
+                const id = req.params.id;
+
+                //Attempt to delete user
+                let result = await Organizer.destroy({where:{id:id}});
+        
+                //No user was deleted
+                if (result == 0) {
+                    let msg = "Failed to delete Attendee";
+                    console.log(msg);
+                    return res.status(400).json({
+                        msg: msg
+                    });
+                }
+                //User was deleted
+                else {
+                    return res.status(200).json({
+                        msg: msg
+                    });
+                }
+
+
+                //TODO delete profile image and event images from S3
+                //TODO DELETE OBJECTS FROM OTHER MODELS
+
+    }
+
+
+
     /**
      * Finds if the email is already taken
      * @param {String} userType attendee OR organizer
