@@ -18,6 +18,9 @@ class UserController {
 
 
 
+
+
+    //TODO ADD IN CREATE IMAGE FUNCTIONALITY FOR PROFILE IMAGE. NORMALIZE RESIZE WITH SHARP+MULTER
     /**
      * Register a new user
      * @param {*} req 
