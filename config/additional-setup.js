@@ -24,6 +24,7 @@ AddAssociations(sequelize) {
       EventImage,
       Performer, 
       TicketType,
+      Tag,
     } = sequelize.models;
   
   
@@ -58,7 +59,9 @@ AddAssociations(sequelize) {
     //Event-TicketType
     Event.hasMany(TicketType);
     TicketType.belongsTo(Event);
-
+    //Event-Tag
+    Event.belongsToMany(Tag, {through:'TaggedWith'}); //Junction table for Many-to-Many
+    Tag.belongsToMany(Event, {through:'TaggedWith'});
   
   }
 

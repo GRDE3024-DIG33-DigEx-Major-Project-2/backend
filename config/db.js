@@ -20,6 +20,7 @@
     //     EventImage,
     //     Performer, 
     //     TicketType,
+    //     Tag,
     //   } = sequelize.models;
 
 
@@ -51,6 +52,7 @@ const modelDefiners = [
   require('../models/event/article-image.model'),
   require('../models/event/performer.model'),
   require('../models/event/ticket-type.model'),
+  require('../models/event/tag.model'),
  ];
 
 
