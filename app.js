@@ -21,7 +21,7 @@ const port = process.env.PORT || 3000;
 
 //DATABASE SETUP ---------------------------------------------------------------------------
 //Instantiate Sequelize instance (which uses db as alias name)
-const { db } = require("./config/db");
+const { db } = require("./db/models/db");
 db.sync({force: true});
 
 
