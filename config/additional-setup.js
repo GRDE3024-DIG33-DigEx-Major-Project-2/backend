@@ -29,26 +29,37 @@ AddAssociations(sequelize) {
   //   RightArm.belongsTo(Man);   // ManId in RigthArm
   
     //Organizer-Event
-    Organizer.hasMany(Event); //No FK
+    Organizer.hasMany(Event, {
+      onDelete:"cascade"
+    }); //No FK
     Event.belongsTo(Organizer); //Has FK
+
     //Attendee-Event
-    Attendee.belongsToMany(Event, {through:'FavouritedBy'}); //Junction table for Many-to-Many
+    Attendee.belongsToMany(Event, {
+      through:'FavouritedBy'
+    }); //Junction table for Many-to-Many
     Event.belongsToMany(Attendee, {through:'FavouritedBy'});
+
     //Event-Image
     Event.hasMany(EventImage);
     EventImage.belongsTo(Event);
+
     //Event-Act
     Event.belongsToMany(Act, {through:'EventActs'});
     Act.belongsToMany(Event, {through:'EventActs'});
+
     //Act-Performer
     Act.belongsToMany(Performer, {through:'ActPerformers'});
     Performer.belongsToMany(Act, {through:'ActPerformers'}); 
+
     //Event-TicketType
     Event.hasMany(TicketType);
     TicketType.belongsTo(Event);
+
     //Event-Tag
     Event.belongsToMany(Tag, {through:'TaggedWith'}); //Junction table for Many-to-Many
     Tag.belongsToMany(Event, {through:'TaggedWith'});
+    
   
   }
 

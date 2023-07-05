@@ -11,11 +11,6 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      //TODO create genre enum later on
-      genres: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull:true
-      },
       dateFormed: {
         type: DataTypes.DATEONLY,
         allowNull:true

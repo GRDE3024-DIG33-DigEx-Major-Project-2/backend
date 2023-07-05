@@ -23,10 +23,6 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    status: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
-    },
     startDate: {
       type: DataTypes.DATE,
       allowNull: false
@@ -63,7 +59,7 @@ module.exports = (sequelize) => {
     },
     purchaseUrl: {
       type: DataTypes.STRING,
-      allowNull:false
+      allowNull:true
     }
   });
 };

@@ -25,7 +25,7 @@ const { db } = require("./config/db");
 db.sync({force: true});
 
 
-
+console.log("running app");
 
 https://www.youtube.com/watch?v=9jrxLF_0dKA for seed setup
 
