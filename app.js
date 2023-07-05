@@ -22,7 +22,7 @@ const port = process.env.PORT || 3000;
 //DATABASE SETUP ---------------------------------------------------------------------------
 //Instantiate Sequelize instance (which uses db as alias name)
 const { db } = require("./config/db");
-await db.sync({force: true});
+db.sync({force: true});
 
 
 
@@ -58,7 +58,7 @@ https://www.youtube.com/watch?v=9jrxLF_0dKA for seed setup
 
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
-const app = express();
+app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({
