@@ -2,7 +2,6 @@
  * Additional setup for Sequelize tables
  */
 
-
 //Contains functions for setting up the database schema
 class AdditionalSetup {
 
@@ -17,10 +16,7 @@ AddAssociations(sequelize) {
       Organizer, 
       Attendee,
       Act,
-      Article,
-      Blog,
       Event,
-      ArticleImage,
       EventImage,
       Performer, 
       TicketType,
@@ -38,9 +34,6 @@ AddAssociations(sequelize) {
     //Attendee-Event
     Attendee.belongsToMany(Event, {through:'FavouritedBy'}); //Junction table for Many-to-Many
     Event.belongsToMany(Attendee, {through:'FavouritedBy'});
-    //Event-Blog
-    Event.hasMany(Blog);
-    Blog.belongsTo(Event);
     //Event-Image
     Event.hasMany(EventImage);
     EventImage.belongsTo(Event);
@@ -50,12 +43,6 @@ AddAssociations(sequelize) {
     //Act-Performer
     Act.belongsToMany(Performer, {through:'ActPerformers'});
     Performer.belongsToMany(Act, {through:'ActPerformers'}); 
-    //Act-Article
-    Act.belongsToMany(Article, {through:'ActArticles'});
-    Article.belongsToMany(Act, {through:'ActArticles'});
-    //Article-Images
-    Article.hasMany(ArticleImage);
-    ArticleImage.belongsTo(Article);
     //Event-TicketType
     Event.hasMany(TicketType);
     TicketType.belongsTo(Event);
@@ -67,7 +54,39 @@ AddAssociations(sequelize) {
 
 
 
-  // AddEventHandling() {
+  // /**
+  //  * Seed dummy data to database
+  //  */
+  // async SeedData(sequelize) {
+
+  //   //Defined models in Sequelize instance
+  //   const { 
+  //     Organizer, 
+  //     Attendee,
+  //     Act,
+  //     Event,
+  //     EventImage,
+  //     Performer, 
+  //     TicketType,
+  //     Tag,
+  //   } = sequelize.models;
+
+
+
+  //   //TODO continue
+
+  //   await Attendee.create({
+  //     firstName:"Name",
+  //     lastName:"Surname",
+  //     bio:"bio",
+  //     dob:"01/01/2000",
+  //     email:"test1@attendee.com",
+  //     password:"abc123",
+  //     imgUrl:""
+  // });
+
+
+
     
   // }
 

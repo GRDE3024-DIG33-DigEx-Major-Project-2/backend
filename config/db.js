@@ -13,10 +13,7 @@
     //     Organizer, 
     //     Attendee,
     //     Act,
-    //     Article,
-    //     Blog,
     //     Event,
-    //     ArticleImage,
     //     EventImage,
     //     Performer, 
     //     TicketType,
@@ -45,11 +42,8 @@ const modelDefiners = [
   require('../models/user/organizer.model'),
   require('../models/user/attendee.model'),
   require('../models/event/act.model'),
-  require('../models/event/article.model'),
-  require('../models/event/blog.model'),
   require('../models/event/event.model'),
   require('../models/event/event-image.model'),
-  require('../models/event/article-image.model'),
   require('../models/event/performer.model'),
   require('../models/event/ticket-type.model'),
   require('../models/event/tag.model'),
@@ -63,6 +57,7 @@ for (const modelDefiner of modelDefiners)
 
 //Config table associations
 AdditionalSetup.AddAssociations(sequelize);
+
 
 
 

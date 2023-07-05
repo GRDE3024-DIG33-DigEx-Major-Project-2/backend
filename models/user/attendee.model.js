@@ -21,6 +21,10 @@
               return `${this.firstName} ${this.lastName}`;
             }
           },
+          bio: {
+            type: DataTypes.TEXT,
+            allowNull:true
+          },
           dob: {
               type:DataTypes.DATEONLY,
               allowNull:false

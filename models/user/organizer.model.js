@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
         allowNull:false
       },
       bio: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull:true
       },
       fullName: {
@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
         }
       },
     organizationName: {
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    phoneNumber: {
       type:DataTypes.STRING,
       allowNull:false
     },

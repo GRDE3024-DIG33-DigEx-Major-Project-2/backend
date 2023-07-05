@@ -53,9 +53,11 @@ class UserController {
             user = await Attendee.create({
                 firstName:req.body.firstName,
                 lastName:req.body.lastName,
+                bio:req.body.bio,
                 dob:req.body.dob,
                 email:req.body.email,
-                password:req.body.password
+                password:req.body.password,
+                imgUrl:req.body.imgUrl
             })
             .catch((reason) => {
                 let msg = "Problem creating Attendee";
@@ -74,10 +76,12 @@ class UserController {
             user = await Organizer.create({
                 firstName:req.body.firstName,
                 lastName:req.body.lastName,
+                bio:req.body.bio,
                 dob:req.body.dob,
                 email:req.body.email,
                 password:req.body.password,
-                organizationName:req.body.organizationName
+                organizationName:req.body.organizationName,
+                imgUrl:req.body.imgUrl
             })
             .catch((reason) => {
                 let msg = "Problem creating Organizer";

@@ -35,8 +35,24 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: false
     },
-    //TODO
-    location: {
+    //FOR EXAMPLE, 123 FAKE STREET, FAKE SUBURB
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    region: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    postcode: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    country: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -44,6 +60,10 @@ module.exports = (sequelize) => {
     isFree: {
       type: DataTypes.BOOLEAN,
       allowNull: false
+    },
+    purchaseUrl: {
+      type: DataTypes.STRING,
+      allowNull:false
     }
   });
 };
