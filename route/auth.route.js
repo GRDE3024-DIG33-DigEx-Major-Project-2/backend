@@ -27,12 +27,9 @@ const authController = new AuthController();
  *                      type: string
  *                  password:
  *                      type: string
- *                  userType:
- *                      type: string
  *              required:
  *                  - email
  *                  - password
- *                  - userType
  */
 
 

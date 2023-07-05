@@ -1,4 +1,4 @@
-/**
+ /**
  * Startup file of express app
  * 
  * Author: Team X
@@ -22,8 +22,13 @@ const port = process.env.PORT || 3000;
 //DATABASE SETUP ---------------------------------------------------------------------------
 //Instantiate Sequelize instance (which uses db as alias name)
 const { db } = require("./config/db");
-//Sync database to match models. Force will also readd tables with changed properties...
 db.sync({force: true});
+
+
+
+
+https://www.youtube.com/watch?v=9jrxLF_0dKA for seed setup
+
 
 
 
@@ -53,7 +58,7 @@ db.sync({force: true});
 
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
-const app = express();
+app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({

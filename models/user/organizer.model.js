@@ -16,17 +16,21 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull:false
       },
+      bio: {
+        type: DataTypes.TEXT,
+        allowNull:true
+      },
       fullName: {
         type: DataTypes.VIRTUAL,
         get() {
           return `${this.firstName} ${this.lastName}`;
         }
       },
-      dob: {
-        type:DataTypes.DATEONLY,
-        allowNull:false
-    },
     organizationName: {
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    phoneNumber: {
       type:DataTypes.STRING,
       allowNull:false
     },
