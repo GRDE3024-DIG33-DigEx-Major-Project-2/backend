@@ -92,14 +92,15 @@ return [
       venueName: 'Arena 51',
       description: "Big Show description! FREE ENTRY",
       summary: "FREE SHOW IN SYDNEY",
-      startDate: "1999-01-08",
-      endDate: "1999-01-08",
+      startDate: "1999-01-08 04:05:06",
+      endDate: "1999-01-08 04:05:06",
       address: '123 Fake Street, Fake Suburb',
       city: "Sydney",
       region: "NSW",
       postcode: "2000",
       country: "Australia",
       isFree: true,
+      purchaseUrl: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     },
@@ -109,20 +110,19 @@ return [
       venueName: 'Arena 52',
       description: "Big Show description! PAID ENTRY",
       summary: "PAID SHOW IN SYDNEY",
-      startDate: "1998-01-08",
-      endDate: "1998-01-08",
+      startDate: "1998-01-08 04:05:06",
+      endDate: "1998-01-08 04:05:06",
       address: '124 Fake Street, Fake Suburb',
       city: "Sydney",
       region: "NSW",
       postcode: "2000",
       country: "Australia",
       isFree: false,
+      purchaseUrl: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
   ];
-
-
 }
 
 
@@ -130,15 +130,30 @@ return [
  * Tickets to seed database with
  * @returns Array of Tickets
  */
-getTickets() {
+getTicketTypes() {
     return [{
         id: uuidv4(),
-        eventId: events[1].id,
         name: "General",
         price: 19.99,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }];
+}
+
+
+/**
+ * Event Ticket Junctions to seed database with
+ * @param {*} events 
+ * @param {*} tickets 
+ * @returns 
+ */
+getEventTickets(events, tickets) {
+  return [{
+    TicketTypeId: tickets[0].id,
+    EventId: events[1].id,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }];
 }
 
 
@@ -179,7 +194,7 @@ getPerformers() {
 
 
 
-getActPerformers() {
+getActPerformers(acts, performers) {
     return [{
         ActId: acts[0].id,
         PerformerId: performers[0].id,
@@ -189,7 +204,7 @@ getActPerformers() {
 }
 
 
-getTaggedWith() {
+getTaggedWith(events, tags) {
     return [
         {
           EventId: events[0].id,
@@ -217,7 +232,7 @@ getEventImgs() {
 
 
 
-getEventActs() {
+getEventActs(events, acts) {
     return [
         {
         EventId: events[0].id,
@@ -236,7 +251,7 @@ getEventActs() {
 
 
 
-getFavouritedBy() {
+getFavouritedBy(attendees, events) {
     return [
         {
         AttendeeId: attendees[0].id,

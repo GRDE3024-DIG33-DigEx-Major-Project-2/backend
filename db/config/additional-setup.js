@@ -36,7 +36,8 @@ AddAssociations(sequelize) {
 
     //Attendee-Event
     Attendee.belongsToMany(Event, {
-      through:'FavouritedBy'
+      through:'FavouritedBy',
+      onDelete:'cascade'
     }); //Junction table for Many-to-Many
     Event.belongsToMany(Attendee, {through:'FavouritedBy'});
 
@@ -53,8 +54,9 @@ AddAssociations(sequelize) {
     Performer.belongsToMany(Act, {through:'ActPerformers'}); 
 
     //Event-TicketType
-    Event.hasMany(TicketType);
-    TicketType.belongsTo(Event);
+    Event.belongsToMany(TicketType, {
+      through:'EventTickets'
+    }); //Junction table for Many-to-Many
 
     //Event-Tag
     Event.belongsToMany(Tag, {through:'TaggedWith'}); //Junction table for Many-to-Many

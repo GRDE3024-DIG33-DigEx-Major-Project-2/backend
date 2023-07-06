@@ -11,7 +11,13 @@ module.exports = {
      */
 
 
-//    queryInterface.createSchema('public', {});
+    // queryInterface.createSchema('test', {});
+
+    // queryInterface.createTable('Organizer', {
+    //   id: {
+    //     type:Sequelize.
+    //   }
+    // });
 
   },
 

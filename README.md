@@ -10,9 +10,9 @@ https://swagger.io/docs/specification/about/
 
 
 # FOLDERS
-- config 
+- db
     - Database ORM configurations.
-- models 
+- db/models 
     - Database ORM models. 
 - route 
     - Contains files, each responsible for a route path (user, event...). 
@@ -35,7 +35,7 @@ https://swagger.io/docs/specification/about/
 2. ~~Login endpoint~~
 3. ~~Password encryption/decryption~~
 4. ~~JWT config~~
-5. Begin pseudocode (and code) for for endpoints for features
+5. ~~Begin pseudocode (and code) for for endpoints for features~~
 6. Delete account endpoint (not final)
 7. Update account endpoint (skeleton code)
 8. Test routes for all possible S3 actions

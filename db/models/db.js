@@ -39,14 +39,14 @@ const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, proc
 
 //Array of model definers
 const modelDefiners = [
-  require('./user/organizer.model'),
-  require('./user/attendee.model'),
-  require('./event/act.model'),
-  require('./event/event.model'),
-  require('./event/event-image.model'),
-  require('./event/performer.model'),
-  require('./event/ticket-type.model'),
-  require('./event/tag.model'),
+  require('./organizer.model'),
+  require('./attendee.model'),
+  require('./act.model'),
+  require('./event.model'),
+  require('./event-image.model'),
+  require('./performer.model'),
+  require('./ticket-type.model'),
+  require('./tag.model'),
  ];
 
 
