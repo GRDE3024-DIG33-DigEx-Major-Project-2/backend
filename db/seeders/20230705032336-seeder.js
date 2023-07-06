@@ -19,7 +19,7 @@ module.exports = {
     let organizers = SeedData.getOrganizers();
     let attendees = SeedData.getAttendees();
 
-    let events = SeedData.getEvents(); 
+    let events = SeedData.getEvents(organizers); 
     let tickets = SeedData.getTicketTypes();
     let tags = SeedData.getTags();
 
@@ -29,11 +29,10 @@ module.exports = {
 
     let eventTickets = SeedData.getEventTickets(events, tickets);
     let taggedWith = SeedData.getTaggedWith(events, tags);
-    let eventImgs = SeedData.getEventImgs();
+    //let eventImgs = SeedData.getEventImgs();
     let eventActs = SeedData.getEventActs(events, acts);
     let favouritedBy = SeedData.getFavouritedBy(attendees, events);
 
-console.log("no error before data");
     //Seed Organizers
     await queryInterface.bulkInsert('Organizers', organizers, {});
     //Seed Attendees

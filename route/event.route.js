@@ -10,7 +10,7 @@ const express = require("express");
 const router = express.Router();
 //Add handlers for endpoints
  const EventController = require('../controller/event.controller');
- const eventController = new UserController();
+ const eventController = new EventController();
 
 
 
@@ -73,7 +73,7 @@ const router = express.Router();
 
 
 //POST EVENT
- router.post('/event', eventController.Create);
+ router.post('/', eventController.Create);
 
 
  //PUT EVENT
@@ -108,5 +108,5 @@ const router = express.Router();
 
 
 
-//Exports the user router
+//Exports the event router
 module.exports = router;

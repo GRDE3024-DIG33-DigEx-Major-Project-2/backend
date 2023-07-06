@@ -84,10 +84,11 @@ getAttendees() {
  * Events to seed database with
  * @returns Array of Events
  */
-getEvents() {
+getEvents(organizers) {
 return [
     {
       id: uuidv4(),
+      OrganizerId: organizers[0].id,
       title: 'Big Show',
       venueName: 'Arena 51',
       description: "Big Show description! FREE ENTRY",
@@ -106,6 +107,7 @@ return [
     },
     {
       id: uuidv4(),
+      OrganizerId: organizers[0].id,
       title: 'Big Show 2',
       venueName: 'Arena 52',
       description: "Big Show description! PAID ENTRY",

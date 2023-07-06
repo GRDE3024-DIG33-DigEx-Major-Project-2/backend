@@ -57,7 +57,7 @@ class UserController {
                 dob:req.body.dob,
                 email:req.body.email,
                 password:req.body.password,
-                imgUrl:req.body.imgUrl
+                imgUrl:req.body.imgUrl | null
             })
             .catch((reason) => {
                 let msg = "Problem creating Attendee";
@@ -78,10 +78,11 @@ class UserController {
                 lastName:req.body.lastName,
                 bio:req.body.bio,
                 dob:req.body.dob,
+                phoneNumber:req.body.phoneNumber,
                 email:req.body.email,
                 password:req.body.password,
                 organizationName:req.body.organizationName,
-                imgUrl:req.body.imgUrl
+                imgUrl:req.body.imgUrl | null
             })
             .catch((reason) => {
                 let msg = "Problem creating Organizer";
@@ -94,13 +95,10 @@ class UserController {
             });
         }
 
-
-        console.log("User created!");
-        console.log(user.toJSON());
-
+        
 
         //Send back 201 status wih the newly created user instance
-		return res.status(201).json(user);
+		return res.status(201).json({user:user});
 
     }
 

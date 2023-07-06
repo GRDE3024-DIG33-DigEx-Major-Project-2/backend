@@ -42,7 +42,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 5. Code cleanup
 6. Code comments
 7. Update JSDocs
-8. 
+8. Add pre-set tags for now
 9. 
 10. 
 
@@ -56,6 +56,9 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Delete Attendee (cascading deletes)
 - Delete Organizer (cascading deletes)
 - Delete Event (cascading deletes)
+- Next seed data iteration
+- Dynamic tag creation
+- **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**
 - **TRELLO BOARD DIVYING TASKS?**
