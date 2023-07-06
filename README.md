@@ -34,7 +34,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
     - Used by Sequelize CLI in db folder for pointing to certain files
 
 
-# NEXT TASKS
+# CURRENT TASKS
 1. Create event
 2. Update event 
 3. Get events by filters
@@ -42,14 +42,9 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 5. Code cleanup
 6. Code comments
 7. Update JSDocs
-
-# PREVIOUS TASKS
-- ~~Registration endpoint ~~
-- ~~Login endpoint~~
-- ~~Password encryption/decryption~~
-- ~~JWT config~~
-- ~~Begin pseudocode (and code) for for endpoints for features~~
-- ~~Initial Seed Data~~
+8. 
+9. 
+10. 
 
 # BACKLOG
 - Enum helpers for reusability (example being userType field)
@@ -61,6 +56,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Delete Attendee (cascading deletes)
 - Delete Organizer (cascading deletes)
 - Delete Event (cascading deletes)
+- **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**
 - **TRELLO BOARD DIVYING TASKS?**
 - **S3 BUCKET PERMISSIONS**
@@ -69,6 +65,19 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - **MIGRATIONS FILE**
 - **A2/A3 SUBDIRECTORY**
 - **Confirm if Performer table will be used**
+
+
+
+# PREVIOUS TASKS
+- ~~Registration endpoint ~~
+- ~~Login endpoint~~
+- ~~Password encryption/decryption~~
+- ~~JWT config~~
+- ~~Begin pseudocode (and code) for for endpoints for features~~
+- ~~Initial Seed Data~~
+
+
+
 
 
 # OTHER NOTES AND REMINDERS
