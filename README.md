@@ -1,5 +1,5 @@
 # GIGNEY BACKEND
-Backend REST API for Gigeny
+This is the backend REST API for Gigeny
 
 
 # RESOURCES
@@ -7,6 +7,8 @@ Sequelize Docs for ORM:
 https://sequelize.org/docs/v6/
 Open API Docs for Swagger UI:
 https://swagger.io/docs/specification/about/
+Sequelize Migrations and Seeding Docs:
+https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # FOLDERS
@@ -28,25 +30,47 @@ https://swagger.io/docs/specification/about/
     - It holds database connection parameters and the app port number.
 - app.js 
     - This is the startup file.
+- .sequelizeerc
+    - Used by Sequelize CLI in db folder for pointing to certain files
 
 
-# NEXT TASKS - RYAN
-1. ~~Registration endpoint ~~
-2. ~~Login endpoint~~
-3. ~~Password encryption/decryption~~
-4. ~~JWT config~~
-5. ~~Begin pseudocode (and code) for for endpoints for features~~
-6. Delete account endpoint (not final)
-7. Update account endpoint (skeleton code)
-8. Test routes for all possible S3 actions
-9. More secure AWS/DB credential handling during development
-10. More secure AWS/DB credential handling on live site
-11. Use dev/prod environment variables
-12. Update database tables and fine-tune constraints
+# NEXT TASKS
+1. Create event
+2. Update event 
+3. Get events by filters
+4. Get your favourited/owned events
+5. Code cleanup
+6. Code comments
+7. Update JSDocs
+
+# PREVIOUS TASKS
+- ~~Registration endpoint ~~
+- ~~Login endpoint~~
+- ~~Password encryption/decryption~~
+- ~~JWT config~~
+- ~~Begin pseudocode (and code) for for endpoints for features~~
+- ~~Initial Seed Data~~
+
+# BACKLOG
+- Enum helpers for reusability (example being userType field)
+- Sequelize model validation and constraints
+- Helper functions
+- Better security for secrets/credentials in dev and prod environments
+- Profile image add/update/delete
+- Event image add/update/delete
+- Delete Attendee (cascading deletes)
+- Delete Organizer (cascading deletes)
+- Delete Event (cascading deletes)
+- **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**
+- **TRELLO BOARD DIVYING TASKS?**
+- **S3 BUCKET PERMISSIONS**
+- **AWS ORG INSTEAD?**
+- **CONFIRM IF EVENTS WILL HAVE MULTIPLE IMAGES**
+- **MIGRATIONS FILE**
+- **A2/A3 SUBDIRECTORY**
+- **Confirm if Performer table will be used**
 
 
 # OTHER NOTES AND REMINDERS
-- Database name is currently Gignet due to typo. I will change it to Gigney soonish
-- Sequelize doesn't support abstract classes easily, so I had to compromise in the models (makes me miss EF Core on C#).
 - Notice the sub extention on some files (test.route.js as an example). I find it makes things a bit more organized and easier to understand.
 - Some AWS services (S3 in particular) may not work properly as I may need to add a better way of sharing access.
