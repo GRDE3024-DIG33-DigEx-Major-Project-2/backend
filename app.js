@@ -21,11 +21,11 @@ const port = process.env.PORT || 3000;
 
 //DATABASE SETUP ---------------------------------------------------------------------------
 //Instantiate Sequelize instance (which uses db as alias name)
-const { db } = require("./config/db");
-db.sync({force: true});
+const { db } = require("./db/models/db");
+db.sync({force: false});
 
 
-
+console.log("running app");
 
 https://www.youtube.com/watch?v=9jrxLF_0dKA for seed setup
 

@@ -7,6 +7,11 @@
 
   module.exports = (sequelize) => {
     sequelize.define('Attendee', {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey:true,
+      },
         firstName: {
             type: DataTypes.STRING,
             allowNull: false

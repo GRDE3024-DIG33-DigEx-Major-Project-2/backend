@@ -25,7 +25,7 @@
 //Import dependencies
 require('dotenv').config();
 const { Sequelize } = require("sequelize");
-const AdditionalSetup = require("./additional-setup");
+const AdditionalSetup = require("../config/additional-setup");
 
 
 //Instantiate database connection through Sequelize instance
@@ -39,14 +39,14 @@ const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, proc
 
 //Array of model definers
 const modelDefiners = [
-  require('../models/user/organizer.model'),
-  require('../models/user/attendee.model'),
-  require('../models/event/act.model'),
-  require('../models/event/event.model'),
-  require('../models/event/event-image.model'),
-  require('../models/event/performer.model'),
-  require('../models/event/ticket-type.model'),
-  require('../models/event/tag.model'),
+  require('./organizer.model'),
+  require('./attendee.model'),
+  require('./act.model'),
+  require('./event.model'),
+  require('./event-image.model'),
+  require('./performer.model'),
+  require('./ticket-type.model'),
+  require('./tag.model'),
  ];
 
 

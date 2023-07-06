@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "localhost",
+    "database": "postgres",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "gignet2023$$",
+    "database": "gignet",
+    "host": "gignet.cykjmvxaizxv.ap-southeast-2.rds.amazonaws.com",
+    "dialect": "postgres"
+  }
+}
