@@ -3,8 +3,6 @@
  */
 
 const { DataTypes } = require('sequelize');
-const enumUtil = require('../../../util/enum.util');
-
 
 
 module.exports = (sequelize) => {
@@ -67,11 +65,6 @@ module.exports = (sequelize) => {
     purchaseUrl: {
       type: DataTypes.STRING,
       allowNull:true
-    },
-    status: {
-      type: DataTypes.CHAR,
-      allowNull: false,
-      defaultValue: enumUtil.eventStatus.upcoming,
     }
   });
 };

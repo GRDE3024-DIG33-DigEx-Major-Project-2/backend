@@ -24,6 +24,14 @@ const port = process.env.PORT || 3000;
 const { db } = require("./db/models/db");
 db.sync({force: false});
 
+
+console.log("running app");
+
+https://www.youtube.com/watch?v=9jrxLF_0dKA for seed setup
+
+
+
+
 // //AWS SETUP ---------------------------------------------------------------------------
 // var AWS = require('aws-sdk');
 // //Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE
@@ -62,15 +70,12 @@ app.use('*', cors());
 
 
 //ROUTING SETUP ---------------------------------------------------------------------------
-//Setup auth router
+//Setup auth route
 const authRouter = require('./route/auth.route');
 app.use('/auth', authRouter);
-//Setup user router
+//Setup user route
 const userRouter = require('./route/user.route');
 app.use('/user', userRouter);
-//Setup event router
-const eventRouter = require('./route/event.route');
-app.use('/event', eventRouter);
 
 
 
