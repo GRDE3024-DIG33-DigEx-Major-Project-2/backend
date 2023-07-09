@@ -18,14 +18,15 @@ AddAssociations(sequelize) {
       Act,
       Event,
       EventImage,
+      Performer, 
       TicketType,
       Tag,
-      EventAct,
-      EventTicket,
-      FavouritedBy,
-      TaggedWith,
     } = sequelize.models;
-
+  
+  
+    //EXAMPLE
+  //   Man.hasOne(RightArm);      // ManId in RigthArm
+  //   RightArm.belongsTo(Man);   // ManId in RigthArm
   
     //Organizer-Event
     Organizer.hasMany(Event, {
@@ -45,12 +46,16 @@ AddAssociations(sequelize) {
     EventImage.belongsTo(Event);
 
     //Event-Act
-    Event.belongsToMany(Act, {through:'EventAct'});
-    Act.belongsToMany(Event, {through:'EventAct'});
+    Event.belongsToMany(Act, {through:'EventActs'});
+    Act.belongsToMany(Event, {through:'EventActs'});
+
+    //Act-Performer
+    Act.belongsToMany(Performer, {through:'ActPerformers'});
+    Performer.belongsToMany(Act, {through:'ActPerformers'}); 
 
     //Event-TicketType
     Event.belongsToMany(TicketType, {
-      through:'EventTicket'
+      through:'EventTickets'
     }); //Junction table for Many-to-Many
 
     //Event-Tag
@@ -59,6 +64,46 @@ AddAssociations(sequelize) {
     
   
   }
+
+
+
+  // /**
+  //  * Seed dummy data to database
+  //  */
+  // async SeedData(sequelize) {
+
+  //   //Defined models in Sequelize instance
+  //   const { 
+  //     Organizer, 
+  //     Attendee,
+  //     Act,
+  //     Event,
+  //     EventImage,
+  //     Performer, 
+  //     TicketType,
+  //     Tag,
+  //   } = sequelize.models;
+
+
+
+  //   //TODO continue
+
+  //   await Attendee.create({
+  //     firstName:"Name",
+  //     lastName:"Surname",
+  //     bio:"bio",
+  //     dob:"01/01/2000",
+  //     email:"test1@attendee.com",
+  //     password:"abc123",
+  //     imgUrl:""
+  // });
+
+
+
+    
+  // }
+
+
 
 
 
