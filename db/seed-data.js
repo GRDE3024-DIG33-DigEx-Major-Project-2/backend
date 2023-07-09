@@ -87,50 +87,84 @@ getAttendees() {
  */
 getEvents(organizers) {
 return [
-    {
-      id: uuidv4(),
-      OrganizerId: organizers[0].id,
-      title: 'Big Show',
-      venueName: 'Arena 51',
-      description: "Big Show description! FREE ENTRY",
-      summary: "FREE SHOW IN SYDNEY",
-      startDate: "1999-01-08 04:05:06",
-      endDate: "1999-01-08 04:05:06",
-      address: '123 Fake Street, Fake Suburb',
-      city: "Sydney",
-      region: "NSW",
-      postcode: "2000",
-      country: "Australia",
-      isFree: true,
-      purchaseUrl: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: uuidv4(),
-      OrganizerId: organizers[0].id,
-      title: 'Big Show 2',
-      venueName: 'Arena 52',
-      description: "Big Show description! PAID ENTRY",
-      summary: "PAID SHOW IN SYDNEY",
-      startDate: "1998-01-08 04:05:06",
-      endDate: "1998-01-08 04:05:06",
-      address: '124 Fake Street, Fake Suburb',
-      city: "Sydney",
-      region: "NSW",
-      postcode: "2000",
-      country: "Australia",
-      isFree: false,
-      purchaseUrl: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
+  {
+    id: uuidv4(),
+    title: 'The Publishers',
+    venueName: 'Arena 51',
+    description: "After the success of their debut album R4inbow Sherbert, The Publishers are touring Australia with their latest record, Golden Fleece.",
+    summary: "FREE SHOW IN SYDNEY",
+    startDate: "2023-08-08 17:00:00",
+    endDate: "023-08-08 19:00:00",
+    address: '18 Guilded Street, Leichhardt',
+    city: "Sydney",
+    region: "NSW",
+    postcode: "2040",
+    country: "Australia",
+    isFree: true,
+    purchaseUrl: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: uuidv4(),
+    title: 'Blue Stomp',
+    venueName: 'The Hifi',
+    description: "Blue Stomp bring the heavy blues guitar licks and lead singer, Chud Grungley's, melancholy voice together in an act that sounds like it's straight out of the Mississippi delta. Supported by Dirtwire",
+    summary: "PAID SHOW IN SYDNEY",
+    startDate: "2023-09-08 17:30:00",
+    endDate: "2023-09-08 20:30:00",
+    address: '42 Willoughby Road, Crows Nest',
+    city: "Sydney",
+    region: "NSW",
+    postcode: "2065",
+    country: "Australia",
+    isFree: false,
+    purchaseUrl: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: uuidv4(),
+    title: 'Bandoliero',
+    venueName: 'Jacks Music Shack',
+    description: "The Mexican mononym, Bandoliero, brings his rasgueado style music to Sydney for the first time",
+    summary: "PAID SHOW IN SYDNEY",
+    startDate: "2023-09-08 18:30:00",
+    endDate: "2023-09-08 20:30:00",
+    address: '18 Victoria Road, Parramatta',
+    city: "Sydney",
+    region: "NSW",
+    postcode: "2000",
+    country: "Australia",
+    isFree: false,
+    purchaseUrl: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: uuidv4(),
+    title: 'VibeFest 2024',
+    venueName: 'The Domain',
+    description: "Sydney's largest annual, electronic music fest! Line up to be announced",
+    summary: "PAID SHOW IN SYDNEY",
+    startDate: "2024-02-24 11:00:00",
+    endDate: "2024-02-24 23:00:00",
+    address: '1 Art Gallery Road',
+    city: "Sydney",
+    region: "NSW",
+    postcode: "2000",
+    country: "Australia",
+    isFree: false,
+    purchaseUrl: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
   ];
 }
 
 
 /**
- * Tickets to seed database with
+ * Tickets to seed database withgit 
  * @returns Array of Tickets
  */
 getTicketTypes() {
@@ -174,6 +208,95 @@ getTags() {
       }];
 }
 
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Blues",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Hip-hop",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Indie",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Country",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Dance",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Classical",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Jazz",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Reggae",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Electronic",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
+
+getTags() {
+  return [{
+      id: uuidv4(),
+      name: "Pop",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+}
 
 /**
  * Acts to seed database with
