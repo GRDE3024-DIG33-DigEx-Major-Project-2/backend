@@ -69,7 +69,7 @@ module.exports = (sequelize) => {
       allowNull:true
     },
     status: {
-      type: DataTypes.CHAR,
+      type: DataTypes.STRING,
       allowNull: false,
       defaultValue: enumUtil.eventStatus.upcoming,
     }
