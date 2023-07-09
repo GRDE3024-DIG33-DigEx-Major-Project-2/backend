@@ -3,7 +3,6 @@
  */
 
 'use strict';
-const { v4: uuidv4 } = require('uuid');
 const SeedData = require('../seed-data');
 
 
@@ -19,45 +18,38 @@ module.exports = {
     let organizers = SeedData.getOrganizers();
     let attendees = SeedData.getAttendees();
 
-    let events = SeedData.getEvents(); 
+    let events = SeedData.getEvents(organizers); 
     let tickets = SeedData.getTicketTypes();
     let tags = SeedData.getTags();
 
     let acts = SeedData.getActs();
-    let performers = SeedData.getPerformers();
-    let actPerformers = SeedData.getActPerformers(acts, performers);
 
     let eventTickets = SeedData.getEventTickets(events, tickets);
     let taggedWith = SeedData.getTaggedWith(events, tags);
-    let eventImgs = SeedData.getEventImgs();
+    //let eventImgs = SeedData.getEventImgs();
     let eventActs = SeedData.getEventActs(events, acts);
     let favouritedBy = SeedData.getFavouritedBy(attendees, events);
 
-console.log("no error before data");
     //Seed Organizers
-    await queryInterface.bulkInsert('Organizers', organizers, {});
+    await queryInterface.bulkInsert('Organizer', organizers, {});
     //Seed Attendees
-    await queryInterface.bulkInsert('Attendees', attendees, {});
+    await queryInterface.bulkInsert('Attendee', attendees, {});
     //Seed Events
-    await queryInterface.bulkInsert('Events', events, {});
+    await queryInterface.bulkInsert('Event', events, {});
     //Seed Tickets
-    await queryInterface.bulkInsert('TicketTypes', tickets, {});
+    await queryInterface.bulkInsert('TicketType', tickets, {});
     //Seed Tags
-    await queryInterface.bulkInsert('Tags', tags, {});
+    await queryInterface.bulkInsert('Tag', tags, {});
     //Seed Acts
-    await queryInterface.bulkInsert('Acts', acts, {});
-    //Seed Performers
-    await queryInterface.bulkInsert('Performers', performers, {});
-    //Seed Performers of Acts
-    await queryInterface.bulkInsert('ActPerformers', actPerformers, {});
+    await queryInterface.bulkInsert('Act', acts, {});
     //Seed Event-Ticket pairs
-    await queryInterface.bulkInsert('EventTickets', eventTickets, {});
+    await queryInterface.bulkInsert('EventTicket', eventTickets, {});
     //Seed Event-Tag pairs
     await queryInterface.bulkInsert('TaggedWith', taggedWith, {});
     //Seed Event Images
-    //await queryInterface.bulkInsert('EventImages', eventImgs, {});
+    //await queryInterface.bulkInsert('EventImage', eventImgs, {});
     //Seed Event-Act pairs
-    await queryInterface.bulkInsert('EventActs', eventActs, {});
+    await queryInterface.bulkInsert('EventAct', eventActs, {});
     //Seed Favourited Events
     await queryInterface.bulkInsert('FavouritedBy', favouritedBy, {});
 
@@ -74,29 +66,25 @@ console.log("no error before data");
     //Empty Favourited Events
     await queryInterface.bulkDelete('FavouritedBy', null, {});
     //Empty Event Acts
-    await queryInterface.bulkDelete('EventActs', null, {});
+    await queryInterface.bulkDelete('EventAct', null, {});
     //Empty Event Images
-    //await queryInterface.bulkDelete('EventImages', null, {});    
+    //await queryInterface.bulkDelete('EventImage', null, {});    
     //Empty Event Tag pairs
     await queryInterface.bulkDelete('TaggedWith', null, {});
     //Empty Event Ticket pairs
-    await queryInterface.bulkDelete('EventTickets', null, {});
-    //Empty Performers of Acts
-    await queryInterface.bulkDelete('ActPerformers', null, {});
-    //Empty Performers
-    await queryInterface.bulkDelete('Performers', null, {});
+    await queryInterface.bulkDelete('EventTicket', null, {});
     //Empty Acts
-    await queryInterface.bulkDelete('Acts', null, {});
+    await queryInterface.bulkDelete('Act', null, {});
     //Empty Tags
-    await queryInterface.bulkDelete('Tags', null, {});
+    await queryInterface.bulkDelete('Tag', null, {});
     //Empty Tickets
-    await queryInterface.bulkDelete('TicketTypes', null, {});
+    await queryInterface.bulkDelete('TicketType', null, {});
     //Empty Events
-    await queryInterface.bulkDelete('Events', null, {});
+    await queryInterface.bulkDelete('Event', null, {});
     //Empty Attendees
-    await queryInterface.bulkDelete('Attendees', null, {});
+    await queryInterface.bulkDelete('Attendee', null, {});
     //Empty Organizers
-    await queryInterface.bulkDelete('Organizers', null, {});
+    await queryInterface.bulkDelete('Organizer', null, {});
 
   }
 
