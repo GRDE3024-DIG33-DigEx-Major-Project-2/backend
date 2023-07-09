@@ -93,10 +93,10 @@ class AuthController {
      */
     Validate = async (req, res) => {
 
+        
         //Deny if authorization header is empty
         if (req.headers.authorization === undefined)
             return res.sendStatus(403);
-
 
         //Get JWT from the authorization header
         const token = req.headers.authorization.split(' ')[1];

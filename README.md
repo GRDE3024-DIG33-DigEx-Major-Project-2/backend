@@ -10,6 +10,10 @@ https://swagger.io/docs/specification/about/
 Sequelize Migrations and Seeding Docs:
 https://sequelize.org/docs/v6/other-topics/migrations/
 
+//EXAMPLE
+//   Man.hasOne(RightArm);      // ManId in RigthArm
+//   RightArm.belongsTo(Man);   // ManId in RigthArm
+
 
 # FOLDERS
 - db
@@ -58,6 +62,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Delete Event (cascading deletes)
 - Next seed data iteration
 - Dynamic tag creation
+- JWT Refresh Token
 - **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**

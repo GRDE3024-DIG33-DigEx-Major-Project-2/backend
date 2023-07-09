@@ -13,6 +13,7 @@ const { v4: uuidv4 } = require('uuid');
 class SeedData {
 
 
+
     /**
      * Organizers to seed database with
      * @returns Array of Organizers
@@ -151,6 +152,7 @@ getTicketTypes() {
  */
 getEventTickets(events, tickets) {
   return [{
+    id: uuidv4(),
     TicketTypeId: tickets[0].id,
     EventId: events[1].id,
     createdAt: new Date().toISOString(),
@@ -173,7 +175,10 @@ getTags() {
 }
 
 
-
+/**
+ * Acts to seed database with
+ * @returns Array of Acts
+ */
 getActs() {
 return [{
     id: uuidv4(),
@@ -184,37 +189,23 @@ return [{
 }
 
 
-getPerformers() {
-    return [{
-        id: uuidv4(),
-        firstName: 'Adam',
-        lastName: 'McDowell',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }];
-}
-
-
-
-getActPerformers(acts, performers) {
-    return [{
-        ActId: acts[0].id,
-        PerformerId: performers[0].id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }];
-}
-
-
+/**
+ * Junction for Tags of Events
+ * @param {*} events 
+ * @param {*} tags 
+ * @returns 
+ */
 getTaggedWith(events, tags) {
     return [
         {
+          id: uuidv4(),
           EventId: events[0].id,
           TagId: tags[0].id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         },
         {
+          id: uuidv4(),
           EventId: events[1].id,
           TagId: tags[0].id,
           createdAt: new Date().toISOString(),
@@ -225,6 +216,11 @@ getTaggedWith(events, tags) {
 
 
 
+
+/**
+ * Event Image array
+ * @returns 
+ */
 getEventImgs() {
     return [{
         // createdAt: new Date().toISOString(),
@@ -234,15 +230,23 @@ getEventImgs() {
 
 
 
+/**
+ * Junction for Events and Acts
+ * @param {*} events 
+ * @param {*} acts 
+ * @returns 
+ */
 getEventActs(events, acts) {
     return [
         {
+        id: uuidv4(),
         EventId: events[0].id,
         ActId: acts[0].id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
       {
+        id: uuidv4(),
         EventId: events[1].id,
         ActId: acts[0].id,
         createdAt: new Date().toISOString(),
@@ -253,9 +257,16 @@ getEventActs(events, acts) {
 
 
 
+/**
+ * Junction for Attendees and Events
+ * @param {*} attendees 
+ * @param {*} events 
+ * @returns 
+ */
 getFavouritedBy(attendees, events) {
     return [
         {
+        id: uuidv4(),
         AttendeeId: attendees[0].id,
         EventId:events[0].id,
         createdAt: new Date().toISOString(),
@@ -271,8 +282,6 @@ getFavouritedBy(attendees, events) {
 
 
 }
-
-
 
 
 //Export SeedData

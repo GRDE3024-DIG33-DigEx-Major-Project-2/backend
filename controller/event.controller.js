@@ -5,7 +5,7 @@
 //Import dependencies
 const enumUtil = require("../util/enum.util");
 const { db } = require("../db/models/db");
-const jwt = require('jsonwebtoken');
+const authUtil = require("../util/auth.util");
 //Load required db models for querying
 //Defined models in Sequelize instance
 const {
@@ -17,7 +17,6 @@ const {
     Event,
     ArticleImage,
     EventImage,
-    Performer,
     TicketType,
     EventTicket,
     TaggedWith,
@@ -27,6 +26,7 @@ const {
 
 
 class EventController {
+
 
 
     //req.body.event
@@ -56,24 +56,15 @@ class EventController {
 
         //Get JWT from the authorization header
         const token = req.headers.authorization.split(' ')[1];
-        //console.log(token === String);
-        let organizerId;
 
+        let decodedToken;
+        let event;
+
+        //Retrieve user data from access token
         try {
-            //Verify JWT
-            jwt.verify(token, process.env.JWTSECRET, (err, tokenData) => {
-                if (err) {
-                    //Token invalid, send 403 response    
-                    return res.status(403).json({
-                        err: "Forbidden"
-                    });
-                } else {
-                    //Token is valid, assign token data to a variable
-                    organizerId = tokenData.id;
-                    console.log("validated");
-                    console.log(organizerId);
-                }
-            });
+            decodedToken = authUtil.decodeJWT(token);
+            console.log("currUser");
+            console.log(decodedToken);
         }
         //Log error, send error response
         catch (err) {
@@ -85,28 +76,67 @@ class EventController {
             });
         }
 
-        //TODO
-        //use JWT for id
 
-        let event = null;
+        //Create Event-related tables
+        try {
+            //Create an Event
+            console.log("Init Event");
+            event = await this.CreateEvent(req.body.event, decodedToken.user, res);
+            //console.log(event);
+            //Create Tag associations
+            console.log("Init Tags");
+            await this.CreateTaggedWith(req.body.tags, event.id, res);
+            //Create Act associations
+            console.log("Init Acts");
+            await this.CreateActs(req.body.acts, event.id, res);
+            //Create Ticket Type associations
+            console.log("Init Ticket Types");
+            await this.CreateTicketTypes(req.body.ticketTypes, event.id, res);
 
-        //Create an Event
-        console.log("Init Event");
-        event = await Event.create({
-            OrganizerId: organizerId,
-            title: req.body.event.title,
-            venueName: req.body.event.venueName,
-            description: req.body.event.description,
-            summary: req.body.event.summary,
-            startDate: req.body.event.startDate,
-            endDate: req.body.event.endDate,
-            address: req.body.event.address,
-            city: req.body.event.city,
-            region: req.body.event.region,
-            postcode: req.body.event.postcode,
-            country: req.body.event.country,
-            isFree: req.body.event.isFree,
-            purchaseUrl: req.body.event.purchaseUrl,
+            console.log("Event created!");
+            //Send back 201 status wih the newly created user instance
+            return res.status(201).json(event);
+        }
+        catch (err) {
+            const msg = "Failed to create all event-related tables";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+
+    }
+
+
+
+
+    //TODO MOVE CRUD FUNCTIONS TO A DB SERVICE FILE
+    /**
+     * Add Event to Event table
+     * @param {*} event 
+     * @param {*} currUser 
+     * @param {*} res 
+     * @returns 
+     */
+    async CreateEvent(event, currUser, res) {
+        //console.log(currUser);
+        return await Event.create({
+            OrganizerId: currUser.id,
+            title: event.title,
+            venueName: event.venueName,
+            description: event.description,
+            summary: event.summary,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            address: event.address,
+            city: event.city,
+            region: event.region,
+            postcode: event.postcode,
+            country: event.country,
+            isFree: event.isFree,
+            purchaseUrl: event.purchaseUrl,
+            status: event.status | enumUtil.eventStatus.upcoming,
         })
             .catch((reason) => {
                 let msg = "Problem creating Event";
@@ -117,12 +147,20 @@ class EventController {
                     error: reason
                 });
             });
+    }
 
-        console.log("Init Tags");
+
+    /**
+     * Add Event-Tag junction rows
+     * @param {*} tags 
+     * @param {*} eventId 
+     * @param {*} res 
+     */
+    async CreateTaggedWith(tags, eventId, res) {
         //Create tag junctions
-        for (let tag of req.body.tags) {
+        for (let tag of tags) {
             let junction = await TaggedWith.create({
-                EventId: event.id,
+                EventId: eventId,
                 TagId: tag.id
             })
                 .catch((reason) => {
@@ -134,13 +172,22 @@ class EventController {
                         error: reason
                     });
                 });
+            // console.log("Tag Junction created");
+            // console.log(junction);
         }
+    }
 
 
-        console.log("Init Acts");
-        //Create each ticket and event-ticket junction
-        for (let act of req.body.acts) {
-            //Create the ticket type
+    /**
+     * Add Acts to Act table
+     * @param {*} tags 
+     * @param {*} eventId 
+     * @param {*} res 
+     */
+    async CreateActs(acts, eventId, res) {
+        //Create each act and event-act junction
+        for (let act of acts) {
+            //Create the act
             let actObj = await Act.create({
                 name: act.name
             })
@@ -153,10 +200,14 @@ class EventController {
                         error: reason
                     });
                 });
+
+            // console.log("Act created");
+            // console.log(actObj);
+
             //Create the junction
             let junction = await EventAct.create({
-                ActId: act.id,
-                EventId: event.id
+                ActId: actObj.id,
+                EventId: eventId
             })
                 .catch((reason) => {
                     let msg = "Problem creating Event Act Junction";
@@ -167,11 +218,22 @@ class EventController {
                         error: reason
                     });
                 });
-        }
 
-        console.log("Init Ticket Types");
+            //  console.log("Act Junction created");
+            // console.log(junction);
+        }
+    }
+
+
+    /**
+     * Add Event-TicketType junction rows
+     * @param {*} tags 
+     * @param {*} eventId 
+     * @param {*} res 
+     */
+    async CreateTicketTypes(ticketTypes, eventId, res) {
         //Create each ticket and event-ticket junction
-        for (let tier of req.body.ticketTypes) {
+        for (let tier of ticketTypes) {
             //Create the ticket type
             let ticketType = await TicketType.create({
                 name: tier.name,
@@ -186,10 +248,12 @@ class EventController {
                         error: reason
                     });
                 });
+            //  console.log("Ticket Type created");
+            //  console.log(ticketType);
             //Create the junction
             let junction = await EventTicket.create({
-                TicketTypeId: tier.id,
-                EventId: event.id
+                TicketTypeId: ticketType.id,
+                EventId: eventId
             })
                 .catch((reason) => {
                     let msg = "Problem creating Event Ticket Junction";
@@ -200,24 +264,9 @@ class EventController {
                         error: reason
                     });
                 });
+            //  console.log("Event-TicketType junction created");
+            // console.log(junction);
         }
-
-
-
-
-
-
-
-
-
-
-        console.log("User created!");
-        console.log(event.toJSON());
-
-
-        //Send back 201 status wih the newly created user instance
-        return res.status(201).json(event);
-
     }
 
 
