@@ -53,30 +53,12 @@ class AuthUtils {
 		});
 	}
 
-	
 
-	/**
-	 * Verifies and subsequently decodes JWT token for token data access
-	 * @param {*} token 
-	 * @returns Returns decoded token result
-	 */
-	decodeJWT(token) {
-            //Verify JWT
-           return jwt.verify(token, process.env.JWTSECRET, (err, tokenData) => {
-				//Token invalid, return false  
-                if (err) {     
-					console.log(err);        
-                    return err;
-                } 
-				//Token is valid, return token data
-				else {                 
-                    console.log("valid");
-					console.log(tokenData);
-					return tokenData;
-                }
-            }); 
-			
-	}
+
+
+
+
+
 
 
 }

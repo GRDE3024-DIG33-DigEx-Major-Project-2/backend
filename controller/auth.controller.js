@@ -37,35 +37,24 @@ class AuthController {
 
         //Search for user match in Attendee and Organizer tables
         try {
-            console.log("begin");
             //Find Attendee match
             let user = await Attendee.findOne({ where: { email: req.body.email } });
             //Attendee match not found, search for Organizer match
             if (user == null) {
-                console.log("look for org");
                 user = await Organizer.findOne({ where: { email: req.body.email } });
                 //User not found in Attendee or Organizer tables, send 400 response
                 if (user == null)
                     return res.status(400).json({
                         msg: "Invalid credentials"
                     });
-                else {
-                    if (authUtil.verify(req.body.password, user.password)) {
-                        const token = authUtil.generateJWT(user);
-                        return res.status(201).json({
-                            accessToken: token,
-                            user: user
-                        });
-                    }
-                }
             }
             //Attendee match found, verify password and attempt login
             else {
-                if (authUtil.verify(req.body.password, user.password)) {
-                    const token = authUtil.generateJWT(user);
+                if (authUtil.verify(req.body.password, value.password)) {
+                    const token = authUtil.generateJWT(value);
                     return res.status(201).json({
                         accessToken: token,
-                        user: user
+                        user: value
                     });
                 }
             }
@@ -93,10 +82,10 @@ class AuthController {
      */
     Validate = async (req, res) => {
 
-        
         //Deny if authorization header is empty
         if (req.headers.authorization === undefined)
             return res.sendStatus(403);
+
 
         //Get JWT from the authorization header
         const token = req.headers.authorization.split(' ')[1];

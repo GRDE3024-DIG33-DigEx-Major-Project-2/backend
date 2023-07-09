@@ -9,8 +9,8 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 //Add handlers for endpoints
- const EventController = require('../controller/event.controller');
- const eventController = new EventController();
+// const UserController = require('../controller/user.controller');
+// const userController = new UserController();
 
 
 
@@ -67,31 +67,9 @@ const router = express.Router();
 //  *              description: A problem occured when trying to register a new user
 //  *              
 //  */
+// router.post('/register', userController.Create);
 
 
-
-
-
-//POST EVENT
- router.post('/', eventController.Create);
-
-
- //PUT EVENT
-
-
- //TOGGLE FAVOURITE EVENT
-
-
- //GET EVENTS
-
-
- //GET EVENT
-
-
-
-
-
- //DELETE EVENT
 
 
 
@@ -108,5 +86,5 @@ const router = express.Router();
 
 
 
-//Exports the event router
+//Exports the user router
 module.exports = router;
