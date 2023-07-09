@@ -3,7 +3,7 @@
  */
 
   const { DataTypes } = require('sequelize');
-  const AuthUtil = require("../../util/auth.util");
+  const AuthUtil = require("../../../util/auth.util");
 
   module.exports = (sequelize) => {
     sequelize.define('Attendee', {

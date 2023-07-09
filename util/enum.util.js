@@ -11,6 +11,17 @@ class EnumUtil {
         attendee: "attendee"
     }
 
+
+    //Event statuses
+    eventStatus = {
+        upcoming: "U",
+        running: "R",
+        finished: "F",
+        draft: "D"
+    }
+
+
+
 }
 
 
