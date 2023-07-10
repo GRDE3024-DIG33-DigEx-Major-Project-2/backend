@@ -28,14 +28,16 @@ class S3Utilities {
 	 * Construct S3 client for S3 handling
 	 */
 	constructor() {
-		this.s3 = new AWS.S3({
-			region,
-			accessKeyId,
-			secretAccessKey
-		});
+		this.s3 = new AWS.S3(
+		// 	{
+		// 	region,
+		// 	accessKeyId,
+		// 	secretAccessKey
+		// }
+		);
 		console.log("IN S3 CONSTRUCTOR");
-		console.log(accessKeyId);
-		console.log(secretAccessKey);
+		//console.log(accessKeyId);
+		//console.log(secretAccessKey);
 		//this.s3.config.credentials = credentials;
 	}
 
