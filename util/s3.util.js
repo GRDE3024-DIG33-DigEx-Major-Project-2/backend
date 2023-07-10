@@ -40,7 +40,7 @@ class S3Utilities {
 	 * @param {*} filename 
 	 * @param {*} mimetype 
 	 */
-	upload(buffer, filename, mimetype) {
+	async upload(buffer, filename, mimetype) {
 console.log("uploading file");
 		const uploadParams = {
 			Bucket: bucketName,
@@ -52,6 +52,7 @@ console.log("uploading file");
 
 		this.s3.upload(uploadParams, () => {}, (err) => {
 			console.log(err);
+			throw new Error(err);
 		});
 	}
 

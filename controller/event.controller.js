@@ -87,6 +87,10 @@ class EventController {
         }
 
 
+
+        
+
+
         //Create Event-related tables
         try {
             const result = await db.transaction(async (t) => {
