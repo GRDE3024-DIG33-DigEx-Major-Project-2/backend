@@ -26,7 +26,10 @@ module.exports = {
 
     let eventTickets = SeedData.getEventTickets(events, tickets);
     let taggedWith = SeedData.getTaggedWith(events, tags);
-    //let eventImgs = SeedData.getEventImgs();
+
+    //TODO
+    let eventImgs = SeedData.getEventImgs();
+
     let eventActs = SeedData.getEventActs(events, acts);
     let favouritedBy = SeedData.getFavouritedBy(attendees, events);
 
@@ -68,7 +71,7 @@ module.exports = {
     //Empty Event Acts
     await queryInterface.bulkDelete('EventAct', null, {});
     //Empty Event Images
-    //await queryInterface.bulkDelete('EventImage', null, {});    
+    await queryInterface.bulkDelete('EventImage', null, {});    
     //Empty Event Tag pairs
     await queryInterface.bulkDelete('TaggedWith', null, {});
     //Empty Event Ticket pairs

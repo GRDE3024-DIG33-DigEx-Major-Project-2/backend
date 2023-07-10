@@ -24,6 +24,9 @@ const port = process.env.PORT || 3000;
 const { db } = require("./db/models/db");
 db.sync({force: false});
 
+
+
+
 // //AWS SETUP ---------------------------------------------------------------------------
 // var AWS = require('aws-sdk');
 // //Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE

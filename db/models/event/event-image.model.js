@@ -3,6 +3,7 @@
  */
 
 const { DataTypes } = require('sequelize');
+const constantsUtil = require('../../../util/constants.util');
 
 
 module.exports = (sequelize) => {
@@ -10,21 +11,26 @@ module.exports = (sequelize) => {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey:true,
+      primaryKey: true,
+    },
+    EventId: {
+      type: DataTypes.UUID,
+      primaryKey: false,
+      references: {
+        model: 'Event',
+        key: 'id'
+      }
+    },
+    filename: {
+      type: DataTypes.STRING,
+      allowNull: true,
+
     },
     url: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        isUrl:true
-      },
-      altText: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      //If the image is grouped with other images, use this for ordering
-      position: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
+      type: DataTypes.VIRTUAL,
+      get() {
+        return `${constantsUtil.BUCKET_URI}${this.filename}${constantsUtil.IMG_MIMETYPE}`;
       }
+    }
   });
 };
