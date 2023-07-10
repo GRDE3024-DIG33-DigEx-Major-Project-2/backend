@@ -9,11 +9,8 @@ const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
 const sharp = require("sharp");
 const path = require("path");
-//Load required db models for querying
 //Defined models in Sequelize instance
 const {
-    Organizer,
-    Attendee,
     Act,
     Event,
     EventImage,
@@ -28,11 +25,6 @@ const {
 class EventController {
 
 
-
-    //req.body.event
-    //req.body.acts[]
-    //req.body.ticketTypes[]
-    //req.body.tags[]
     /**
      * Create a new event
      * @param {*} req 
@@ -44,19 +36,6 @@ class EventController {
         let decodedToken;
         let event;
         let eventImgFilename = "";
-
-        // console.log("creating event");
-        // console.log(req.body);
-        // console.log("EVENT LOG");
-        // console.log(req.body.event);
-        // console.log("ACTS LOG");
-        // console.log(req.body.acts);
-        // console.log("ACT INDEX LOG");
-        // console.log(req.body.acts[0]);
-        // console.log("TICKET TYPES LOG");
-        // console.log(req.body.ticketTypes);
-        // console.log("FILENAME LOG");
-        // console.log(req.body.filename);
 
         //If body is empty, send 400 response
         if (!Object.keys(req.body).length) {
@@ -72,8 +51,6 @@ class EventController {
         //Retrieve user data from access token
         try {
             decodedToken = authUtil.decodeJWT(token);
-            //console.log("currUser");
-            //console.log(decodedToken);
         }
         //Log error, send error response
         catch (err) {
@@ -91,15 +68,14 @@ class EventController {
             eventImgFilename = Date.now() + Math.random().toString(24).slice(2, 12) + path.extname(req.body.filename);
             //Resize image and save to S3 bucket
             try {
-                let imgBuffer = await sharp(req.file.buffer).resize(320, 320).withMetadata().toBuffer();
-                //let imgBuffer = await sharp(req.file.buffer)
+                let imgBuffer = await sharp(req.file.buffer)
+                .resize(320, 320)
                 // .resize({
                 //     fit: sharp.fit.contain,
                 //     width: 600
-                // })
-                //.withMetadata()
-                //.toBuffer();
-                console.log(imgBuffer);
+                // })                
+                .withMetadata()
+                .toBuffer();
                 //Upload image to S3 bucket
                 s3Util.upload(imgBuffer, eventImgFilename, req.file.mimetype);
             } catch (error) {
@@ -117,7 +93,6 @@ class EventController {
             //Create an Event
             console.log("Init Event");
             event = await this.CreateEvent(req.body.event, decodedToken.user, res, t);
-            //console.log(event);
             //Create Tag associations
             console.log("Init Tags");
             await this.CreateTaggedWith(req.body.tags, event.id, res, t);
@@ -183,15 +158,6 @@ class EventController {
             purchaseUrl: event.purchaseUrl,
             status: event.status | enumUtil.eventStatus.upcoming,
         }, { transaction: transaction });
-            // .catch((reason) => {
-            //     let msg = "Problem creating Event";
-            //     console.log(msg);
-            //     console.log(reason);
-            //     return res.status(400).json({
-            //         msg: msg,
-            //         error: reason
-            //     });
-            // });
     }
 
 
@@ -208,17 +174,6 @@ class EventController {
                 EventId: eventId,
                 TagId: tag.id
             }, { transaction: transaction });
-                // .catch((reason) => {
-                //     let msg = "Problem creating Event Tag Junction";
-                //     console.log(msg);
-                //     console.log(reason);
-                //     return res.status(400).json({
-                //         msg: msg,
-                //         error: reason
-                //     });
-                // });
-            // console.log("Tag Junction created");
-            // console.log(junction);
         }
     }
 
@@ -236,36 +191,11 @@ class EventController {
             let actObj = await Act.create({
                 name: act.name
             }, { transaction: transaction });
-                // .catch((reason) => {
-                //     let msg = "Problem creating Act";
-                //     console.log(msg);
-                //     console.log(reason);
-                //     return res.status(400).json({
-                //         msg: msg,
-                //         error: reason
-                //     });
-                // });
-
-            // console.log("Act created");
-            // console.log(actObj);
-
             //Create the junction
             let junction = await EventAct.create({
                 ActId: actObj.id,
                 EventId: eventId
             }, { transaction: transaction });
-                // .catch((reason) => {
-                //     let msg = "Problem creating Event Act Junction";
-                //     console.log(msg);
-                //     console.log(reason);
-                //     return res.status(400).json({
-                //         msg: msg,
-                //         error: reason
-                //     });
-                // });
-
-            //  console.log("Act Junction created");
-            // console.log(junction);
         }
     }
 
@@ -284,39 +214,23 @@ class EventController {
                 name: tier.name,
                 price: tier.price
             }, { transaction: transaction });
-                // .catch((reason) => {
-                //     let msg = "Problem creating Ticket Type";
-                //     console.log(msg);
-                //     console.log(reason);
-                //     return res.status(400).json({
-                //         msg: msg,
-                //         error: reason
-                //     });
-                // });
-            //  console.log("Ticket Type created");
-            //  console.log(ticketType);
             //Create the junction
             let junction = await EventTicket.create({
                 TicketTypeId: ticketType.id,
                 EventId: eventId
             }, { transaction: transaction });
-                // .catch((reason) => {
-                //     let msg = "Problem creating Event Ticket Junction";
-                //     console.log(msg);
-                //     console.log(reason);
-                //     return res.status(400).json({
-                //         msg: msg,
-                //         error: reason
-                //     });
-                // });
-            //  console.log("Event-TicketType junction created");
-            // console.log(junction);
         }
     }
 
 
+    /**
+     * Add EventImage row to table
+     * @param {*} eventImgFilename 
+     * @param {*} eventId 
+     * @param {*} res 
+     * @param {*} transaction 
+     */
     async CreateEventImage(eventImgFilename, eventId, res, transaction) {
-
         let eventImage = await EventImage.create({
             filename:eventImgFilename,
             EventId:eventId,

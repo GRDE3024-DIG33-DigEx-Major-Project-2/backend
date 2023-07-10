@@ -11,7 +11,6 @@ const S3 = require('aws-sdk/clients/s3');
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
-const bucketRegion = process.env.BUCKET_REGION;
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'Gigney'});
 AWS.config.credentials = credentials;
@@ -26,11 +25,7 @@ class S3Utilities {
 	 * Construct S3 client for S3 handling
 	 */
 	constructor() {
-		this.s3 = new AWS.S3(
-		//	{
-			//region: bucketRegion
-		//}
-		);
+		this.s3 = new AWS.S3();
 		console.log("IN S3 CONSTRUCTOR");
 		console.log(this.s3.config.credentials);
 		this.s3.config.credentials = credentials;
