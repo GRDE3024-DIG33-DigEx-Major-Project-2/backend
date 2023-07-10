@@ -63,6 +63,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Next seed data iteration
 - Dynamic tag creation
 - JWT Refresh Token
+- Rollback transactions through Sequelize
 - **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**

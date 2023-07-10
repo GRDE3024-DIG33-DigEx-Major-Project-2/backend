@@ -320,10 +320,12 @@ class SeedData {
    * @returns 
    */
   getEventImgs() {
-    return [{
+    return [
+      //{
       // createdAt: new Date().toISOString(),
       // updatedAt: new Date().toISOString()
-    }];
+    //}
+  ];
   }
 
 

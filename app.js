@@ -24,29 +24,6 @@ const port = process.env.PORT || 3000;
 const { db } = require("./db/models/db");
 db.sync({force: false});
 
-// //AWS SETUP ---------------------------------------------------------------------------
-// var AWS = require('aws-sdk');
-// //Add config variables (credentials) to AWS instance. TODO SET UP AWS CREDENTIAL BEST PRACTICES FOR BOTH LOCAL AND LIVE SITE
-// AWS.config.loadFromPath('../config.json');
-// //S3 client instance. Use for object storage (images, files...)
-// var s3 = new AWS.S3();
-// /**
-//  * Simple temporary test for s3 connection and permissions. Not complete.
-//  */
-// async function s3Test() {
-
-//     //S3 test example
-//   s3.listBuckets(function(err, data) {
-//     if (err) {
-//       console.log("Error", err);
-//     } else {
-//       console.log("Success", data.Buckets);
-//     }
-//   });
-//   }
-//Run the S3 test function
-//s3Test();
-
 
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
@@ -71,7 +48,6 @@ app.use('/user', userRouter);
 //Setup event router
 const eventRouter = require('./route/event.route');
 app.use('/event', eventRouter);
-
 
 
 

@@ -6,12 +6,14 @@
  */
 
 require('dotenv').config();
+var AWS = require("aws-sdk");
 const S3 = require('aws-sdk/clients/s3');
 
 //Details required to connect to the S3 bucket
-const name = process.env.BUCKET_NAME;
-const region = process.env.BUCKET_REGION;
+const bucketName = process.env.BUCKET_NAME;
 
+var credentials = new AWS.SharedIniFileCredentials({profile: 'Gigney'});
+AWS.config.credentials = credentials;
 
 
 
@@ -23,7 +25,10 @@ class S3Utilities {
 	 * Construct S3 client for S3 handling
 	 */
 	constructor() {
-		this.s3 = new S3();
+		this.s3 = new AWS.S3();
+		console.log("IN S3 CONSTRUCTOR");
+		console.log(this.s3.config.credentials);
+		this.s3.config.credentials = credentials;
 	}
 
 
@@ -35,10 +40,10 @@ class S3Utilities {
 	 * @param {*} filename 
 	 * @param {*} mimetype 
 	 */
-	uploadFile(buffer, filename, mimetype) {
-
+	upload(buffer, filename, mimetype) {
+console.log("uploading file");
 		const uploadParams = {
-			Bucket: name,
+			Bucket: bucketName,
 			Body: buffer,
 			Key: filename,
 			ContentType: mimetype,
@@ -58,7 +63,7 @@ class S3Utilities {
 	deleteFile(filename) {
 
 		const deleteParams = {
-			Bucket: name,
+			Bucket: bucketName,
 			Key: filename
 		};
 
