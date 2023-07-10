@@ -32,6 +32,8 @@ class EventController {
      */
     Create = async (req, res) => {
 
+        //Increase request timeout
+        req.connection.setTimeout(100000); //100 seconds
 
         let decodedToken;
         let event;
