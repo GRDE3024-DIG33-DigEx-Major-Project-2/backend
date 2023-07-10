@@ -52,6 +52,7 @@ console.log("uploading file");
 
 		this.s3.upload(uploadParams, () => {}, (err) => {
 			console.log(err);
+			throw new Error(err);
 		});
 	}
 
