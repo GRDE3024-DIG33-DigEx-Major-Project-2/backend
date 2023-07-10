@@ -17,7 +17,7 @@ const secretAccessKey = process.env.AWS_SECRET_KEY;
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'Gigney'});
 AWS.config.credentials = credentials;
-
+console.log(credentials);
 
 
 //AWS S3 Bucket file utilities
@@ -28,14 +28,14 @@ class S3Utilities {
 	 * Construct S3 client for S3 handling
 	 */
 	constructor() {
-		this.s3 = new S3({
+		this.s3 = new AWS.S3({
 			region,
 			accessKeyId,
 			secretAccessKey
 		});
 		console.log("IN S3 CONSTRUCTOR");
 		console.log(this.s3.config.credentials);
-		this.s3.config.credentials = credentials;
+		//this.s3.config.credentials = credentials;
 	}
 
 
