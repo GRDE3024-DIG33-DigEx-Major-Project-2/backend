@@ -18,6 +18,7 @@ const {
     EventTicket,
     TaggedWith,
     EventAct,
+    Tag
 } = db.models;
 
 
@@ -130,6 +131,32 @@ class EventController {
 
     }
 
+
+    /**
+     * Get all event tags
+     * @param {*} req 
+     * @param {*} res 
+     */
+    GetTags = async (req, res) => {
+
+        Tag.findAll()
+        .then((tags) => {
+            return res.status(200).json({
+                tags: tags
+            });
+        })
+        .catch((err) => {
+            const msg = "Failed to get all tags";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        });
+    }
+
+
+    
 
 
 

@@ -27,7 +27,7 @@ router.post('/', upload.single('event-img'), eventController.Create);
 
 
 //GET EVENTS
-
+router.get('/tags', eventController.GetTags)
 
 //GET EVENT
 
