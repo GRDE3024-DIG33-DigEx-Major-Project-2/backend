@@ -49,12 +49,14 @@ class AuthController {
                     return res.status(400).json({
                         msg: "Invalid credentials"
                     });
+                //Organizer match found, verify password and attempt login
                 else {
                     if (authUtil.verify(req.body.password, user.password)) {
                         const token = authUtil.generateJWT(user);
                         return res.status(201).json({
                             accessToken: token,
-                            user: user
+                            user: user,
+                            userType: enumUtil.userTypes.organizer
                         });
                     }
                 }
@@ -65,7 +67,8 @@ class AuthController {
                     const token = authUtil.generateJWT(user);
                     return res.status(201).json({
                         accessToken: token,
-                        user: user
+                        user: user,
+                        userType: enumUtil.userTypes.attendee
                     });
                 }
             }
