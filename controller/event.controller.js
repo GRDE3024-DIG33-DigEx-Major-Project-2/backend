@@ -158,28 +158,55 @@ class EventController {
 
 
 
-    // //TODO IMPROVE/CHANGE INTO SEARCH FOR EVENTS
-    // /**
-    //  * Get list of events
-    //  * @param {*} req 
-    //  * @param {*} res 
-    //  */
-    // GetList = async (req, res) => {
-    //     Event.findAll()
-    //         .then((tags) => {
-    //             return res.status(200).json({
-    //                 tags: tags
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             const msg = "Failed to get all tags";
-    //             console.log(msg, err);
-    //             res.status(500).json({
-    //                 msg: msg,
-    //                 error: err
-    //             });
-    //         });
-    // }
+     //TODO IMPROVE/CHANGE INTO SEARCH FOR EVENTS
+     //NO SEARCH FILTERS WORK YET. JUST PAGINATION FOR NOW
+     /**
+      * Get list of events via search
+      * @param {*} req 
+      * @param {*} res 
+      */
+    SearchEvents = async (req, res) => {
+
+        //CHECK IF BODY EXISTS
+
+        //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
+
+        
+        let limit = 10;
+        let offset = req.body.offset * limit;
+
+
+        await Event.findAll(
+            {
+                where: {
+
+                },
+                offset: offset,
+                limit: limit,
+                order: [["createdAt", "ASC"]],
+            })
+            .then(async (events) => {
+                console.log("EVENTS");
+                console.log(events);
+                let data = [];
+                for (let ev of events) {
+                    let val = await this.FindEvent(ev.dataValues.id, res);
+                    console.log("VAL");
+                    console.log(val);
+                    data.push(val);
+                }
+                    
+                 return res.status(200).json(data);
+             })
+             .catch((err) => {
+                 const msg = "Failed to get events";
+                 console.log(msg, err);
+                 res.status(500).json({
+                     msg: msg,
+                     error: err
+                 });
+             });
+     }
 
 
 
@@ -192,6 +219,23 @@ class EventController {
 
         let eventId = req.params.id;
 
+        let data = await this.FindEvent(eventId, res);
+                        //Send back 200 status with the retrieved event and related tables
+                        return res.status(201).json(data);
+    }
+
+
+
+
+
+
+    /**
+     * Find event-related tables for an event by event id
+     * @param {any} eventId
+     * @param {any} res
+     */
+    async FindEvent(eventId, res) {
+
         let data = {
             event: null,
             tags: [],
@@ -199,7 +243,6 @@ class EventController {
             ticketTypes: [],
             eventImg: null
         }
-
 
         //Get all event-related rows
         try {
@@ -300,15 +343,10 @@ class EventController {
                     .then(() => {
                         console.log("Event retrieved!");
                         console.log(data);
-                        //Send back 200 status with the retrieved event and related tables
-                        return res.status(201).json(data);
                     })
             });
         }
         catch (err) {
-            //Delete file from S3 if it was uploaded in this instance
-            if (eventImgFilename != "")
-                s3Util.deleteFile(eventImgFilename);
             const msg = "Failed to find event-related tables by id";
             console.log(msg, err);
             res.status(500).json({
@@ -316,10 +354,9 @@ class EventController {
                 error: err
             });
         }
-
+        //Return event obj
+        return data;
     }
-
-
 
 
 

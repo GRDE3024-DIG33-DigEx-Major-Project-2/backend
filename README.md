@@ -39,19 +39,18 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
-1. Create event
-2. Update event 
-3. Get events by filters
-4. Get your favourited/owned events
+1. Get events by filters
+2. Get your favourited/owned events
+3. Toggle event favourite
+4. Update event
 5. Code cleanup
 6. Code comments
 7. Update JSDocs
-8. Add pre-set tags for now
+8. 
 9. 
 10. 
 
 # BACKLOG
-- Enum helpers for reusability (example being userType field)
 - Sequelize model validation and constraints
 - Helper functions
 - Better security for secrets/credentials in dev and prod environments
@@ -63,6 +62,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Next seed data iteration
 - Dynamic tag creation
 - JWT Refresh Token
+- Clean up image extension and resize handling
 - Rollback transactions through Sequelize
 - **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
@@ -84,8 +84,10 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - ~~JWT config~~
 - ~~Begin pseudocode (and code) for for endpoints for features~~
 - ~~Initial Seed Data~~
-
-
+- Create event
+- Get Event By ID
+- Add pre-set tags for now
+- Enum helpers for reusability (example being userType field)
 
 
 

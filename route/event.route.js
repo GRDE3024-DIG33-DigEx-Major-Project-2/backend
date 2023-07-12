@@ -32,8 +32,8 @@ router.get('/tags', eventController.GetTags);
 //GET EVENT
 router.get('/:id', eventController.GetById);
 
-//GET EVENTS
-//router.get('/all', eventController.GetList);
+//POST -- GET PAGINATION OF EVENTS
+router.post('/search-page', eventController.SearchEvents);
 
 //DELETE EVENT
 
