@@ -26,14 +26,14 @@ router.post('/', upload.single('event-img'), eventController.Create);
 //TOGGLE FAVOURITE EVENT
 
 
-//GET EVENTS
-router.get('/tags', eventController.GetTags)
+//GET TAGS
+router.get('/tags', eventController.GetTags);
 
 //GET EVENT
+router.get('/:id', eventController.GetById);
 
-
-
-
+//GET EVENTS
+//router.get('/all', eventController.GetList);
 
 //DELETE EVENT
 

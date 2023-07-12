@@ -9,6 +9,7 @@ const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
 const sharp = require("sharp");
 const path = require("path");
+const { UUIDV4 } = require("sequelize");
 //Defined models in Sequelize instance
 const {
     Act,
@@ -34,7 +35,7 @@ class EventController {
     Create = async (req, res) => {
 
         //Increase request timeout
-        req.connection.setTimeout(100000); //100 seconds
+        //req.connection.setTimeout(100000); //100 seconds
 
         let decodedToken;
         let event;
@@ -72,13 +73,13 @@ class EventController {
             //Resize image and save to S3 bucket
             try {
                 let imgBuffer = await sharp(req.file.buffer)
-                .resize(320, 320)
-                // .resize({
-                //     fit: sharp.fit.contain,
-                //     width: 600
-                // })                
-                .withMetadata()
-                .toBuffer();
+                    //.resize(320, 320)
+                    // .resize({
+                    //     fit: sharp.fit.contain,
+                    //     width: 600
+                    // })                
+                    .withMetadata()
+                    .toBuffer();
                 //Upload image to S3 bucket
                 s3Util.upload(imgBuffer, eventImgFilename, req.file.mimetype);
             } catch (error) {
@@ -93,34 +94,34 @@ class EventController {
         //Create Event-related tables
         try {
             const result = await db.transaction(async (t) => {
-            //Create an Event
-            console.log("Init Event");
-            event = await this.CreateEvent(req.body.event, decodedToken.user, res, t);
-            //Create Tag associations
-            console.log("Init Tags");
-            await this.CreateTaggedWith(req.body.tags, event.id, res, t);
-            //Create Act associations
-            console.log("Init Acts");
-            await this.CreateActs(req.body.acts, event.id, res, t);
-            //Create Ticket Type associations
-            console.log("Init Ticket Types");
-            await this.CreateTicketTypes(req.body.ticketTypes, event.id, res, t);
-            //Create Event Image 
-            if (eventImgFilename != "") {
-            await this.CreateEventImage(eventImgFilename, event.id, res, t);
-            }
+                //Create an Event
+                console.log("Init Event");
+                event = await this.CreateEvent(req.body.event, decodedToken.user, res, t);
+                //Create Tag associations
+                console.log("Init Tags");
+                await this.CreateTaggedWith(req.body.tags, event.id, res, t);
+                //Create Act associations
+                console.log("Init Acts");
+                await this.CreateActs(req.body.acts, event.id, res, t);
+                //Create Ticket Type associations
+                console.log("Init Ticket Types");
+                await this.CreateTicketTypes(req.body.ticketTypes, event.id, res, t);
+                //Create Event Image 
+                if (eventImgFilename != "") {
+                    await this.CreateEventImage(eventImgFilename, event.id, res, t);
+                }
 
-            console.log("Event created!");
-            //Send back 201 status wih the newly created user instance
-            return res.status(201).json(event);            
-            
-              });
+                console.log("Event created!");
+                //Send back 201 status wih the newly created user instance
+                return res.status(201).json(event);
+
+            });
 
         }
         catch (err) {
             //Delete file from S3 if it was uploaded in this instance
             if (eventImgFilename != "")
-            s3Util.deleteFile(eventImgFilename);
+                s3Util.deleteFile(eventImgFilename);
             const msg = "Failed to create all event-related tables";
             console.log(msg, err);
             res.status(500).json({
@@ -140,27 +141,193 @@ class EventController {
     GetTags = async (req, res) => {
 
         Tag.findAll()
-        .then((tags) => {
-            return res.status(200).json({
-                tags: tags
+            .then((tags) => {
+                return res.status(200).json({
+                    tags: tags
+                });
+            })
+            .catch((err) => {
+                const msg = "Failed to get all tags";
+                console.log(msg, err);
+                res.status(500).json({
+                    msg: msg,
+                    error: err
+                });
             });
-        })
-        .catch((err) => {
-            const msg = "Failed to get all tags";
+    }
+
+
+
+    // //TODO IMPROVE/CHANGE INTO SEARCH FOR EVENTS
+    // /**
+    //  * Get list of events
+    //  * @param {*} req 
+    //  * @param {*} res 
+    //  */
+    // GetList = async (req, res) => {
+    //     Event.findAll()
+    //         .then((tags) => {
+    //             return res.status(200).json({
+    //                 tags: tags
+    //             });
+    //         })
+    //         .catch((err) => {
+    //             const msg = "Failed to get all tags";
+    //             console.log(msg, err);
+    //             res.status(500).json({
+    //                 msg: msg,
+    //                 error: err
+    //             });
+    //         });
+    // }
+
+
+
+    /**
+     * Get event by event id
+     * @param {any} req
+     * @param {any} res
+     */
+    GetById = async (req, res) => {
+
+        let eventId = req.params.id;
+
+        let data = {
+            event: null,
+            tags: [],
+            acts: [],
+            ticketTypes: [],
+            eventImg: null
+        }
+
+
+        //Get all event-related rows
+        try {
+            const result = await db.transaction(async (t) => {
+                //Find event
+                await Event.findByPk(eventId)
+                    .then(async (event) => {
+                        //Event not found
+                        if (event == null) {
+                            const msg = "Failed to find event";
+                            console.log(msg);
+                            res.status(500).json({
+                                msg: msg,
+                            });
+                        }
+                        data.event = event.dataValues;
+                        console.log("FOUND EVENT");
+
+                        //Find event image
+                        await EventImage.findOne({ where: { EventId: eventId } })
+                            .then((eventImg) => {
+                                //Event Image found
+                                if (eventImg != null) {
+                                    data.eventImg = eventImg.dataValues;
+                                    console.log("FOUND EVENT IMG");
+                                }
+                                else {
+                                    console.log("No event image found");
+                                }
+                            });
+
+                        //Find taggedwith junctions
+                        await TaggedWith.findAll({ where: { EventId: eventId } })
+                            .then(async (taggedWithArr) => {
+                                //Get tags from TaggedWith junction rows
+                                if (taggedWithArr != null) {
+                                    //Find tags
+                                    for (let row of taggedWithArr) {
+                                        await Tag.findOne({
+                                            where: {
+                                                id: row.dataValues.TagId
+                                            }
+                                        })
+                                            .then((tag) => {
+                                                data.tags.push(tag.dataValues);
+                                                console.log(data.tags);
+                                            });
+                                    }
+                                }
+                                else {
+                                    console.log("No tag associations found for event");
+                                }
+                            });
+
+                        //Find EventAct junctions
+                        await EventAct.findAll({ where: { EventId: eventId } })
+                            .then(async (eventActs) => {
+                                //Get acts from EventAct junction rows
+                                if (eventActs != null) {
+                                    //Find acts
+                                    for (let row of eventActs)
+                                        await Act.findOne({
+                                            where: {
+                                                id: row.dataValues.ActId
+                                            }
+                                        })
+                                            .then((act) => {
+                                                data.acts.push(act.dataValues);
+                                            })
+                                }
+                                else {
+                                    console.log("No act associations found for event");
+                                }
+                            });
+
+                        //Find EventTicket junctions
+                        await EventTicket.findAll({ where: { EventId: eventId } })
+                            .then(async (eventTickets) => {
+                                //Get ticketType from EventTicket junction rows
+                                if (eventTickets != null) {
+                                    //Find ticket types
+                                    for (let row of eventTickets)
+                                        await TicketType.findOne({
+                                            where: {
+                                                id: row.dataValues.TicketTypeId
+                                            }
+                                        })
+                                            .then((ticketType) => {
+                                                data.ticketTypes.push(ticketType.dataValues);
+                                            })
+                                }
+                                else {
+                                    console.log("No ticket type associations found for event");
+                                }
+                            });
+                    })
+                    //Return successful response
+                    .then(() => {
+                        console.log("Event retrieved!");
+                        console.log(data);
+                        //Send back 200 status with the retrieved event and related tables
+                        return res.status(201).json(data);
+                    })
+            });
+        }
+        catch (err) {
+            //Delete file from S3 if it was uploaded in this instance
+            if (eventImgFilename != "")
+                s3Util.deleteFile(eventImgFilename);
+            const msg = "Failed to find event-related tables by id";
             console.log(msg, err);
             res.status(500).json({
                 msg: msg,
                 error: err
             });
-        });
+        }
+
     }
 
 
-    
+
+
 
 
 
     //TODO MOVE CRUD FUNCTIONS TO A DB SERVICE FILE
+
+
     /**
      * Add Event to Event table
      * @param {*} event 
@@ -261,8 +428,8 @@ class EventController {
      */
     async CreateEventImage(eventImgFilename, eventId, res, transaction) {
         let eventImage = await EventImage.create({
-            filename:eventImgFilename,
-            EventId:eventId,
+            filename: eventImgFilename,
+            EventId: eventId,
         }, { transaction: transaction });
     }
 
