@@ -46,13 +46,15 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 5. Code cleanup
 6. Code comments
 7. Update JSDocs
-8. 
-9. 
+8. Delete old image in update endpoints
+9. Finish db CRUD handler abstraction
 10. 
 
 # BACKLOG
 - Sequelize model validation and constraints
 - Helper functions
+- Update event image handling + test
+- Profile image upload in post and put endpoints
 - Better security for secrets/credentials in dev and prod environments
 - Profile image add/update/delete
 - Event image add/update/delete
@@ -62,8 +64,11 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Next seed data iteration
 - Dynamic tag creation
 - JWT Refresh Token
+- createResult bug in update event handler for act arr and ticketType arr
 - Clean up image extension and resize handling
 - Rollback transactions through Sequelize
+- Fix up comments so they have the correct meaning
+- Exclude password hash in db Organizer/Attendee response JSON
 - **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**

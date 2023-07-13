@@ -5,6 +5,7 @@
 
 //Import dependencies
 const { v4: uuidv4 } = require('uuid');
+const enumUtil = require('../util/enum.util');
 
 
 /**
@@ -22,8 +23,6 @@ class SeedData {
     return [
       {
         id: uuidv4(),
-        firstName: 'Adam',
-        lastName: 'Antonio',
         bio: null,
         organizationName: 'Adam\'s Venues',
         phoneNumber: '04123123',
@@ -35,8 +34,6 @@ class SeedData {
       },
       {
         id: uuidv4(),
-        firstName: 'Bill',
-        lastName: 'Bo',
         bio: null,
         organizationName: 'Bill\'s Theaters',
         phoneNumber: '04321321',

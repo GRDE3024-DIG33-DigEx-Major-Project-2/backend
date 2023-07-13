@@ -11,9 +11,10 @@ const router = express.Router();
 //Add handlers for endpoints
 const UserController = require('../controller/user.controller');
 const userController = new UserController();
-
-
-
+const multer = require("multer");
+//Image buffer for multipart form file
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 
 //Swagger UI schemas
@@ -68,22 +69,14 @@ const userController = new UserController();
  *              
  */
 router.post('/register', userController.Create);
-
-
-
-
-
-
-
-router.delete('/organizer/:id', userController.DeleteOrganizer);
-
-
-
-
-router.delete('/attendee/:id', userController.DeleteAttendee);
-
-
-
+//router.post('/register', multer(upload.single), userController.Create);
+//UPDATE PASSWORD
+router.put('/reset-password', userController.ResetPassword);
+//UPDATE USER
+router.put('/', userController.Update);
+//router.put('/', multer(upload.single), userController.Update);
+//DELETE USER
+router.delete('/', userController.Delete);
 
 
 //Exports the user router

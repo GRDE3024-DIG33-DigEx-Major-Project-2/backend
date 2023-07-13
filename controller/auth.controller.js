@@ -55,8 +55,13 @@ class AuthController {
                         const token = authUtil.generateJWT(user);
                         return res.status(201).json({
                             accessToken: token,
-                            user: user,
-                            userType: enumUtil.userTypes.organizer
+                            user: user
+                        });
+                    }
+                    //Password invalid, send 400 response
+                    else {
+                        return res.status(400).json({
+                            msg: "Invalid credentials"
                         });
                     }
                 }
@@ -69,6 +74,12 @@ class AuthController {
                         accessToken: token,
                         user: user,
                         userType: enumUtil.userTypes.attendee
+                    });
+                }
+                //Password invalid, send 400 response
+                else {
+                    return res.status(400).json({
+                        msg: "Invalid credentials"
                     });
                 }
             }

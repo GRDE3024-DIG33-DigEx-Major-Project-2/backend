@@ -4,13 +4,17 @@
  */
 
 
-
 //Import dependencies
 const enumUtil = require("../util/enum.util");
 const { db } = require("../db/models/db");
 //Load required db models for querying
-const {Organizer, Attendee} = db.models;
-
+const { Organizer, Attendee } = db.models;
+//Db handler for creating users
+const CreateUserHandler = require("../db/handlers/users/create.handler");
+//Db handler for deleting users
+const DeleteUserHandler = require("../db/handlers/users/delete.handler");
+//Auth-related utilities
+const authUtil = require("../util/auth.util");
 
 
 //Endpoint actions for user routers
@@ -25,205 +29,137 @@ class UserController {
      * @param {*} req 
      * @param {*} res 
      */
-    Create = async(req, res) => {
-
-
+    Create = async (req, res) => {
         //If body is empty, send 400 response
-		if (!Object.keys(req.body).length) {
-			return res.status(400).json({
-				msg: "The user content is empty!"
-			});
-		}
-
+        if (!Object.keys(req.body).length) {
+            return res.status(400).json({
+                msg: "The user content is empty!"
+            });
+        }
         //If email is taken regardless of user type, return 400 response
-        if (this.IsEmailTaken(enumUtil.userTypes.attendee, req, res) || this.IsEmailTaken(enumUtil.userTypes.organizer, req, res)) {
+        if (CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
+            || CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)) {
             let msg = "Email is taken already";
             console.log(msg);
             return res.status(400).json({
                 msg: msg
             });
         }
-
-        let user = null;
-
-        //Create an Attendee
-        if (req.body.userType == enumUtil.userTypes.attendee) {
-            console.log("Init Attendee");
-            user = await Attendee.create({
-                firstName:req.body.firstName,
-                lastName:req.body.lastName,
-                bio:req.body.bio,
-                dob:req.body.dob,
-                email:req.body.email,
-                password:req.body.password,
-                imgUrl:req.body.imgUrl | null
-            })
-            .catch((reason) => {
-                let msg = "Problem creating Attendee";
-                console.log(msg);
-                console.log(reason);
-                return res.status(400).json({
-                    msg: msg,
-                    error: reason
-                });
-            });
-          
-        }
-        //Create an organizer
-        else if (req.body.userType == enumUtil.userTypes.organizer) {
-            console.log("Init Organizer");
-            user = await Organizer.create({
-                firstName:req.body.firstName,
-                lastName:req.body.lastName,
-                bio:req.body.bio,
-                dob:req.body.dob,
-                phoneNumber:req.body.phoneNumber,
-                email:req.body.email,
-                password:req.body.password,
-                organizationName:req.body.organizationName,
-                imgUrl:req.body.imgUrl | null
-            })
-            .catch((reason) => {
-                let msg = "Problem creating Organizer";
-                console.log(msg);
-                console.log(reason);
-                return res.status(400).json({
-                    msg: msg,
-                    error: reason
-                });
-            });
-        }
-
-        
-
+        //Create user in db
+        const user = await CreateUserHandler.CreateUser(req.body, res);
         //Send back 201 status wih the newly created user instance
-		return res.status(201).json({user:user});
-
+        return res.status(201).json({ user: user });
     }
 
 
 
-
-
     /**
-     * Delete Attendee and relevant entities
+     * Update a user
      * @param {*} req 
      * @param {*} res 
      */
-    DeleteAttendee = async(req, res) => {
-
-        //Get id from request params
-        const id = req.params.id;
-
-        //Attempt to delete user
-        let result = await Attendee.destroy({where:{id:id}});
-
-        //No user was deleted
-        if (result == 0) {
-            let msg = "Failed to delete Attendee";
-            console.log(msg);
-            return res.status(400).json({
-                msg: msg
-            });
-        }
-        //User was deleted
-        else {
-            return res.status(200).json({
-                msg: msg
-            });
-        }
-
-
-
-        //TODO delete profile image
+    Update = async (req, res) => {
 
     }
 
 
 
+
+
+
+
+
     /**
-     * Delete Organizer and relevant entities
+     * Reset a user's password
      * @param {*} req 
      * @param {*} res 
      */
-    DeleteOrganizer = async(req, res) => {
+    ResetPassword = async (req, res) => {
 
-                //Get id from request params
-                const id = req.params.id;
+        let decodedToken;
+        let user;
 
-                //Attempt to delete user
-                let result = await Organizer.destroy({where:{id:id}});
-        
-                //No user was deleted
-                if (result == 0) {
-                    let msg = "Failed to delete Attendee";
-                    console.log(msg);
-                    return res.status(400).json({
-                        msg: msg
-                    });
-                }
-                //User was deleted
-                else {
-                    return res.status(200).json({
-                        msg: msg
-                    });
-                }
-
-
-                //TODO delete profile image and event images from S3
-                //TODO DELETE OBJECTS FROM OTHER MODELS
-
-    }
-
-
-
-    /**
-     * Finds if the email is already taken
-     * @param {String} userType attendee OR organizer
-     * @returns {boolean | any} TRUE if email is taken, FALSE if not
-     */
-    IsEmailTaken(userType, req, res) {
-
-        //Check Attendees for the email
-        if (userType == enumUtil.userTypes.attendee)
-        Attendee.findOne({ where:{email:req.body.email}})
-        .then((value) => {
-            //Exists, return true
-            if (value != null)
-            return true;
-            //Doesn't exist, return false
-            else return false;
-        })
-        .catch((reason) => {
-            let msg = "Error occurred when checking if email is taken by an Attendee";
-            console.log(msg);
-            console.log(reason);
+        //Check for old password and new password in body
+        if (!req.body.oldPassword || !req.body.newPassword) {
             return res.status(400).json({
+                msg: "Please provide an old password and new password"
+            });
+        }
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
                 msg: msg,
-                error: reason
-            });
-        });
-
-        //Check Organizers for the email
-        else if (userType == enumUtil.userTypes.organizer) {
-            Organizer.findOne({ where:{email:req.body.email}})
-            .then((value) => {
-                //Exists, return true
-                if (value != null)
-                return true;
-                //Doesn't exist, return false
-                else return false;
-            })
-            .catch((reason) => {
-                let msg = "Error occurred when checking if email is taken by an Organizer";
-                console.log(msg);
-                console.log(reason);
-                return res.status(400).json({
-                    msg: msg,
-                    error: reason
-                });
+                error: err
             });
         }
+
+
+        if (decodedToken.user.userType == enumUtil.userTypes.attendee)
+        user = await Attendee.findByPk(decodedToken.user.id);
+        else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
+        user = await Organizer.findByPk(decodedToken.user.id);
+
+        //Verify current password
+        if (authUtil.verify(req.body.oldPassword, user.password)) {
+        //Update the user's password
+        try {
+            const result = await db.transaction(async (t) => {
+                if (decodedToken.user.userType == enumUtil.userTypes.attendee) {
+                    await Attendee.update({
+                        password:req.body.newPassword
+                    },
+                    {where: {
+                        id: decodedToken.user.id
+                    }})
+                    .then((value) => {
+                //Send back 200 status after password updated
+                return res.status(200).json({msg: "Successfully updated password"});                        
+                    });
+                }
+                else if (decodedToken.user.userType == enumUtil.userTypes.organizer) {
+                    await Organizer.update({
+                        password:req.body.newPassword
+                    },
+                    {where: {
+                        id: decodedToken.user.id
+                    }})
+                    .then((value) => {
+                //Send back 200 status after password updated
+                return res.status(200).json({msg: "Successfully updated password"});                        
+                    });
+                }
+
+            });
+        }
+        catch (err) {
+            const msg = "Failed to update password";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+        }
+        //Password invalid, send 400 response
+        else {
+            return res.status(400).json({
+                msg: "Invalid credentials"
+            });
+        }
+
+
+
 
     }
 
@@ -234,6 +170,47 @@ class UserController {
 
 
 
+
+    //TODO
+    /**
+     * Delete a user and all related data in db
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
+    Delete = async (req, res) => {
+
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+
+        //TODO UNFINISHED
+        //Delete event handler for org
+        //Delete user for org and attendee
+        //Delete user image
+        //User type conditional
+        if (decodedToken.user.userType == enumUtil.userTypes.attendee)
+            await DeleteUserHandler.DeleteAttendee();
+        else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
+            await DeleteUserHandler.DeleteOrganizer();
+
+
+    }
 
 }
 

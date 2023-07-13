@@ -2,8 +2,9 @@
  * Organizer model
  */
 
-  const { DataTypes } = require('sequelize');
-  const AuthUtil = require("../../../util/auth.util");
+const { DataTypes } = require('sequelize');
+const AuthUtil = require("../../../util/auth.util");
+const enumUtil = require('../../../util/enum.util');
 
 
 module.exports = (sequelize) => {
@@ -11,33 +12,19 @@ module.exports = (sequelize) => {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey:true,
+      primaryKey: true,
     },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull:false
-      },
-      bio: {
-        type: DataTypes.TEXT,
-        allowNull:true
-      },
-      fullName: {
-        type: DataTypes.VIRTUAL,
-        get() {
-          return `${this.firstName} ${this.lastName}`;
-        }
-      },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     organizationName: {
-      type:DataTypes.STRING,
-      allowNull:false
+      type: DataTypes.STRING,
+      allowNull: false
     },
     phoneNumber: {
-      type:DataTypes.STRING,
-      allowNull:false
+      type: DataTypes.STRING,
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
@@ -47,18 +34,21 @@ module.exports = (sequelize) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull:false,
+      allowNull: false,
       /**
        * Hash password
        * @param {*} value Unencrypted password
        */
       set(value) {
         this.setDataValue('password', AuthUtil.generateHash(value));
-      }, 
+      }
     },
     imgUrl: {
       type: DataTypes.STRING,
-      allowNull:true
+      allowNull: true
+    },
+    userType: {
+      type: DataTypes.STRING,
+      defaultValue:enumUtil.userTypes.organizer,
     }
-    })
-};
+  })};

@@ -4,6 +4,7 @@
 
   const { DataTypes } = require('sequelize');
   const AuthUtil = require("../../../util/auth.util");
+const enumUtil = require('../../../util/enum.util');
 
   module.exports = (sequelize) => {
     sequelize.define('Attendee', {
@@ -34,7 +35,6 @@
               type:DataTypes.DATEONLY,
               allowNull:false
           },
-          //TODO email will need additional logic for unique validation
           email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -55,6 +55,10 @@
           imgUrl: {
             type: DataTypes.STRING,
             allowNull:true
+          },
+          userType: {
+            type: DataTypes.STRING,
+            defaultValue: enumUtil.userTypes.attendee,
           }
       })
   };
