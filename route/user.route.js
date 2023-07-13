@@ -73,7 +73,7 @@ router.post('/register', userController.Create);
 //UPDATE PASSWORD
 router.put('/reset-password', userController.ResetPassword);
 //UPDATE USER
-router.put('/', multer(upload.single), userController.Update);
+router.put('/', upload.single('profile-img'), userController.Update);
 //DELETE USER
 router.delete('/', userController.Delete);
 
