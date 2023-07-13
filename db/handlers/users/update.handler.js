@@ -54,7 +54,9 @@ class UpdateUserHandler {
 					})
 					.then(async () => {
 						//Return the updated attendee row
-						await Attendee.findByPk(currUser.id)
+						await Attendee.findOne(
+							{where:{id:currUser.id}, 
+							transaction:transaction})
 							.then((value) => {
 								updatedUser = value.dataValues;
 							});
@@ -83,7 +85,9 @@ class UpdateUserHandler {
 				})
 				.then(async () => {
 					//Return the updated organizer row
-					await Organizer.findByPk(currUser.id)
+					await Organizer.findOne(
+						{where:{id:currUser.id}, 
+						transaction:transaction})
 						.then((value) => {
 							updatedUser = value.dataValues;
 						});
