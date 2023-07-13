@@ -19,6 +19,7 @@ const {
     EventTicket,
     TaggedWith,
     EventAct,
+    FavouritedBy,
     Tag
 } = db.models;
 //Import db CRUD handlers
@@ -75,7 +76,7 @@ class EventController {
         //Upload event image
         if (req.file && req.file.buffer) {
             eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
-            try {              
+            try {
                 await s3Util
                     .uploadEventImg(
                         eventImgFilename,
@@ -163,8 +164,8 @@ class EventController {
                         eventImgFilename,
                         req.file.buffer,
                         constantsUtil.IMG_MIMETYPE
-                    );            
-                    
+                    );
+
                 //Search for an old event image
                 EventImage.findOne({
                     where: {
@@ -220,14 +221,72 @@ class EventController {
         return res.status(201).json(data);
     }
 
-
-
     /**
      * Toggle a favourite event for an Attendee
      * @param {*} req 
      * @param {*} res 
      */
     ToggleFavourite = async (req, res) => {
+
+        //Decoded access token data
+        let decodedToken;
+        //If body is empty, send 400 response
+        if (!Object.keys(req.body).length) {
+            return res.status(400).json({
+                msg: "Request body is empty!"
+            });
+        }
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+        //Prevent non-attendees from favouriting events
+        if (decodedToken.user.userType != enumUtil.userTypes.attendee) {
+            const msg = "Only Attendees may favourite events";
+            console.log(msg);
+            return res.status(403).json({
+                msg: msg
+            });
+        }
+
+        //Look for existing favourite association
+        await FavouritedBy.findOne({ where: { AttendeeId: decodedToken.user.id, EventId: req.body.eventId } })
+            .then(async (junction) => {
+                //Not favourited, therefore add new junction
+                if (junction == null) {
+                    let result = await FavouritedBy.create({
+                        EventId: req.body.eventId,
+                        AttendeeId: decodedToken.user.id
+                    });
+                    console.log("Favourited event");
+                    console.log(result);
+                //Send back 200 status after creating junction
+                return res.status(200).json({msg:"Favourited event"});
+                }
+                //Favourited, therefore remove associated junction
+                else {
+                    let result = await FavouritedBy.destroy({ where: { id: junction.id } });
+                    console.log("Unfavourited event");
+                    console.log(result);
+                    //Send back 200 status after removing junction
+                    return res.status(200).json({msg:"Unfavourited event"});
+                }
+            })
+
 
     }
 
@@ -239,6 +298,81 @@ class EventController {
      * @param {*} res 
      */
     GetFavourites = async (req, res) => {
+        console.log("INSIDE FAVOURITES");
+        //Decoded access token data
+        let decodedToken;
+        //If body is empty, send 400 response
+        if (!Object.keys(req.body).length) {
+            return res.status(400).json({
+                msg: "Request body is empty!"
+            });
+        }
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+        //Only attendees have a favourites list
+        if (decodedToken.user.userType != enumUtil.userTypes.attendee) {
+            const msg = "Only attendees have a favourites list";
+            console.log(msg);
+            return res.status(403).json({
+                msg: msg
+            });
+        }
+
+        //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
+
+
+        let limit = 10;
+        let offset = req.body.offset * limit;
+        console.log("USER ID TEST");
+        console.log(decodedToken.user.id);
+
+
+        //Find page of attendee-event junctions
+        await FavouritedBy.findAll(
+            {
+                where: {
+                    AttendeeId: decodedToken.user.id
+                },
+                offset: offset,
+                limit: limit,
+                order: [["createdAt", "ASC"]],
+            })
+            //Find all data associated with the events across all tables
+            .then(async (junctions) => {
+                console.log("Found favourited events");
+                console.log(junctions);
+                let data = [];
+                for (let junc of junctions) {
+                    let val = await GetEventHandler.FindOneById(junc.dataValues.EventId, res);
+                    data.push(val);
+                }
+                //Return the event data array
+                return res.status(200).json(data);
+            })
+            .catch((err) => {
+                const msg = "Failed to get favourited events";
+                console.log(msg, err);
+                res.status(500).json({
+                    msg: msg,
+                    error: err
+                });
+            });
 
     }
 
@@ -249,6 +383,80 @@ class EventController {
      * @param {*} res 
      */
     GetOwnedEvents = async (req, res) => {
+        
+        //Decoded access token data
+        let decodedToken;
+        //If body is empty, send 400 response
+        if (!Object.keys(req.body).length) {
+            return res.status(400).json({
+                msg: "Request body is empty!"
+            });
+        }
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+        //Only Organizers have owned events
+        if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
+            const msg = "Only Organizers have owned events";
+            console.log(msg);
+            return res.status(403).json({
+                msg: msg
+            });
+        }
+
+        //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
+
+
+        let limit = 10;
+        let offset = req.body.offset * limit;
+
+
+        //Find page of owned events event rows
+        await Event.findAll(
+            {
+                where: {
+                    OrganizerId: decodedToken.user.id
+                },
+                offset: offset,
+                limit: limit,
+                order: [["createdAt", "ASC"]],
+            })
+            //Find all data associated with the events across all tables
+            .then(async (events) => {
+                console.log("Found owned events");
+                console.log(events);
+                let data = [];
+                for (let ev of events) {
+                    let val = await GetEventHandler.FindOneById(ev.dataValues.id, res);
+                    data.push(val);
+                }
+                //Return the event data array
+                return res.status(200).json(data);
+            })
+            .catch((err) => {
+                const msg = "Failed to get owned events";
+                console.log(msg, err);
+                res.status(500).json({
+                    msg: msg,
+                    error: err
+                });
+            });
+
 
     }
 
@@ -261,7 +469,12 @@ class EventController {
      */
     SearchEvents = async (req, res) => {
 
-        //CHECK IF BODY EXISTS
+        //If body is empty, send 400 response
+        if (!Object.keys(req.body).length) {
+            return res.status(400).json({
+                msg: "Request body is empty!"
+            });
+        }
 
         //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
 

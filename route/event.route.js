@@ -29,9 +29,9 @@ router.get('/:id', eventController.GetById);
 //POST -- GET PAGINATION OF EVENTS
 router.post('/search-page', eventController.SearchEvents);
 //GET FAVOURITED EVENTS PAGE WITH FILTERS
-router.post('/favourites');
+router.post('/favourites', eventController.GetFavourites);
 //GET YOUR CREATED EVENTS PAGE WITH FILTERS
-router.post('owned-events');
+router.post('/owned-events', eventController.GetOwnedEvents);
 //DELETE EVENT
 router.delete('/:id', eventController.DeleteEvent);
 
