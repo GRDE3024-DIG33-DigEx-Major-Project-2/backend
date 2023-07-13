@@ -199,7 +199,7 @@ class EventController {
             //Delete file from S3 if it was uploaded in this instance
             if (eventImgFilename != "")
                 s3Util.deleteFile(eventImgFilename);
-            const msg = "Failed to create all event-related tables";
+            const msg = "Failed to update all event-related tables";
             console.log(msg, err);
             res.status(500).json({
                 msg: msg,
