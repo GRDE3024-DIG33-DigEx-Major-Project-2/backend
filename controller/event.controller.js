@@ -284,7 +284,7 @@ class EventController {
                 console.log(events);
                 let data = [];
                 for (let ev of events) {
-                    let val = await this.FindEvent(ev.dataValues.id, res);
+                    let val = await GetEventHandler.FindOneById(ev.dataValues.id, res);
                     console.log("VAL");
                     console.log(val);
                     data.push(val);
