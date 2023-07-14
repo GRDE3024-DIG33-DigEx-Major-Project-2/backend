@@ -5,6 +5,7 @@
 
 const enumUtil = require("../../../util/enum.util");
 const { db } = require("../../../db/models/db");
+const e = require("cors");
 //Defined models in Sequelize instance
 const {
 	Act,
@@ -109,14 +110,39 @@ class CreateEventHandler {
 	 * @returns {Array} Event-Tag junctions array
 	 */
 	async CreateTaggedWith(tags, eventId, transaction) {
+		//Array of new Event-Tag junctions
+		let junctionArr = [];
+		//Array of Tags now associated with the event
 		let arr = [];
 		//Create tag junctions
 		for (let tag of tags) {
-			arr.push(await TaggedWith.create({
+			junctionArr.push(await TaggedWith.create({
 				EventId: eventId,
 				TagId: tag.id
 			}, { transaction: transaction }));
 		}
+		console.log("Created tag junctions!");
+		//Get Tag table rows that share a junction with the Event
+		for (let junction of junctionArr) {
+			await Tag.findOne({
+				where: {
+					id: junction.TagId
+				}
+			},
+			{transaction:transaction})
+			.then((associatedTag) => {
+				if (associatedTag != null) {
+					console.log("");
+					arr.push(associatedTag.dataValues);
+				}
+				else {
+					let msg = "Associated tag not found!";
+					console.log(msg);
+					throw new Error(msg);
+				}
+			});
+		}	
+		console.log("Found tag associations!");
 		return arr;
 	}
 

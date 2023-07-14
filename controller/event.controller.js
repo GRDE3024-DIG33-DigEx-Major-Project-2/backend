@@ -4,6 +4,7 @@
 
 //Import dependencies
 const enumUtil = require("../util/enum.util");
+const constantsUtil = require("../util/constants.util");
 const { db } = require("../db/models/db");
 const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
@@ -22,11 +23,16 @@ const {
     FavouritedBy,
     Tag
 } = db.models;
-//Import db CRUD handlers
+//Db create event handler
 const CreateEventHandler = require("../db/handlers/events/create.handler");
+//Db update event handler
 const UpdateEventHandler = require("../db/handlers/events/update.handler");
+//Db get event handler
 const GetEventHandler = require("../db/handlers/events/get.handler");
-const constantsUtil = require("../util/constants.util");
+//Db delete event handler
+const DeleteEventHandler = require("../db/handlers/events/delete.handler");
+
+
 
 class EventController {
 
@@ -274,8 +280,8 @@ class EventController {
                     });
                     console.log("Favourited event");
                     console.log(result);
-                //Send back 200 status after creating junction
-                return res.status(200).json({msg:"Favourited event"});
+                    //Send back 200 status after creating junction
+                    return res.status(200).json({ msg: "Favourited event" });
                 }
                 //Favourited, therefore remove associated junction
                 else {
@@ -283,7 +289,7 @@ class EventController {
                     console.log("Unfavourited event");
                     console.log(result);
                     //Send back 200 status after removing junction
-                    return res.status(200).json({msg:"Unfavourited event"});
+                    return res.status(200).json({ msg: "Unfavourited event" });
                 }
             })
 
@@ -383,7 +389,7 @@ class EventController {
      * @param {*} res 
      */
     GetOwnedEvents = async (req, res) => {
-        
+
         //Decoded access token data
         let decodedToken;
         //If body is empty, send 400 response
@@ -545,6 +551,62 @@ class EventController {
      * @param {*} res 
      */
     DeleteEvent = async (req, res) => {
+
+        //The id of the event to delete
+        let eventId = req.params.id;
+        //Decoded access token data
+        let decodedToken;
+        //Deny if authorization header is empty
+        if (req.headers.authorization === undefined)
+            return res.sendStatus(403);
+        //Get JWT from the authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        //Retrieve user data from access token
+        try {
+            decodedToken = authUtil.decodeJWT(token);
+        }
+        //Log error, send error response
+        catch (err) {
+            const msg = "Failed to verify access token";
+            console.log(msg, err);
+            return res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+        //Prevent non-organizers from deleting events
+        if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
+            const msg = "Only Attendees may favourite events";
+            console.log(msg);
+            return res.status(403).json({
+                msg: msg
+            });
+        }
+
+
+
+
+        //Delete Event-related tables and images
+        try {
+            const result = await db.transaction(async (t) => {
+                const deleteResult = await DeleteEventHandler.Delete(eventId, decodedToken.user, t);
+                //Send back 200 status once event has been deleted
+                return res.status(200).json(deleteResult);
+            });
+        }
+        catch (err) {
+            const msg = "Failed to delete all event-related tables";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+
+
+
+
+
 
     }
 

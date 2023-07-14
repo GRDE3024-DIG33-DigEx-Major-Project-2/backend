@@ -306,16 +306,24 @@ class UserController {
             });
         }
 
-        //TODO UNFINISHED
-        //Delete event handler for org
-        //Delete user for org and attendee
-        //Delete user image
-        //User type conditional
-        if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-            await DeleteUserHandler.DeleteAttendee();
-        else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-            await DeleteUserHandler.DeleteOrganizer();
 
+
+        //Delete User-related data and images
+        try {
+            const result = await db.transaction(async (t) => {
+                const deleteResult = await DeleteUserHandler.Delete(decodedToken.user, t);
+                //Send back 200 status once user has been deleted
+                return res.status(200).json(deleteResult);
+            });
+        }
+        catch (err) {
+            const msg = "Failed to delete all User-related data";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
 
     }
 

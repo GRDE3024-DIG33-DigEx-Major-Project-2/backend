@@ -25,35 +25,10 @@ class DeleteEventHandler {
 	 * Attempt to delete event data in db
 	 * @returns 
 	 */
-	async Delete(data, eventImgFilename, currUser, t) {
-		// //Event-related tables to return in response
-		// let eventData = {
-		// 	event: null,
-		// 	eventImg: null,
-		// 	tags: [],
-		// 	acts: [],
-		// 	ticketTypes: [],
-		// };
-		// //Create an Event
-		// console.log("Init Event");
-		// eventData.event = await this.DeleteEvent(data.event, currUser, t);
-		// //Create Event Image 
-		// if (eventImgFilename != "") {
-		// 	console.log("Init Event Image");
-		// 	await this.DeleteEventImage(eventImgFilename, eventData.event.id, t);
-		// }
-		// //Create Tag associations
-		// console.log("Init Tags");
-		// eventData.tags = await this.DeleteTaggedWith(data.tags, eventData.event.id, t);
-		// //Create Act associations
-		// console.log("Init Acts");
-		// eventData.acts = await this.DeleteActs(data.acts, eventData.event.id, t);
-		// //Create Ticket Type associations
-		// console.log("Init Ticket Types");
-		// eventData.ticketTypes = await this.DeleteTicketTypes(data.ticketTypes, eventData.event.id, t);
-		// //Return the new event db data
-		// console.log("Event created!");
-		// return eventData;
+	async Delete(eventId, currUser, t) {
+		//DELETE EACH TABLE IN CORRECT ORDER
+		//THEN, DELETE EVENT IMAGE IF IT EXISTS IN S3
+		//RETURN MSG DETAILING THE DELETION OUTCOME
 	}
 
 
