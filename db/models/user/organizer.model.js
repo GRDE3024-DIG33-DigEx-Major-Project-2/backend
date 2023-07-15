@@ -5,7 +5,7 @@
 const { DataTypes } = require('sequelize');
 const AuthUtil = require("../../../util/auth.util");
 const enumUtil = require('../../../util/enum.util');
-
+const constantsUtil = require('../../../util/constants.util');
 
 module.exports = (sequelize) => {
   sequelize.define('Organizer', {
@@ -44,8 +44,17 @@ module.exports = (sequelize) => {
       }
     },
     imgUrl: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        if (this.imgFilename != "" && this.imgFilename != null)
+        return `${constantsUtil.BUCKET_URI}${this.imgFilename}${constantsUtil.IMG_MIMETYPE}`;
+        else return null;
+      }
+    },
+    imgFilename: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
+      defaultValue: "",
     },
     userType: {
       type: DataTypes.STRING,

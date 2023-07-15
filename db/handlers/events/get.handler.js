@@ -53,13 +53,13 @@ class GetEventHandler {
         try {
             const result = await db.transaction(async (t) => {
                 //Find event
-                await Event.findByPk(eventId)
+                await Event.findOne({where: {id: eventId}, transaction: t})
                     .then(async (event) => {
                         //Event not found
                         if (event == null) {
                             const msg = "Failed to find event";
                             console.log(msg);
-                            res.status(500).json({
+                            return res.status(500).json({
                                 msg: msg,
                             });
                         }
@@ -67,12 +67,11 @@ class GetEventHandler {
                         console.log("FOUND EVENT");
 
                         //Find event image
-                        await EventImage.findOne({ where: { EventId: eventId } })
-                            .then((eventImg) => {
+                        await EventImage.findOne({ where: { EventId: eventId }, transaction: t })
+                            .then(async (eventImg) => {
                                 //Event Image found
                                 if (eventImg != null) {
-                                    data.eventImg = eventImg.dataValues;
-                                    console.log("FOUND EVENT IMG");
+                                    data.eventImg =  eventImg.dataValues;
                                 }
                                 else {
                                     console.log("No event image found");
@@ -161,6 +160,31 @@ class GetEventHandler {
         }
         //Return event obj
         return data;
+    }
+
+
+
+    /**
+     * Find Event table rows associated with the Organizer
+     * @param {*} organizerId 
+     * @param {*} t 
+     * @returns Array of Event rows data
+     */
+    async FindOrganizerEvents(organizerId, t) {
+        console.log("Finding Organizer events");
+        //Array of event row data
+        let arr = [];
+        await Event.findAll({where: {OrganizerId:organizerId}, transaction: t})
+        .then((events) => {
+            console.log("Event search complete: " + events);
+            //Add event row table to events array
+            if (events != null)
+                for (let event of events)
+             if (event.dataValues) 
+              arr.push(event.dataValues);                           
+        });
+        //Return event rows
+        return arr;
     }
 
 

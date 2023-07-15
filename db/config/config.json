@@ -4,13 +4,15 @@
     "password": "localhost",
     "database": "postgres",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "multipleStatements":true
   },
   "production": {
     "username": "postgres",
     "password": "gignet2023$$",
     "database": "gignet",
     "host": "gignet.cykjmvxaizxv.ap-southeast-2.rds.amazonaws.com",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "multipleStatements":true
   }
 }

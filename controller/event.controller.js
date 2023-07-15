@@ -107,7 +107,7 @@ class EventController {
         catch (err) {
             //Delete file from S3 if it was uploaded in this instance
             if (eventImgFilename != "")
-                s3Util.deleteFile(eventImgFilename);
+                s3Util.deleteEventImage(eventImgFilename);
             const msg = "Failed to create all event-related tables";
             console.log(msg, err);
             res.status(500).json({
@@ -192,6 +192,35 @@ class EventController {
                 });
             }
         }
+
+        //Remove image without replacement
+        try {
+
+            EventImage.findOne({
+                where: {
+                    EventId: req.body.event.id
+                }
+            })
+                //Delete old event image and db row if found
+                .then(async (oldEventImg) => {
+                    if (oldEventImg != null && req.body.eventImg == null) {
+                        console.log("old event image exists!");
+                            console.log("Flagged for event image removal");
+                            //Delete from db
+                            await EventImage.destroy({where: {id: oldEventImg.dataValues.id}});
+                            //Delete image from s3 bucket
+                            s3Util.deleteEventImage(oldEventImg.dataValues.filename);
+                    }
+                });
+        }
+        catch (error) {
+            console.log(error);
+            return res.status(400).json({
+                message: "Image removal failed"
+            });
+        }
+
+
         //Updated Event-related tables
         try {
             const result = await db.transaction(async (t) => {
@@ -204,7 +233,7 @@ class EventController {
         catch (err) {
             //Delete file from S3 if it was uploaded in this instance
             if (eventImgFilename != "")
-                s3Util.deleteFile(eventImgFilename);
+                s3Util.deleteEventImage(eventImgFilename);
             const msg = "Failed to update all event-related tables";
             console.log(msg, err);
             res.status(500).json({
@@ -576,20 +605,32 @@ class EventController {
         }
         //Prevent non-organizers from deleting events
         if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
-            const msg = "Only Attendees may favourite events";
+            const msg = "Only Organizers may delete events";
             console.log(msg);
             return res.status(403).json({
                 msg: msg
             });
         }
 
-
-
+        //Verify that the user owns the Event requesting deletion
+        let event = await Event.findByPk(eventId);
+        if (event.dataValues.OrganizerId != decodedToken.user.id) {
+            const msg = "Organizer is not associated with the Event specified";
+            console.log(msg);
+            return res.status(403).json({
+                msg: msg
+            });
+        }
 
         //Delete Event-related tables and images
         try {
             const result = await db.transaction(async (t) => {
-                const deleteResult = await DeleteEventHandler.Delete(eventId, decodedToken.user, t);
+                const deleteResult = await DeleteEventHandler.Delete(eventId, t);
+
+                //Delete profile image if it exists
+                if (deleteResult.eventImgFilename != null)
+                    s3Util.deleteEventImage(deleteResult.eventImgFilename);
+
                 //Send back 200 status once event has been deleted
                 return res.status(200).json(deleteResult);
             });

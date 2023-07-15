@@ -124,6 +124,15 @@ class UpdateEventHandler {
 
         let updatedEventImg;
 
+        let existingImg = await EventImage.findOne({
+            transaction: transaction,
+            where: { EventId: eventId }
+        });
+
+
+        //If Event Image exists, update it
+        if (existingImg != null) {
+            console.log("Updating existing EventImage");
         await EventImage.update({
             filename: eventImgFilename
         }, {
@@ -132,11 +141,30 @@ class UpdateEventHandler {
         })
             .then(async (numFieldsChanged) => {
                 //Return the updated event row
-                updatedEventImg = await EventImage.findOne({ where: { EventId: eventId } });
+                updatedEventImg = await EventImage.findOne({ where: { EventId: eventId }, transaction: transaction });
             });
 
-        return updatedEventImg;
-    }
+   
+    }      
+    //If Event Image doesn't exist, create it
+    else {
+        console.log("Creating new EventImage");
+        await EventImage.create({
+            EventId: eventId,
+            filename: eventImgFilename
+        }, {
+            transaction: transaction
+        })
+            .then(async (newEventImg) => {
+                console.log("CREATED EVENT IMAGE");
+                console.log(newEventImg);
+                //Return the created event row
+                updatedEventImg = await EventImage.findOne({ where: { EventId: eventId }, transaction: transaction });
+            }); 
+    }       
+            return updatedEventImg;
+        }
+
 
 
 

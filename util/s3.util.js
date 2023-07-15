@@ -7,6 +7,7 @@ require('dotenv').config();
 var AWS = require("aws-sdk");
 const sharp = require("sharp");
 const path = require("path");
+const constantsUtil = require('./constants.util');
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
@@ -138,7 +139,7 @@ class S3Utilities {
 		//Delete options
 		const deleteParams = {
 			Bucket: bucketName,
-			Key: filename
+			Key: filename + constantsUtil.IMG_MIMETYPE
 		};
 		//Delete
 		this.s3.deleteObject(deleteParams, () => { }, (err) => {

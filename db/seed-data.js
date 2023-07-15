@@ -6,6 +6,7 @@
 //Import dependencies
 const { v4: uuidv4 } = require('uuid');
 const enumUtil = require('../util/enum.util');
+const AuthUtil = require("../util/auth.util");
 
 
 /**
@@ -27,8 +28,8 @@ class SeedData {
         organizationName: 'Adam\'s Venues',
         phoneNumber: '04123123',
         email: "adam@email.com",
-        password: "abc123",
-        imgUrl: null,
+        password: AuthUtil.generateHash("abc123"),
+        imgFilename: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
@@ -38,8 +39,8 @@ class SeedData {
         organizationName: 'Bill\'s Theaters',
         phoneNumber: '04321321',
         email: "bill@email.com",
-        password: "abc123",
-        imgUrl: null,
+        password: AuthUtil.generateHash("abc123"),
+        imgFilename: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }];
@@ -58,8 +59,8 @@ class SeedData {
         bio: null,
         dob: "2000-12-23",
         email: "zelda@email.com",
-        password: "abc123",
-        imgUrl: null,
+        password: AuthUtil.generateHash("abc123"),
+        imgFilename: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
@@ -70,8 +71,8 @@ class SeedData {
         bio: null,
         dob: "2000-6-23",
         email: "xavier@email.com",
-        password: "abc123",
-        imgUrl: null,
+        password: AuthUtil.generateHash("abc123"),
+        imgFilename: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }];

@@ -27,7 +27,7 @@ class AuthController {
      * @param {*} res 
      */
     Login = async (req, res) => {
-
+console.log(req.body.email);
         //Check for email and password in body
         if (!req.body.email || !req.body.password) {
             return res.status(400).json({
@@ -42,7 +42,6 @@ class AuthController {
             let user = await Attendee.findOne({ where: { email: req.body.email } });
             //Attendee match not found, search for Organizer match
             if (user == null) {
-                console.log("look for org");
                 user = await Organizer.findOne({ where: { email: req.body.email } });
                 //User not found in Attendee or Organizer tables, send 400 response
                 if (user == null)
@@ -68,7 +67,11 @@ class AuthController {
             }
             //Attendee match found, verify password and attempt login
             else {
+                console.log("NOT NULL");
+                console.log(req.body.password);
+                console.log(user.password);
                 if (authUtil.verify(req.body.password, user.password)) {
+                    console.log("VALID");
                     const token = authUtil.generateJWT(user);
                     return res.status(201).json({
                         accessToken: token,

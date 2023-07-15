@@ -35,7 +35,7 @@ class CreateUserHandler {
                 dob: data.dob,
                 email: data.email,
                 password: data.password,
-                imgUrl: data.imgUrl | null,
+                imgFilename: data.imgFilename,
             })
                 .catch((reason) => {
                     let msg = "Problem creating Attendee";
@@ -57,7 +57,7 @@ class CreateUserHandler {
                 email: data.email,
                 password: data.password,
                 organizationName: data.organizationName,
-                imgUrl: data.imgUrl | null,
+                imgFilename: data.imgFilename,
             })
                 .catch((reason) => {
                     let msg = "Problem creating Organizer";
@@ -81,16 +81,18 @@ class CreateUserHandler {
     * @param {String} userType attendee OR organizer
     * @returns {boolean | any} TRUE if email is taken, FALSE if not
     */
-    IsEmailTaken(userType, email, res) {
+    async IsEmailTaken(userType, email, res) {
+        let result;
         //Check Attendees for the email
         if (userType == enumUtil.userTypes.attendee)
-            Attendee.findOne({ where: { email: email } })
+            await Attendee.findOne({ where: { email: email } })
                 .then((value) => {
                     //Exists, return true
                     if (value != null)
-                        return true;
+                        result = true;
                     //Doesn't exist, return false
-                    else return false;
+                    else
+                    result = false;
                 })
                 .catch((reason) => {
                     let msg = "Error occurred when checking if email is taken by an Attendee";
@@ -104,13 +106,14 @@ class CreateUserHandler {
 
         //Check Organizers for the email
         else if (userType == enumUtil.userTypes.organizer) {
-            Organizer.findOne({ where: { email: email } })
+            await Organizer.findOne({ where: { email: email } })
                 .then((value) => {
-                    //Exists, return true
+                    //Exists, set to true true
                     if (value != null)
-                        return true;
-                    //Doesn't exist, return false
-                    else return false;
+                        result = true;
+                    //Doesn't exist, set to false
+                    else
+                    result = false;
                 })
                 .catch((reason) => {
                     let msg = "Error occurred when checking if email is taken by an Organizer";
@@ -122,6 +125,10 @@ class CreateUserHandler {
                     });
                 });
         }
+
+        console.log("RETURNING RESULT: " + result);
+        return result;
+
     }
 
 

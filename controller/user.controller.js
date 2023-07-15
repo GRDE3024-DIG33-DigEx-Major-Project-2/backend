@@ -19,13 +19,10 @@ const UpdateUserHandler = require("../db/handlers/users/update.handler");
 const authUtil = require("../util/auth.util");
 //S3 bucket storage utilities
 const s3Util = require("../util/s3.util");
+const constantsUtil = require("../util/constants.util");
 
 //Endpoint actions for user routers
 class UserController {
-
-
-
-
 
     /**
      * Register a new user
@@ -39,15 +36,23 @@ class UserController {
                 msg: "The user content is empty!"
             });
         }
+
+
+let isAttendee = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
+let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)
+
         //If email is taken regardless of user type, return 400 response
-        if (CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
-            || CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)) {
+        if (isAttendee == true || isOrganiser  == true) {
             let msg = "Email is taken already";
+
             console.log(msg);
             return res.status(400).json({
                 msg: msg
             });
         }
+
+
+                   console.log("EMAIL DUPLICATE NOT TRIGGERED"); 
         //Create user in db
         const user = await CreateUserHandler.CreateUser(req.body, res);
         //Send back 201 status wih the newly created user instance
@@ -90,44 +95,24 @@ class UserController {
                 error: err
             });
         }
-
-
-        //TODOTODO CONTINUE PROFILE IMAGE UPLOAD TASK
-        //TODOTODO CONTINUE PROFILE IMAGE UPLOAD TASK
-        //TODOTODO CONTINUE PROFILE IMAGE UPLOAD TASK
-        //TODOTODO CONTINUE PROFILE IMAGE UPLOAD TASK
-
         //Upload profile image
         if (req.file && req.file.buffer) {
             profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
             try {
                 //Upload new image
-                profileImgFilename = await s3Util.uploadProfileImage(
+                await s3Util.uploadProfileImage(
                     profileImgFilename,
                         req.file.buffer,
                         constantsUtil.IMG_MIMETYPE
                     );
 
+                    //Existing profile image exists, delete it
+                    if (decodedToken.user.imgFilename != null
+                        && decodedToken.user.imgFilename != "") {
+                        s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+                        console.log("Old profile image deleted");
+                    }
 
-                    //TODO TODO TODO DELETE OLD PROFILE IMAGE
-                    // if () {
-
-                    // }
-
-
-                // //Search for an old profile image
-                // EventImage.findOne({
-                //     where: {
-                //         EventId: req.body.event.id
-                //     }
-                // })
-                //     //Delete old event image if found
-                //     .then((oldEventImg) => {
-                //         if (oldEventImg != null) {
-                //             console.log("old event image exists!");
-                //             s3Util.deleteEventImage(oldEventImg.dataValues.filename);
-                //         }
-                //     });
             } catch (error) {
                 console.log(error);
                 return res.status(400).json({
@@ -137,20 +122,49 @@ class UserController {
         }
 
 
+        try {
+
+        //Remove image without replacement
+        if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
+                s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+                console.log("Old profile image deleted");
+        }            
+        }
+        catch (error) {
+            console.log(error);
+            return res.status(400).json({
+                message: "Profile Image removal failed"
+            });
+        }
+
+
 
         //Updated User data in db
         try {
+
+            let newData;
+
             const result = await db.transaction(async (t) => {
-                const updatedUser = await UpdateUserHandler.Update(req.body, profileImgFilename, decodedToken.user, t);
+                await UpdateUserHandler.Update(req.body, profileImgFilename, decodedToken.user, t);
                 console.log("User updated!");
-                //Send back 200 status wih the newly updated object
-                return res.status(200).json(updatedUser);
+
+                if (decodedToken.user.userType == enumUtil.userTypes.attendee)
+                newData = await Attendee.findByPk(decodedToken.user.id, {transaction: t});
+                else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
+                newData = await Organizer.findByPk(decodedToken.user.id, {transaction: t});
+
+                //Send back 201 status wih the newly updated access token
+                const token = authUtil.generateJWT(newData);
+                return res.status(201).json({
+                    accessToken: token,
+                    user: newData
+                });
             });
         }
         catch (err) {
             //Delete file from S3 if it was uploaded in this instance
             if (profileImgFilename != "")
-                s3Util.deleteFile(profileImgFilename);
+                s3Util.deleteProfileImage(profileImgFilename);
             const msg = "Failed to update user data in db";
             console.log(msg, err);
             res.status(500).json({
@@ -158,9 +172,6 @@ class UserController {
                 error: err
             });
         }
-
-
-
 
 
     }
@@ -286,6 +297,8 @@ class UserController {
      * @returns 
      */
     Delete = async (req, res) => {
+
+        let decodedToken;
 
         //Deny if authorization header is empty
         if (req.headers.authorization === undefined)

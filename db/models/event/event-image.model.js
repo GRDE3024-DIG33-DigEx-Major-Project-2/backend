@@ -23,12 +23,14 @@ module.exports = (sequelize) => {
     },
     filename: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     url: {
       type: DataTypes.VIRTUAL,
       get() {
+        if (this.filename != "" && this.filename != null)
         return `${constantsUtil.BUCKET_URI}${this.filename}${constantsUtil.IMG_MIMETYPE}`;
+        else return null;
       }
     }
   });

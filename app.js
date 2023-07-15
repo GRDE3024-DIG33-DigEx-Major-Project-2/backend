@@ -9,6 +9,8 @@
 //IMPORT DEPENDENCIES ---------------------------------------------------------------------------
 //Configure .env file support
 require('dotenv').config();
+//Environment variables
+const config = require('./config');
 const express = require("express");
 //Enables CORS
 const cors = require("cors");
