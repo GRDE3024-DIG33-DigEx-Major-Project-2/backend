@@ -11,12 +11,13 @@ const constantsUtil = require('./constants.util');
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
-// var credentials = new AWS.SharedIniFileCredentials({profile: 'Gigney'});
-// AWS.config.credentials = credentials;
+		//Load shared credentials  
+	var credentials = new AWS.SharedIniFileCredentials({profile: 'Gigney'});
+	AWS.config.credentials = credentials;
+	
 
 //AWS S3 Bucket file utilities
 class S3Utilities {
-
 
 	/**
 	 * Construct S3 client for S3 handling

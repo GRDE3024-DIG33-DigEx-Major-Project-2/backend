@@ -38,11 +38,11 @@ class UserController {
         }
 
 
-let isAttendee = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
-let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)
+        let isAttendee = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
+        let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)
 
         //If email is taken regardless of user type, return 400 response
-        if (isAttendee == true || isOrganiser  == true) {
+        if (isAttendee == true || isOrganiser == true) {
             let msg = "Email is taken already";
 
             console.log(msg);
@@ -52,7 +52,7 @@ let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organi
         }
 
 
-                   console.log("EMAIL DUPLICATE NOT TRIGGERED"); 
+        console.log("EMAIL DUPLICATE NOT TRIGGERED");
         //Create user in db
         const user = await CreateUserHandler.CreateUser(req.body, res);
         //Send back 201 status wih the newly created user instance
@@ -102,16 +102,16 @@ let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organi
                 //Upload new image
                 await s3Util.uploadProfileImage(
                     profileImgFilename,
-                        req.file.buffer,
-                        constantsUtil.IMG_MIMETYPE
-                    );
+                    req.file.buffer,
+                    constantsUtil.IMG_MIMETYPE
+                );
 
-                    //Existing profile image exists, delete it
-                    if (decodedToken.user.imgFilename != null
-                        && decodedToken.user.imgFilename != "") {
-                        s3Util.deleteProfileImage(decodedToken.user.imgFilename);
-                        console.log("Old profile image deleted");
-                    }
+                //Existing profile image exists, delete it
+                if (decodedToken.user.imgFilename != null
+                    && decodedToken.user.imgFilename != "") {
+                    s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+                    console.log("Old profile image deleted");
+                }
 
             } catch (error) {
                 console.log(error);
@@ -121,14 +121,15 @@ let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organi
             }
         }
 
-
-        try {
-
         //Remove image without replacement
-        if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
-                s3Util.deleteProfileImage(decodedToken.user.imgFilename);
-                console.log("Old profile image deleted");
-        }            
+        try {
+            if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
+                //If profile image is flagged for removal
+                if (req.body.removeImg == true) {
+                    s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+                    console.log("Old profile image deleted");
+                }
+            }
         }
         catch (error) {
             console.log(error);
@@ -149,9 +150,9 @@ let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organi
                 console.log("User updated!");
 
                 if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-                newData = await Attendee.findByPk(decodedToken.user.id, {transaction: t});
+                    newData = await Attendee.findByPk(decodedToken.user.id, { transaction: t });
                 else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-                newData = await Organizer.findByPk(decodedToken.user.id, {transaction: t});
+                    newData = await Organizer.findByPk(decodedToken.user.id, { transaction: t });
 
                 //Send back 201 status wih the newly updated access token
                 const token = authUtil.generateJWT(newData);

@@ -69,6 +69,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Rollback transactions through Sequelize
 - Fix up comments so they have the correct meaning
 - Exclude password hash in db Organizer/Attendee response JSON
+- Remove password hash from user access token
 - **Should we have existing act checks, or just create a new act instance every time?**
 - **Implement JWT token values in endpoints**
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**

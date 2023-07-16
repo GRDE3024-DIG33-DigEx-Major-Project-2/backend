@@ -195,7 +195,6 @@ class EventController {
 
         //Remove image without replacement
         try {
-
             EventImage.findOne({
                 where: {
                     EventId: req.body.event.id
@@ -205,11 +204,11 @@ class EventController {
                 .then(async (oldEventImg) => {
                     if (oldEventImg != null && req.body.eventImg == null) {
                         console.log("old event image exists!");
-                            console.log("Flagged for event image removal");
-                            //Delete from db
-                            await EventImage.destroy({where: {id: oldEventImg.dataValues.id}});
-                            //Delete image from s3 bucket
-                            s3Util.deleteEventImage(oldEventImg.dataValues.filename);
+                        console.log("Flagged for event image removal");
+                        //Delete from db
+                        await EventImage.destroy({ where: { id: oldEventImg.dataValues.id } });
+                        //Delete image from s3 bucket
+                        s3Util.deleteEventImage(oldEventImg.dataValues.filename);
                     }
                 });
         }
@@ -251,9 +250,25 @@ class EventController {
      */
     GetById = async (req, res) => {
         let eventId = req.params.id;
-        let data = await GetEventHandler.FindOneById(eventId, res);
+        let event;
+        try {
+            const result = await db.transaction(async (t) => {
+        await GetEventHandler.FindOneById(eventId, res, t)
+            .then((data) => {
+                event = data;
+            });
+            });
+        }
+        catch (err) {
+            const msg = "Failed to find event by id";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
         //Send back 200 status with the retrieved event and related tables
-        return res.status(201).json(data);
+        return res.status(201).json(event);
     }
 
     /**
@@ -328,7 +343,7 @@ class EventController {
 
     //NO SEARCH FILTERS WORK YET. JUST PAGINATION FOR NOW
     /**
-     * Get filtered page of event favourites for an Attendee
+     * Get filtered page of event favourites for an Attendee. Also finds number of pages
      * @param {*} req 
      * @param {*} res 
      */
@@ -376,38 +391,67 @@ class EventController {
         let offset = req.body.offset * limit;
         console.log("USER ID TEST");
         console.log(decodedToken.user.id);
+        //Number of pages that meet the search criteria
+        let numPages = 0;
+        //Array of favourited events for page
+        let data = [];
 
+        try {
+            const result = await db.transaction(async (t) => {
 
-        //Find page of attendee-event junctions
-        await FavouritedBy.findAll(
-            {
-                where: {
-                    AttendeeId: decodedToken.user.id
-                },
-                offset: offset,
-                limit: limit,
-                order: [["createdAt", "ASC"]],
-            })
-            //Find all data associated with the events across all tables
-            .then(async (junctions) => {
-                console.log("Found favourited events");
-                console.log(junctions);
-                let data = [];
-                for (let junc of junctions) {
-                    let val = await GetEventHandler.FindOneById(junc.dataValues.EventId, res);
-                    data.push(val);
-                }
-                //Return the event data array
-                return res.status(200).json(data);
-            })
-            .catch((err) => {
-                const msg = "Failed to get favourited events";
-                console.log(msg, err);
-                res.status(500).json({
-                    msg: msg,
-                    error: err
-                });
+                //Counts number of pages
+                await FavouritedBy.count({
+                    where: {
+                        AttendeeId: decodedToken.user.id
+                    },
+                    transaction: t,
+                })
+                    .then((result) => {
+                        //Divide number of rows by the page limit
+                        numPages = Math.ceil(result / limit);
+                    });
+
+                //Find page of attendee-event junctions
+                await FavouritedBy.findAll(
+                    {
+                        where: {
+                            AttendeeId: decodedToken.user.id
+                        },
+                        transaction: t,
+                        offset: offset,
+                        limit: limit,
+                        order: [["createdAt", "ASC"]],
+                    })
+                    //Find all data associated with the events across all tables
+                    .then(async (junctions) => {
+                        console.log("Found favourited events");
+                        console.log(junctions);
+
+                        for (let junc of junctions) {
+                            let val = await GetEventHandler.FindOneById(junc.dataValues.EventId, res, t);
+                            data.push(val);
+                        }
+
+                    });
+
+                //Return 200 response with the event data array and page count
+                return res.status(200).json({ events: data, pageCount: numPages });
+
             });
+        }
+        catch (err) {
+            const msg = "Failed to find favourited events page";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+
+
+
+
+
 
     }
 
@@ -459,44 +503,67 @@ class EventController {
 
         let limit = 10;
         let offset = req.body.offset * limit;
+        //Number of pages that meet the search criteria
+        let numPages = 0;
+        //Array of owned events for page
+        let data = [];
 
+        try {
+            const result = await db.transaction(async (t) => {
 
-        //Find page of owned events event rows
-        await Event.findAll(
-            {
-                where: {
-                    OrganizerId: decodedToken.user.id
-                },
-                offset: offset,
-                limit: limit,
-                order: [["createdAt", "ASC"]],
-            })
-            //Find all data associated with the events across all tables
-            .then(async (events) => {
-                console.log("Found owned events");
-                console.log(events);
-                let data = [];
-                for (let ev of events) {
-                    let val = await GetEventHandler.FindOneById(ev.dataValues.id, res);
-                    data.push(val);
-                }
-                //Return the event data array
-                return res.status(200).json(data);
-            })
-            .catch((err) => {
-                const msg = "Failed to get owned events";
-                console.log(msg, err);
-                res.status(500).json({
-                    msg: msg,
-                    error: err
-                });
+                //Counts number of pages
+                await Event.count({
+                    where: {
+                        OrganizerId: decodedToken.user.id
+                    },
+                    transaction: t
+                })
+                    .then((result) => {
+                        //Divide number of rows by the page limit
+                        numPages = Math.ceil(result / limit);
+                    });
+
+                //Find page of owned events event rows
+                await Event.findAll(
+                    {
+                        where: {
+                            OrganizerId: decodedToken.user.id
+                        },
+                        transaction: t,
+                        offset: offset,
+                        limit: limit,
+                        order: [["createdAt", "ASC"]],
+                    })
+                    //Find all data associated with the events across all tables
+                    .then(async (events) => {
+                        console.log("Found owned events");
+                        console.log(events);
+                        for (let ev of events) {
+                            let val = await GetEventHandler.FindOneById(ev.dataValues.id, res, t);
+                            data.push(val);
+                        }
+                    });
+
+                //Return 200 response with the event data array and page count
+                return res.status(200).json({ events: data, pageCount: numPages });
+
             });
+        }
+        catch (err) {
+            const msg = "Failed to find owned events page";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
 
 
     }
 
     //TODO IMPROVE/CHANGE INTO SEARCH FOR EVENTS
     //NO SEARCH FILTERS WORK YET. JUST PAGINATION FOR NOW
+    //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
     /**
      * Get list of events via search
      * @param {*} req 
@@ -510,44 +577,61 @@ class EventController {
                 msg: "Request body is empty!"
             });
         }
-
-        //FIND TAG JUNCTIONS FOR EACH TAG IN REQ.BODY.TAGS
-
+        //Number of pages that meet the search criteria
+        let numPages = 0;
+        //Array of owned events for page
+        let data = [];
 
         let limit = 10;
         let offset = req.body.offset * limit;
 
+        try {
+            const result = await db.transaction(async (t) => {
+                //Counts number of pages
+                await Event.count({
+                    where: {
+                    },
+                    transaction: t
+                })
+                    .then((result) => {
+                        //Divide number of rows by the page limit
+                        numPages = Math.ceil(result / limit);
+                    });
 
-        await Event.findAll(
-            {
-                where: {
+                //Find page of owned events event rows
+                await Event.findAll(
+                    {
+                        where: {
+                        },
+                        transaction: t,
+                        offset: offset,
+                        limit: limit,
+                        order: [["createdAt", "ASC"]],
+                    })
+                    //Find all data associated with the events across all tables
+                    .then(async (events) => {
+                        console.log("Found events");
+                        console.log(events);
+                        for (let ev of events) {
+                            let val = await GetEventHandler.FindOneById(ev.dataValues.id, res, t);
+                            data.push(val);
+                        }
+                    });
 
-                },
-                offset: offset,
-                limit: limit,
-                order: [["createdAt", "ASC"]],
-            })
-            .then(async (events) => {
-                console.log("EVENTS");
-                console.log(events);
-                let data = [];
-                for (let ev of events) {
-                    let val = await GetEventHandler.FindOneById(ev.dataValues.id, res);
-                    console.log("VAL");
-                    console.log(val);
-                    data.push(val);
-                }
+                //Return 200 response with the event data array and page count
+                return res.status(200).json({ events: data, pageCount: numPages });
 
-                return res.status(200).json(data);
-            })
-            .catch((err) => {
-                const msg = "Failed to get events";
-                console.log(msg, err);
-                res.status(500).json({
-                    msg: msg,
-                    error: err
-                });
             });
+        }
+        catch (err) {
+            const msg = "Failed to find events page";
+            console.log(msg, err);
+            res.status(500).json({
+                msg: msg,
+                error: err
+            });
+        }
+
     }
 
     /**

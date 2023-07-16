@@ -38,8 +38,9 @@ class GetEventHandler {
      * Find event-related tables for an event by event id
      * @param {any} eventId
      * @param {any} res
+     * @param {any} transaction
      */
-    async FindOneById(eventId, res) {
+    async FindOneById(eventId, res, transaction) {
 
         let data = {
             event: null,
@@ -51,9 +52,9 @@ class GetEventHandler {
 
         //Get all event-related rows
         try {
-            const result = await db.transaction(async (t) => {
+           // const result = await db.transaction(async (t) => {
                 //Find event
-                await Event.findOne({where: {id: eventId}, transaction: t})
+                await Event.findOne({where: {id: eventId}, transaction: transaction})
                     .then(async (event) => {
                         //Event not found
                         if (event == null) {
@@ -67,7 +68,7 @@ class GetEventHandler {
                         console.log("FOUND EVENT");
 
                         //Find event image
-                        await EventImage.findOne({ where: { EventId: eventId }, transaction: t })
+                        await EventImage.findOne({ where: { EventId: eventId }, transaction: transaction })
                             .then(async (eventImg) => {
                                 //Event Image found
                                 if (eventImg != null) {
@@ -79,7 +80,7 @@ class GetEventHandler {
                             });
 
                         //Find taggedwith junctions
-                        await TaggedWith.findAll({ where: { EventId: eventId } })
+                        await TaggedWith.findAll({ where: { EventId: eventId }, transaction: transaction })
                             .then(async (taggedWithArr) => {
                                 //Get tags from TaggedWith junction rows
                                 if (taggedWithArr != null) {
@@ -88,7 +89,7 @@ class GetEventHandler {
                                         await Tag.findOne({
                                             where: {
                                                 id: row.dataValues.TagId
-                                            }
+                                            }, transaction: transaction
                                         })
                                             .then((tag) => {
                                                 data.tags.push(tag.dataValues);
@@ -102,7 +103,7 @@ class GetEventHandler {
                             });
 
                         //Find EventAct junctions
-                        await EventAct.findAll({ where: { EventId: eventId } })
+                        await EventAct.findAll({ where: { EventId: eventId }, transaction: transaction })
                             .then(async (eventActs) => {
                                 //Get acts from EventAct junction rows
                                 if (eventActs != null) {
@@ -111,7 +112,7 @@ class GetEventHandler {
                                         await Act.findOne({
                                             where: {
                                                 id: row.dataValues.ActId
-                                            }
+                                            }, transaction: transaction
                                         })
                                             .then((act) => {
                                                 data.acts.push(act.dataValues);
@@ -123,7 +124,7 @@ class GetEventHandler {
                             });
 
                         //Find EventTicket junctions
-                        await EventTicket.findAll({ where: { EventId: eventId } })
+                        await EventTicket.findAll({ where: { EventId: eventId }, transaction: transaction })
                             .then(async (eventTickets) => {
                                 //Get ticketType from EventTicket junction rows
                                 if (eventTickets != null) {
@@ -132,7 +133,7 @@ class GetEventHandler {
                                         await TicketType.findOne({
                                             where: {
                                                 id: row.dataValues.TicketTypeId
-                                            }
+                                            }, transaction: transaction
                                         })
                                             .then((ticketType) => {
                                                 data.ticketTypes.push(ticketType.dataValues);
@@ -148,7 +149,7 @@ class GetEventHandler {
                         console.log("Event retrieved!");
                         console.log(data);
                     })
-            });
+         //  });
         }
         catch (err) {
             const msg = "Failed to find event-related tables by id";
