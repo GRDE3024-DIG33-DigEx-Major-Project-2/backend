@@ -46,6 +46,8 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 5. Code comments + cleanup
 6. Update JSDocs
 7. Finish db CRUD handler abstraction
+8. BUG - WHEN UPDATING EVENT AND SENDING EXISTING IMAGE THAT YOU DONT WANT CHANGED, THE RESPONSE FOR EVENTIMG IS NULL REGARDLESS OF ADJUSTMENTS
+9. Url VIRTUAL field consistency
 
 # BACKLOG
 - Better security for secrets/credentials in dev and prod environments
