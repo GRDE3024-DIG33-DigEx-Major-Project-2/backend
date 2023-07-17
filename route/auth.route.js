@@ -1,19 +1,15 @@
 /**
  * Endpoints for authenticating user
- * 
+ *
  */
-
 
 //Import dependencies
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 //Add handlers for endpoints
-const AuthController = require('../controller/auth.controller');
+const AuthController = require("../controller/auth.controller");
 const authController = new AuthController();
-
-
-
 
 //Swagger UI schemas
 /**
@@ -32,8 +28,6 @@ const authController = new AuthController();
  *                  - password
  */
 
-
-
 /**
  * @swagger
  * /auth/login:
@@ -45,22 +39,21 @@ const authController = new AuthController();
  *              application/json:
  *                  schema:
  *                      $ref: '#/components/schemas/LoginReq'
- *      responses: 
+ *      responses:
  *          '201':
  *              description: Login successful, new access token sent back as JSON
  *          '400':
  *              description: Failed to log a user in
- *              
+ *
  */
-router.post('/login', authController.Login);
-
+router.post("/login", authController.Login);
 
 /**
  * @swagger
  * /auth/validate:
  *  get:
  *      description: Checks if the sender is authorized through the token in the request Authorization header
- *      responses: 
+ *      responses:
  *          '200':
  *              description: Token was valid, token data sent back as JSON
  *          '403':
@@ -69,11 +62,9 @@ router.post('/login', authController.Login);
  *              description: Server-side failed to verify access token
  *      security:
  *          - BearerAuth: []
- *              
+ *
  */
-router.get('/validate', authController.Validate);
-
-
+router.get("/validate", authController.Validate);
 
 //Exports the auth router
 module.exports = router;

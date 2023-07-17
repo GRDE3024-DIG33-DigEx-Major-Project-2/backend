@@ -2,23 +2,26 @@
  * Ticket type model
  */
 
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
-
+//TicketType Model definition
 module.exports = (sequelize) => {
-  sequelize.define('TicketType', {
+  sequelize.define("TicketType", {
+    //Primary Key
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey:true,
+      primaryKey: true,
     },
+    //The name of the ticket
     name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    //The price of the ticket
     price: {
-        type: DataTypes.DECIMAL,
-        allowNull: false
-    }
+      type: DataTypes.DECIMAL,
+      allowNull: false,
+    },
   });
 };

@@ -1,35 +1,19 @@
 /**
  * Event endpoints
- * 
+ *
  */
-
 
 //Import dependencies
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 //Add handlers for endpoints
-const EventController = require('../controller/event.controller');
+const EventController = require("../controller/event.controller");
 const eventController = new EventController();
 const multer = require("multer");
 //Image buffer for multipart form file
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
-
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-//TODOTODOTODOTODO SCHEMAS
-
-
-
-//TODO CREATE/UPDATE EVENT SCHEMAS INCOMPLETE
-//TODO ADD PROPS
-//TODO ENCODING ERROR FIX FOR MULTIPART/FORM-DATA
 
 //Swagger UI schemas
 /**
@@ -41,17 +25,178 @@ const upload = multer({ storage: storage });
  *              properties:
  *                  event:
  *                      type: object
- *                  eventImg:
- *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: string
+ *                          title:
+ *                              type: string
+ *                          venueName:
+ *                              type: string
+ *                          description:
+ *                              type: string
+ *                          summary:
+ *                              type: string
+ *                          startDate:
+ *                              type: string
+ *                          endDate:
+ *                              type: string
+ *                          address:
+ *                              type: string
+ *                          city:
+ *                              type: string
+ *                          region:
+ *                              type: string
+ *                          postcode:
+ *                              type: string
+ *                          country:
+ *                              type: string
+ *                          isFree:
+ *                              type: boolean
+ *                          purchaseUrl:
+ *                              type: string
+ *                  acts:
+ *                      type: array
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                  ticketTypes:
+ *                      type: array
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                              price:
+ *                                  type: string
+ *                  tags:
+ *                      type: array
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                              name:
+ *                                  type: string
+ *                                  description: The tag's name
+ *                  filename:
+ *                      type: string
+ *                      description: The filename of the event image, without the filename extension
+ *                  event-img:
+ *                      type: string
+ *                      format: base64
+ *                      description: The event image file to upload
  *              required:
- *                  - todo
+ *                  - event
+ *                  - acts
+ *                  - tags
+ *                  - ticketTypes
  *          UpdateEventReq:
  *              type: object
  *              properties:
- *                  todo:
+ *                  event:
+ *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: string
+ *                          title:
+ *                              type: string
+ *                          venueName:
+ *                              type: string
+ *                          description:
+ *                              type: string
+ *                          summary:
+ *                              type: string
+ *                          startDate:
+ *                              type: string
+ *                          endDate:
+ *                              type: string
+ *                          address:
+ *                              type: string
+ *                          city:
+ *                              type: string
+ *                          region:
+ *                              type: string
+ *                          postcode:
+ *                              type: string
+ *                          country:
+ *                              type: string
+ *                          isFree:
+ *                              type: boolean
+ *                          purchaseUrl:
+ *                              type: string
+ *                  acts:
+ *                      type: array
+ *                      description: Current acts before update. Acts that you want removed should be absent from it.
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                  newActs:
+ *                      type: array
+ *                      description: Acts that you want to add.
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                  ticketTypes:
+ *                      type: array
+ *                      description: Current tickets before update. Tickets that you want removed should be absent from it.
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                              price:
+ *                                  type: string
+ *                  newTicketTypes:
+ *                      type: array
+ *                      description: Ticket types that you want to add.
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                              price:
+ *                                  type: string
+ *                  tags:
+ *                      type: array
+ *                      description: The updated list of tags you want associated with the event.
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                              name:
+ *                                  type: string
+ *                                  description: The tag's name
+ *                  eventImg:
+ *                      type: object
+ *                      description: The event image table row. Contains the filename of the related event's image. To remove the event image without replacement, send eventImg as null.
+ *                      properties:
+ *                          id:
+ *                              type: string
+ *                          filename:
+ *                              type: string
+ *                              description: The filename of the S3-stored image, without the filename extension
+ *                          EventId:
+ *                              type: string
+ *                              description: The FK of the Event table row
+ *                  filename:
  *                      type: string
+ *                      description: The filename of the event image, without the filename extension
+ *                  event-img:
+ *                      type: string
+ *                      format: base64
+ *                      description: The event image file to upload
  *              required:
- *                  - todo
+ *                  - event
+ *                  - acts
+ *                  - tags
+ *                  - ticketTypes
  *          ToggleEventReq:
  *              type: object
  *              properties:
@@ -64,33 +209,32 @@ const upload = multer({ storage: storage });
  *              properties:
  *                  offset:
  *                      type: number
+ *                  tags:
+ *                      type: array
+ *                      description: This is a String array that contains the ids of all tags you want to be associated with the Events that are in the search result. Events must be associated with ALL tags
+ *                      items:
+ *                          type: string
+ *                          description: The id (Primary Key) of a Tag row in the database.
  *              required:
- *                  - offset    
+ *                  - offset
  *          FavouritedEventsReq:
  *              type: object
  *              properties:
  *                  offset:
  *                      type: number
  *              required:
- *                  - offset   
+ *                  - offset
  *          OwnedEventsRequest:
  *              type: object
  *              properties:
  *                  offset:
  *                      type: number
  *              required:
- *                  - offset   
- * 
- * 
- * 
+ *                  - offset
+ *
+ *
+ *
  */
-
-
-
-
-
-
-
 
 /**
  * @swagger
@@ -112,10 +256,9 @@ const upload = multer({ storage: storage });
  *          '400':
  *              description: A problem occured when trying to create event
  *      security:
- *          - BearerAuth: []        
+ *          - BearerAuth: []
  */
-router.post('/', upload.single('event-img'), eventController.Create);
-
+router.post("/", upload.single("event-img"), eventController.Create);
 
 /**
  * @swagger
@@ -137,9 +280,9 @@ router.post('/', upload.single('event-img'), eventController.Create);
  *          '400':
  *              description: A problem occured when trying to update event
  *      security:
- *          - BearerAuth: []        
+ *          - BearerAuth: []
  */
-router.put('/', upload.single('event-img'), eventController.Update);
+router.put("/", upload.single("event-img"), eventController.Update);
 
 /**
  * @swagger
@@ -158,9 +301,9 @@ router.put('/', upload.single('event-img'), eventController.Update);
  *          '400':
  *              description: A problem occured when trying to toggle event favourite status
  *      security:
- *          - BearerAuth: []        
+ *          - BearerAuth: []
  */
-router.post('/toggle-favourite', eventController.ToggleFavourite);
+router.post("/toggle-favourite", eventController.ToggleFavourite);
 
 /**
  * @swagger
@@ -171,9 +314,9 @@ router.post('/toggle-favourite', eventController.ToggleFavourite);
  *          '200':
  *              description: All tags
  *          '400':
- *              description: A problem occured when trying to get all tags      
+ *              description: A problem occured when trying to get all tags
  */
-router.get('/tags', eventController.GetAllTags);
+router.get("/tags", eventController.GetAllTags);
 
 /**
  * @swagger
@@ -187,9 +330,9 @@ router.get('/tags', eventController.GetAllTags);
  *          '200':
  *              description: The event
  *          '400':
- *              description: A problem occured when trying to get the event   
+ *              description: A problem occured when trying to get the event
  */
-router.get('/:id', eventController.GetById);
+router.get("/:id", eventController.GetById);
 
 /**
  * @swagger
@@ -208,8 +351,7 @@ router.get('/:id', eventController.GetById);
  *          '400':
  *              description: A problem occured when trying to search events
  */
-router.post('/search-page', eventController.SearchEvents);
-
+router.post("/search-page", eventController.SearchEvents);
 
 /**
  * @swagger
@@ -228,10 +370,9 @@ router.post('/search-page', eventController.SearchEvents);
  *          '400':
  *              description: A problem occured when trying to search events
  *      security:
- *          - BearerAuth: []        
+ *          - BearerAuth: []
  */
-router.post('/favourites', eventController.GetFavourites);
-
+router.post("/favourites", eventController.GetFavourites);
 
 /**
  * @swagger
@@ -250,9 +391,9 @@ router.post('/favourites', eventController.GetFavourites);
  *          '400':
  *              description: A problem occured when trying to search events
  *      security:
- *          - BearerAuth: []        
+ *          - BearerAuth: []
  */
-router.post('/owned-events', eventController.GetOwnedEvents);
+router.post("/owned-events", eventController.GetOwnedEvents);
 
 /**
  * @swagger
@@ -268,9 +409,9 @@ router.post('/owned-events', eventController.GetOwnedEvents);
  *          '400':
  *              description: A problem occured when trying to delete the event
  *      security:
- *          - BearerAuth: []   
+ *          - BearerAuth: []
  */
-router.delete('/:id', eventController.DeleteEvent);
+router.delete("/:id", eventController.DeleteEvent);
 
 //Exports the event router
 module.exports = router;

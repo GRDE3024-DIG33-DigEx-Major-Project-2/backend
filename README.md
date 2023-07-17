@@ -40,27 +40,15 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 # CURRENT TASKS
 1. Get events by filters
-2. Get your favourited/owned events
-3. Toggle event favourite
-4. Update event
-5. Code cleanup
-6. Code comments
-7. Update JSDocs
-8. Delete old image in update endpoints
-9. Finish db CRUD handler abstraction
-10. 
+2. Sequelize model validation and constraints
+3. Endpoint testing and patching
+4. A3 Group and Independent report
+5. Code comments + cleanup
+6. Update JSDocs
+7. Finish db CRUD handler abstraction
 
 # BACKLOG
-- Sequelize model validation and constraints
-- Helper functions
-- Update event image handling + test
-- Profile image upload in post and put endpoints
 - Better security for secrets/credentials in dev and prod environments
-- Profile image add/update/delete
-- Event image add/update/delete
-- Delete Attendee (cascading deletes)
-- Delete Organizer (cascading deletes)
-- Delete Event (cascading deletes)
 - Next seed data iteration
 - Dynamic tag creation
 - JWT Refresh Token
@@ -70,16 +58,11 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Fix up comments so they have the correct meaning
 - Exclude password hash in db Organizer/Attendee response JSON
 - Remove password hash from user access token
-- **Should we have existing act checks, or just create a new act instance every time?**
-- **Implement JWT token values in endpoints**
+- Fix Migrations Down function
 - **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**
-- **TRELLO BOARD DIVYING TASKS?**
-- **S3 BUCKET PERMISSIONS**
-- **AWS ORG INSTEAD?**
-- **CONFIRM IF EVENTS WILL HAVE MULTIPLE IMAGES**
 - **MIGRATIONS FILE**
 - **A2/A3 SUBDIRECTORY**
-- **Confirm if Performer table will be used**
+
 
 
 
@@ -94,8 +77,25 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Get Event By ID
 - Add pre-set tags for now
 - Enum helpers for reusability (example being userType field)
-
-
+- Delete Attendee (cascading deletes)
+- Delete Organizer (cascading deletes)
+- Delete Event (cascading deletes)
+- Profile image add/update/delete
+- Event image add/update/delete
+- Helper functions
+-  Get your favourited/owned events
+-  Toggle event favourite
+-  Update event
+- Delete old image in update endpoints
+- Update event image handling + test
+- Profile image upload in post and put endpoints
+- **AWS ORG INSTEAD?**
+- **Confirm if Performer table will be used**
+- **Should we have existing act checks, or just create a new act instance every time?**
+- **Implement JWT token values in endpoints**
+- **TRELLO BOARD DIVYING TASKS?**
+- **S3 BUCKET PERMISSIONS**
+- **CONFIRM IF EVENTS WILL HAVE MULTIPLE IMAGES**
 
 # OTHER NOTES AND REMINDERS
 - Notice the sub extention on some files (test.route.js as an example). I find it makes things a bit more organized and easier to understand.

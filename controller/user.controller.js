@@ -1,8 +1,7 @@
 /**
  * Endpoint functions for user-related tasks
- * 
+ *
  */
-
 
 //Import dependencies
 const enumUtil = require("../util/enum.util");
@@ -23,326 +22,304 @@ const constantsUtil = require("../util/constants.util");
 
 //Endpoint actions for user routers
 class UserController {
-
-    /**
-     * Register a new user
-     * @param {*} req 
-     * @param {*} res 
-     */
-    Create = async (req, res) => {
-        //If body is empty, send 400 response
-        if (!Object.keys(req.body).length) {
-            return res.status(400).json({
-                msg: "The user content is empty!"
-            });
-        }
-
-
-        let isAttendee = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.attendee, req.body.email, res)
-        let isOrganiser = await CreateUserHandler.IsEmailTaken(enumUtil.userTypes.organizer, req.body.email, res)
-
-        //If email is taken regardless of user type, return 400 response
-        if (isAttendee == true || isOrganiser == true) {
-            let msg = "Email is taken already";
-
-            console.log(msg);
-            return res.status(400).json({
-                msg: msg
-            });
-        }
-
-
-        console.log("EMAIL DUPLICATE NOT TRIGGERED");
-        //Create user in db
-        const user = await CreateUserHandler.CreateUser(req.body, res);
-        //Send back 201 status wih the newly created user instance
-        return res.status(201).json({ user: user });
+  /**
+   * Register a new user
+   * @param {*} req
+   * @param {*} res
+   */
+  Create = async (req, res) => {
+    //If body is empty, send 400 response
+    if (!Object.keys(req.body).length) {
+      return res.status(400).json({
+        msg: "The user content is empty!",
+      });
     }
 
+    //Find if an Attendee or Organizer is already associated with the email
+    let isAttendee = await CreateUserHandler.IsEmailTaken(
+      enumUtil.userTypes.attendee,
+      req.body.email,
+      res,
+    );
+    let isOrganiser = await CreateUserHandler.IsEmailTaken(
+      enumUtil.userTypes.organizer,
+      req.body.email,
+      res,
+    );
 
+    //If email is taken regardless of user type, return 400 response
+    if (isAttendee == true || isOrganiser == true) {
+      let msg = "Email is taken already";
 
-    /**
-     * Update a user
-     * @param {*} req 
-     * @param {*} res 
-     */
-    Update = async (req, res) => {
-        //Decoded access token data
-        let decodedToken;
-        //S3 filename of image, excluding the extension
-        let profileImgFilename = "";
-        //If body is empty, send 400 response
-        if (!Object.keys(req.body).length) {
-            return res.status(400).json({
-                msg: "Request body is empty!"
-            });
+      console.log(msg);
+      return res.status(400).json({
+        msg: msg,
+      });
+    }
+    //Create user in db
+    const user = await CreateUserHandler.CreateUser(req.body, res);
+    //Send back 201 status wih the newly created user instance
+    return res.status(201).json({ user: user });
+  };
+
+  /**
+   * Update a user
+   * @param {*} req
+   * @param {*} res
+   */
+  Update = async (req, res) => {
+    //Decoded access token data
+    let decodedToken;
+    //S3 filename of image, excluding the extension
+    let profileImgFilename = "";
+    //If body is empty, send 400 response
+    if (!Object.keys(req.body).length) {
+      return res.status(400).json({
+        msg: "Request body is empty!",
+      });
+    }
+    //Deny if authorization header is empty
+    if (req.headers.authorization === undefined) return res.sendStatus(403);
+    //Get JWT from the authorization header
+    const token = req.headers.authorization.split(" ")[1];
+    //Retrieve user data from access token
+    try {
+      decodedToken = authUtil.decodeJWT(token);
+    } catch (err) {
+      //Log error, send error response
+      const msg = "Failed to verify access token";
+      console.log(msg, err);
+      res.status(500).json({
+        msg: msg,
+        error: err,
+      });
+    }
+    //Upload profile image
+    if (req.file && req.file.buffer) {
+      profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
+      try {
+        //Upload new image
+        await s3Util.uploadProfileImage(
+          profileImgFilename,
+          req.file.buffer,
+          constantsUtil.IMG_MIMETYPE,
+        );
+
+        //Existing profile image exists, delete it
+        if (
+          decodedToken.user.imgFilename != null &&
+          decodedToken.user.imgFilename != ""
+        ) {
+          s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+          console.log("Old profile image deleted");
         }
-        //Deny if authorization header is empty
-        if (req.headers.authorization === undefined)
-            return res.sendStatus(403);
-        //Get JWT from the authorization header
-        const token = req.headers.authorization.split(' ')[1];
-        //Retrieve user data from access token
-        try {
-            decodedToken = authUtil.decodeJWT(token);
-        }
-        //Log error, send error response
-        catch (err) {
-            const msg = "Failed to verify access token";
-            console.log(msg, err);
-            res.status(500).json({
-                msg: msg,
-                error: err
-            });
-        }
-        //Upload profile image
-        if (req.file && req.file.buffer) {
-            profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
-            try {
-                //Upload new image
-                await s3Util.uploadProfileImage(
-                    profileImgFilename,
-                    req.file.buffer,
-                    constantsUtil.IMG_MIMETYPE
-                );
-
-                //Existing profile image exists, delete it
-                if (decodedToken.user.imgFilename != null
-                    && decodedToken.user.imgFilename != "") {
-                    s3Util.deleteProfileImage(decodedToken.user.imgFilename);
-                    console.log("Old profile image deleted");
-                }
-
-            } catch (error) {
-                console.log(error);
-                return res.status(400).json({
-                    message: "Image upload failed"
-                });
-            }
-        }
-
-        //Remove image without replacement
-        try {
-            if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
-                //If profile image is flagged for removal
-                if (req.body.removeImg == true) {
-                    s3Util.deleteProfileImage(decodedToken.user.imgFilename);
-                    console.log("Old profile image deleted");
-                }
-            }
-        }
-        catch (error) {
-            console.log(error);
-            return res.status(400).json({
-                message: "Profile Image removal failed"
-            });
-        }
-
-
-
-        //Updated User data in db
-        try {
-
-            let newData;
-
-            const result = await db.transaction(async (t) => {
-                await UpdateUserHandler.Update(req.body, profileImgFilename, decodedToken.user, t);
-                console.log("User updated!");
-
-                if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-                    newData = await Attendee.findByPk(decodedToken.user.id, { transaction: t });
-                else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-                    newData = await Organizer.findByPk(decodedToken.user.id, { transaction: t });
-
-                //Send back 201 status wih the newly updated access token
-                const token = authUtil.generateJWT(newData);
-                return res.status(201).json({
-                    accessToken: token,
-                    user: newData
-                });
-            });
-        }
-        catch (err) {
-            //Delete file from S3 if it was uploaded in this instance
-            if (profileImgFilename != "")
-                s3Util.deleteProfileImage(profileImgFilename);
-            const msg = "Failed to update user data in db";
-            console.log(msg, err);
-            res.status(500).json({
-                msg: msg,
-                error: err
-            });
-        }
-
-
+      } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+          message: "Image deletion failed",
+        });
+      }
     }
 
-
-
-
-
-
-
-
-    /**
-     * Reset a user's password
-     * @param {*} req 
-     * @param {*} res 
-     */
-    ResetPassword = async (req, res) => {
-
-        let decodedToken;
-        let user;
-
-        //Check for old password and new password in body
-        if (!req.body.oldPassword || !req.body.newPassword) {
-            return res.status(400).json({
-                msg: "Please provide an old password and new password"
-            });
+    //Remove image without replacement
+    try {
+      if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
+        //If profile image is flagged for removal
+        if (req.body.removeImg == true) {
+          s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+          console.log("Old profile image deleted without replacement");
         }
-        //Deny if authorization header is empty
-        if (req.headers.authorization === undefined)
-            return res.sendStatus(403);
-        //Get JWT from the authorization header
-        const token = req.headers.authorization.split(' ')[1];
-        //Retrieve user data from access token
-        try {
-            decodedToken = authUtil.decodeJWT(token);
-        }
-        //Log error, send error response
-        catch (err) {
-            const msg = "Failed to verify access token";
-            console.log(msg, err);
-            return res.status(500).json({
-                msg: msg,
-                error: err
-            });
-        }
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: "Profile Image removal without replacement failed",
+      });
+    }
 
+    //Updated User data in db
+    try {
+      let newData;
+
+      const result = await db.transaction(async (t) => {
+        await UpdateUserHandler.Update(
+          req.body,
+          profileImgFilename,
+          decodedToken.user,
+          t,
+        );
+        console.log("User updated!");
 
         if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-            user = await Attendee.findByPk(decodedToken.user.id);
+          newData = await Attendee.findByPk(decodedToken.user.id, {
+            transaction: t,
+          });
         else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-            user = await Organizer.findByPk(decodedToken.user.id);
+          newData = await Organizer.findByPk(decodedToken.user.id, {
+            transaction: t,
+          });
 
-        //Verify current password
-        if (authUtil.verify(req.body.oldPassword, user.password)) {
-            //Update the user's password
-            try {
-                const result = await db.transaction(async (t) => {
-                    if (decodedToken.user.userType == enumUtil.userTypes.attendee) {
-                        await Attendee.update({
-                            password: req.body.newPassword
-                        },
-                            {
-                                where: {
-                                    id: decodedToken.user.id
-                                }
-                            })
-                            .then((value) => {
-                                //Send back 200 status after password updated
-                                return res.status(200).json({ msg: "Successfully updated password" });
-                            });
-                    }
-                    else if (decodedToken.user.userType == enumUtil.userTypes.organizer) {
-                        await Organizer.update({
-                            password: req.body.newPassword
-                        },
-                            {
-                                where: {
-                                    id: decodedToken.user.id
-                                }
-                            })
-                            .then((value) => {
-                                //Send back 200 status after password updated
-                                return res.status(200).json({ msg: "Successfully updated password" });
-                            });
-                    }
+        //Send back 201 status wih the newly updated access token
+        const token = authUtil.generateJWT(newData);
+        return res.status(201).json({
+          accessToken: token,
+          user: newData,
+        });
+      });
+    } catch (err) {
+      //Delete file from S3 if it was uploaded in this instance
+      if (profileImgFilename != "")
+        s3Util.deleteProfileImage(profileImgFilename);
+      const msg = "Failed to update user data in db";
+      console.log(msg, err);
+      res.status(500).json({
+        msg: msg,
+        error: err,
+      });
+    }
+  };
 
-                });
-            }
-            catch (err) {
-                const msg = "Failed to update password";
-                console.log(msg, err);
-                res.status(500).json({
-                    msg: msg,
-                    error: err
-                });
-            }
-        }
-        //Password invalid, send 400 response
-        else {
-            return res.status(400).json({
-                msg: "Invalid credentials"
-            });
-        }
+  /**
+   * Reset a user's password
+   * @param {*} req
+   * @param {*} res
+   */
+  ResetPassword = async (req, res) => {
+    let decodedToken;
+    let user;
 
-
-
-
+    //Check for old password and new password in body
+    if (!req.body.oldPassword || !req.body.newPassword) {
+      return res.status(400).json({
+        msg: "Please provide an old password and new password",
+      });
+    }
+    //Deny if authorization header is empty
+    if (req.headers.authorization === undefined) return res.sendStatus(403);
+    //Get JWT from the authorization header
+    const token = req.headers.authorization.split(" ")[1];
+    //Retrieve user data from access token
+    try {
+      decodedToken = authUtil.decodeJWT(token);
+    } catch (err) {
+      //Log error, send error response
+      const msg = "Failed to verify access token";
+      console.log(msg, err);
+      return res.status(500).json({
+        msg: msg,
+        error: err,
+      });
     }
 
+    //Find the user in the db for password verification
+    if (decodedToken.user.userType == enumUtil.userTypes.attendee)
+      user = await Attendee.findByPk(decodedToken.user.id);
+    else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
+      user = await Organizer.findByPk(decodedToken.user.id);
 
-
-
-
-
-
-
-
-    //TODO
-    /**
-     * Delete a user and all related data in db
-     * @param {*} req 
-     * @param {*} res 
-     * @returns 
-     */
-    Delete = async (req, res) => {
-
-        let decodedToken;
-
-        //Deny if authorization header is empty
-        if (req.headers.authorization === undefined)
-            return res.sendStatus(403);
-        //Get JWT from the authorization header
-        const token = req.headers.authorization.split(' ')[1];
-        //Retrieve user data from access token
-        try {
-            decodedToken = authUtil.decodeJWT(token);
-        }
-        //Log error, send error response
-        catch (err) {
-            const msg = "Failed to verify access token";
-            console.log(msg, err);
-            return res.status(500).json({
-                msg: msg,
-                error: err
+    //Verify current password
+    if (authUtil.verify(req.body.oldPassword, user.password)) {
+      //Update the user's password
+      try {
+        const result = await db.transaction(async (t) => {
+          if (decodedToken.user.userType == enumUtil.userTypes.attendee) {
+            await Attendee.update(
+              {
+                password: req.body.newPassword,
+              },
+              {
+                where: {
+                  id: decodedToken.user.id,
+                },
+              },
+            ).then((value) => {
+              //Send back 200 status after password updated
+              return res
+                .status(200)
+                .json({ msg: "Successfully updated password" });
             });
-        }
-
-
-
-        //Delete User-related data and images
-        try {
-            const result = await db.transaction(async (t) => {
-                const deleteResult = await DeleteUserHandler.Delete(decodedToken.user, t);
-                //Send back 200 status once user has been deleted
-                return res.status(200).json(deleteResult);
+          } else if (
+            decodedToken.user.userType == enumUtil.userTypes.organizer
+          ) {
+            await Organizer.update(
+              {
+                password: req.body.newPassword,
+              },
+              {
+                where: {
+                  id: decodedToken.user.id,
+                },
+              },
+            ).then((value) => {
+              //Send back 200 status after password updated
+              return res
+                .status(200)
+                .json({ msg: "Successfully updated password" });
             });
-        }
-        catch (err) {
-            const msg = "Failed to delete all User-related data";
-            console.log(msg, err);
-            res.status(500).json({
-                msg: msg,
-                error: err
-            });
-        }
+          }
+        });
+      } catch (err) {
+        const msg = "Failed to update password";
+        console.log(msg, err);
+        res.status(500).json({
+          msg: msg,
+          error: err,
+        });
+      }
+    }
+    //Password invalid, send 400 response
+    else {
+      return res.status(400).json({
+        msg: "Invalid credentials",
+      });
+    }
+  };
 
+  /**
+   * Delete a user and all related data in db
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  Delete = async (req, res) => {
+    let decodedToken;
+    //Deny if authorization header is empty
+    if (req.headers.authorization === undefined) return res.sendStatus(403);
+    //Get JWT from the authorization header
+    const token = req.headers.authorization.split(" ")[1];
+    //Retrieve user data from access token
+    try {
+      decodedToken = authUtil.decodeJWT(token);
+    } catch (err) {
+      //Log error, send error response
+      const msg = "Failed to verify access token";
+      console.log(msg, err);
+      return res.status(500).json({
+        msg: msg,
+        error: err,
+      });
     }
 
+    //Delete User-related data and images
+    try {
+      const result = await db.transaction(async (t) => {
+        const deleteResult = await DeleteUserHandler.Delete(
+          decodedToken.user,
+          t,
+        );
+        //Send back 200 status once user has been deleted
+        return res.status(200).json(deleteResult);
+      });
+    } catch (err) {
+      const msg = "Failed to delete all User-related data";
+      console.log(msg, err);
+      res.status(500).json({
+        msg: msg,
+        error: err,
+      });
+    }
+  };
 }
-
 
 //Export the user controller
 module.exports = UserController;

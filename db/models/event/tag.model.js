@@ -2,19 +2,21 @@
  * Tag model
  */
 
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
-
+//Tag Model definition
 module.exports = (sequelize) => {
-  sequelize.define('Tag', {
+  sequelize.define("Tag", {
+    //Primary Key
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey:true,
+      primaryKey: true,
     },
+    //The name of the tag
     name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      }
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   });
 };

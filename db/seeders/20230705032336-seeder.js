@@ -2,23 +2,21 @@
  * Seeding file
  */
 
-'use strict';
-const SeedData = require('../seed-data');
-
+"use strict";
+const SeedData = require("../seed-data");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   /**
    * Adds rows to database tables
-   * @param {*} queryInterface 
-   * @param {*} Sequelize 
+   * @param {*} queryInterface
+   * @param {*} Sequelize
    */
   async up(queryInterface, Sequelize) {
-
     let organizers = SeedData.getOrganizers();
     let attendees = SeedData.getAttendees();
 
-    let events = SeedData.getEvents(organizers); 
+    let events = SeedData.getEvents(organizers);
     let tickets = SeedData.getTicketTypes();
     let tags = SeedData.getTags();
 
@@ -34,64 +32,57 @@ module.exports = {
     let favouritedBy = SeedData.getFavouritedBy(attendees, events);
 
     //Seed Organizers
-    await queryInterface.bulkInsert('Organizer', organizers, {});
+    await queryInterface.bulkInsert("Organizer", organizers, {});
     //Seed Attendees
-    await queryInterface.bulkInsert('Attendee', attendees, {});
+    await queryInterface.bulkInsert("Attendee", attendees, {});
     //Seed Events
-    await queryInterface.bulkInsert('Event', events, {});
+    await queryInterface.bulkInsert("Event", events, {});
     //Seed Tickets
-    await queryInterface.bulkInsert('TicketType', tickets, {});
+    await queryInterface.bulkInsert("TicketType", tickets, {});
     //Seed Tags
-    await queryInterface.bulkInsert('Tag', tags, {});
+    await queryInterface.bulkInsert("Tag", tags, {});
     //Seed Acts
-    await queryInterface.bulkInsert('Act', acts, {});
+    await queryInterface.bulkInsert("Act", acts, {});
     //Seed Event-Ticket pairs
-    await queryInterface.bulkInsert('EventTicket', eventTickets, {});
+    await queryInterface.bulkInsert("EventTicket", eventTickets, {});
     //Seed Event-Tag pairs
-    await queryInterface.bulkInsert('TaggedWith', taggedWith, {});
+    await queryInterface.bulkInsert("TaggedWith", taggedWith, {});
     //Seed Event Images
     //await queryInterface.bulkInsert('EventImage', eventImgs, {});
     //Seed Event-Act pairs
-    await queryInterface.bulkInsert('EventAct', eventActs, {});
+    await queryInterface.bulkInsert("EventAct", eventActs, {});
     //Seed Favourited Events
-    await queryInterface.bulkInsert('FavouritedBy', favouritedBy, {});
-
+    await queryInterface.bulkInsert("FavouritedBy", favouritedBy, {});
   },
 
   /**
    * Removes data from database tables
-   * @param {*} queryInterface 
-   * @param {*} Sequelize 
-   * @returns 
+   * @param {*} queryInterface
+   * @param {*} Sequelize
+   * @returns
    */
   async down(queryInterface, Sequelize) {
-
     //Empty Favourited Events
-    await queryInterface.bulkDelete('FavouritedBy', null, {});
+    await queryInterface.bulkDelete("FavouritedBy", null, {});
     //Empty Event Acts
-    await queryInterface.bulkDelete('EventAct', null, {});
+    await queryInterface.bulkDelete("EventAct", null, {});
     //Empty Event Images
-    await queryInterface.bulkDelete('EventImage', null, {});    
+    await queryInterface.bulkDelete("EventImage", null, {});
     //Empty Event Tag pairs
-    await queryInterface.bulkDelete('TaggedWith', null, {});
+    await queryInterface.bulkDelete("TaggedWith", null, {});
     //Empty Event Ticket pairs
-    await queryInterface.bulkDelete('EventTicket', null, {});
+    await queryInterface.bulkDelete("EventTicket", null, {});
     //Empty Acts
-    await queryInterface.bulkDelete('Act', null, {});
+    await queryInterface.bulkDelete("Act", null, {});
     //Empty Tags
-    await queryInterface.bulkDelete('Tag', null, {});
+    await queryInterface.bulkDelete("Tag", null, {});
     //Empty Tickets
-    await queryInterface.bulkDelete('TicketType', null, {});
+    await queryInterface.bulkDelete("TicketType", null, {});
     //Empty Events
-    await queryInterface.bulkDelete('Event', null, {});
+    await queryInterface.bulkDelete("Event", null, {});
     //Empty Attendees
-    await queryInterface.bulkDelete('Attendee', null, {});
+    await queryInterface.bulkDelete("Attendee", null, {});
     //Empty Organizers
-    await queryInterface.bulkDelete('Organizer', null, {});
-
-  }
-
-
-
-
+    await queryInterface.bulkDelete("Organizer", null, {});
+  },
 };

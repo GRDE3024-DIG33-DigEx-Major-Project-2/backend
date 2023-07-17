@@ -79,12 +79,27 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon app.js",
-    "prod": "cross-env NODE_ENV=production node app.js"
+    "prod": "cross-env NODE_ENV=production node app.js",
+    "migrate-dev-up": "npx sequelize-cli db:migrate --env development",
+    "migrate-prod-up": "npx sequelize-cli db:migrate --env production",
+    "migrate-dev-down": "npx sequelize-cli db:migrate:undo:all --env development",
+    "migrate-prod-down": "npx sequelize-cli db:migrate:undo:all --env production",
+    "seed-dev-up": "sequelize db:seed:all --env development",
+    "seed-prod-up": "sequelize db:seed:all --env production",
+    "seed-dev-down": "npx sequelize-cli db:seed:undo:all --env development",
+    "seed-prod-down": "npx sequelize-cli db:seed:undo:all --env production",
+    "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.22",
+    "prettier": "^3.0.0",
     "sequelize-cli": "^6.6.1"
+  },
+  "nodemonConfig": {
+    "events": {
+      "start": "echo '--------------------\n'& clear || cls"
+    }
   }
 }
