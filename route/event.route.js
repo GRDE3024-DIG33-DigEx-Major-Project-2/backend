@@ -207,8 +207,9 @@ const upload = multer({ storage: storage });
  *          SearchEventsReq:
  *              type: object
  *              properties:
- *                  offset:
+ *                  page:
  *                      type: number
+ *                      description: The page you want to retrieve (0 would be the first page)
  *                  tags:
  *                      type: array
  *                      description: This is a String array that contains the ids of all tags you want to be associated with the Events that are in the search result. Events must be associated with ALL tags
@@ -216,21 +217,23 @@ const upload = multer({ storage: storage });
  *                          type: string
  *                          description: The id (Primary Key) of a Tag row in the database.
  *              required:
- *                  - offset
+ *                  - page
  *          FavouritedEventsReq:
  *              type: object
  *              properties:
- *                  offset:
+ *                  page:
  *                      type: number
+ *                      description: The page you want to retrieve (0 would be the first page)
  *              required:
- *                  - offset
+ *                  - page
  *          OwnedEventsRequest:
  *              type: object
  *              properties:
- *                  offset:
+ *                  page:
  *                      type: number
+ *                      description: The page you want to retrieve (0 would be the first page)
  *              required:
- *                  - offset
+ *                  - page
  *
  *
  *

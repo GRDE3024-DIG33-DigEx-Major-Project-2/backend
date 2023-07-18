@@ -375,7 +375,7 @@ class EventController {
         }
 
         let limit = 10;
-        let offset = req.body.offset * limit;
+        let offset = req.body.page * limit;
         //Number of pages that meet the search criteria
         let numPages = 0;
         //Array of favourited events for page
@@ -472,7 +472,7 @@ class EventController {
         }
 
         let limit = 10;
-        let offset = req.body.offset * limit;
+        let offset = req.body.page * limit;
         //Number of pages that meet the search criteria
         let numPages = 0;
         //Array of owned events for page
@@ -546,7 +546,7 @@ class EventController {
         let data = [];
 
         let limit = 10;
-        let offset = req.body.offset * limit;
+        let offset = req.body.page * limit;
 
         //The tags to filter events by
         let tags = [];

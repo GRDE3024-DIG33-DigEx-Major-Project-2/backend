@@ -78,7 +78,7 @@
     "vary": "^1.1.2"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "dev": "cross-env NODE_ENV=development nodemon  --config src/nodemon.json app.js",
     "prod": "cross-env NODE_ENV=production node app.js",
     "migrate-dev-up": "npx sequelize-cli db:migrate --env development",
     "migrate-prod-up": "npx sequelize-cli db:migrate --env production",
