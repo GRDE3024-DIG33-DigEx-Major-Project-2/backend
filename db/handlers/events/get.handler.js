@@ -62,7 +62,13 @@ class GetEventHandler {
           }).then(async (eventImg) => {
             //Event Image found
             if (eventImg != null) {
-              data.eventImg = eventImg.dataValues;
+              data.eventImg = {
+                id: eventImg.dataValues.id,
+                filename: eventImg.dataValues.filename,
+                url: eventImg.get('url'),
+                createdAt: eventImg.dataValues.createdAt,
+                updatedAt: eventImg.dataValues.updatedAt
+              };
             } else {
               //console.log("No event image found");
             }
