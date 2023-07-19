@@ -1,0 +1,53 @@
+Backend Localhost Setup and Deployment Guide
+
+Summary: 
+This is a setup guide on how to run the backend application on your localhost
+
+
+Pre-requisites:
+- Node.js installed on OS
+    - Node.js installation guide: https://www.pluralsight.com/guides/getting-started-with-nodejs
+    - Node.js should be setup globally through the OS environment variables
+- PostgreSQL installed on OS
+    - Installers: https://www.postgresql.org/download/
+- pgAdmin4 installed on OS
+    - Windows installations: https://www.pgadmin.org/download/pgadmin-4-windows/
+    - macOS installations: https://www.pgadmin.org/download/pgadmin-4-macos/
+
+
+Steps:
+1.  Make sure the pre-requisites are installed on your OS
+2.  Open pgAdmin4
+3.  Configure your Master Password if prompted
+4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
+5.  In the right-click options, navigate to Register->Server
+6.  Under the "General" tab, set the "Name" to "postgres" (make sure the PGDATABASE .env variable matches this Name)
+7.  Under the "Connection" tab:
+    -   Set "Host name/address" to "localhost" (make sure the PGHOST .env variable matches your computer's localhost IP address)
+    -   Set "Port" to "5432" (make sure the PGPORT .env variable matches this port number)
+    -   Set "Maintenance database" to "postgres"
+    -   Set "Username" to "postgres" (make sure the PGNAME .env variable matches this Username)
+    -   Set "Password" to "localhost" (make sure the PGPASSWORD .env variable matches this Password)
+    -   Enable "Save Password?"
+8.  Click "Save" and connect to this server through pgAdmin4
+9.  Under the Server's Databases dropdown, the "postgres" database should be listed
+    -   If not, right-click the database dropdown, navigate to Create->Database, specify the Database name as "postgres", then click "Save"
+10. Under the Database's Schema dropdown, the "public" schema should be listed
+    -   If not, right click the Schema dropdown, navigate to Create->Schema, specify the Schema name as "public", then click "Save"
+11. Once the PostgreSQL database is set up, open a terminal in the backend's root directory
+    -   Execute the line "npm install" to install package dependencies
+    -   Execute the line "npm run migrate-dev-up" to migrate the code-first models to the localhost "postgres" database "public" schema
+    -   Execute the line "npm run seed-dev-up" to seed the localhost "postgres" database tables with data
+    -   Execute the line "npm run prod" to begin running the backend on your localhost in production mode
+
+
+Notes:
+-   In case of AWS SDK credentials issues:
+    -   If the AWS SDK runs into issues regarding credentials, it means that the source code doesn't have the AWS access key and secret key in it.
+    -   As Github doesn't allow AWS credentials to be in repositories (and it is something you should never do), we intended to add temporary credentials into the source code for the A2/A3 submissions.
+    -   As the live deployment uses AWS-managed credentials, and the localhost deployments use the VSCODE AWS Toolkit for authentication, we have to manually add them in so that it works for assessors.
+    -   Please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
+-   Additional scripts you may need during assessing:
+    -   Execute the line "npm run dev" for the Nodemon-enabled application or if you run into any issues with the script for production
+    -   Execute the line "npm run migrate-dev-down" to drop all tables in the database along with table data
+    -   Execute the line "npm run seed-dev-down" to drop all table data without dropping tables
