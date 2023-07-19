@@ -66,6 +66,9 @@ const upload = multer({ storage: storage });
  *                      type: string
  *                  lastName:
  *                      type: string
+ *                  removeImg:
+ *                      type: boolean
+ *                      description: False means don't remove profile image, True means remove the profile image (without replacement)
  *                  profile-img:
  *                      type: string
  *                      format: base64
