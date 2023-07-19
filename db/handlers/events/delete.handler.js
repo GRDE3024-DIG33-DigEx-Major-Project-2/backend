@@ -3,7 +3,6 @@
  *
  */
 
-const enumUtil = require("../../../util/enum.util");
 const { db } = require("../../../db/models/db");
 //Defined models in Sequelize instance
 const {

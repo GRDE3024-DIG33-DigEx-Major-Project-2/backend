@@ -171,7 +171,7 @@ class S3Utilities {
     //Delete options
     const deleteParams = {
       Bucket: bucketName,
-      Key: filename + constantsUtil.IMG_MIMETYPE,
+      Key: filename + constantsUtil.IMG_EXT,
     };
     //Delete
     return await this.s3

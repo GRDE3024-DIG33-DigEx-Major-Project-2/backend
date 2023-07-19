@@ -37,7 +37,7 @@ module.exports = (sequelize) => {
        */
       get() {
         if (this.filename != "" && this.filename != null)
-          return `${constantsUtil.BUCKET_URI}${this.filename}${constantsUtil.IMG_MIMETYPE}`;
+          return `${constantsUtil.BUCKET_URI}${this.filename}${constantsUtil.IMG_EXT}`;
         else return null;
       },
     },

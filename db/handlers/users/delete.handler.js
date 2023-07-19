@@ -9,19 +9,7 @@ const s3Util = require("../../../util/s3.util");
 const deleteEventHandler = require("../../handlers/events/delete.handler");
 const getEventHandler = require("../../handlers/events/get.handler");
 //Defined models in Sequelize instance
-const {
-  Organizer,
-  Attendee,
-  Act,
-  Event,
-  EventImage,
-  TicketType,
-  EventTicket,
-  TaggedWith,
-  EventAct,
-  FavouritedBy,
-  Tag,
-} = db.models;
+const { Organizer, Attendee, FavouritedBy } = db.models;
 
 class DeleteUserHandler {
   /**
@@ -53,7 +41,7 @@ class DeleteUserHandler {
       await getEventHandler
         .FindOrganizerEvents(currUser.id, t)
         .then(async (events) => {
-          console.log("FOUND ORGANIZER EVENTS: " + events.length);
+          console.log("Number of Found Organizer Events: " + events.length);
           //Delete the Organizer's events
           for (let event of events) {
             await deleteEventHandler

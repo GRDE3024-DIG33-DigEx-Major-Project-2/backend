@@ -8,11 +8,20 @@ const { db } = require("../../../db/models/db");
 //Load required db models for querying
 const { Organizer, Attendee } = db.models;
 
+//Db update handler for Users (Organizer/Attendee)
 class UpdateUserHandler {
+  /**
+   * Update the user (Organizer/Attendee)
+   * @param {*} newData
+   * @param {*} profileImgFilename
+   * @param {*} currUser
+   * @param {*} t
+   * @returns
+   */
   async Update(newData, profileImgFilename, currUser, t) {
     let user;
     console.log("Beginning user update");
-
+    //Update the Attendee
     if (currUser.userType == enumUtil.userTypes.attendee)
       user = await this.UpdateAttendee(
         newData,

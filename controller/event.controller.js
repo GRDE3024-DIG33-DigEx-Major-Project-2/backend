@@ -9,17 +9,7 @@ const { db } = require("../db/models/db");
 const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
 //Defined models in Sequelize instance
-const {
-  Act,
-  Event,
-  EventImage,
-  TicketType,
-  EventTicket,
-  TaggedWith,
-  EventAct,
-  FavouritedBy,
-  Tag,
-} = db.models;
+const { Event, EventImage, FavouritedBy, Tag } = db.models;
 //Db create event handler
 const CreateEventHandler = require("../db/handlers/events/create.handler");
 //Db update event handler
@@ -78,7 +68,7 @@ class EventController {
         await s3Util.uploadEventImg(
           eventImgFilename,
           req.file.buffer,
-          constantsUtil.IMG_MIMETYPE,
+          constantsUtil.IMG_EXT,
         );
       } catch (error) {
         console.log(error);
@@ -163,7 +153,7 @@ class EventController {
         await s3Util.uploadEventImg(
           eventImgFilename,
           req.file.buffer,
-          constantsUtil.IMG_MIMETYPE,
+          constantsUtil.IMG_EXT,
         );
 
         //Search for an old event image
@@ -223,7 +213,6 @@ class EventController {
           decodedToken.user,
           t,
         );
-        console.log("Event updated!");
 
         //If EventImg exists and wasn't updated, find and assign it to response data
         if (eventData.eventImg == null) {
@@ -380,7 +369,9 @@ class EventController {
       });
     }
 
-    let limit = 10;
+    //The limit of events to return
+    let limit = constantsUtil.PAGE_LIMIT;
+    //Which page of events to retrieve
     let offset = req.body.page * limit;
     //Number of pages that meet the search criteria
     let numPages = 0;
@@ -477,7 +468,9 @@ class EventController {
       });
     }
 
-    let limit = 10;
+    //The limit of events to return
+    let limit = constantsUtil.PAGE_LIMIT;
+    //Which page of events to retrieve
     let offset = req.body.page * limit;
     //Number of pages that meet the search criteria
     let numPages = 0;
@@ -550,21 +543,23 @@ class EventController {
     let numPages = 0;
     //Array of owned events for page
     let data = [];
-
-    let limit = 10;
+    //The limit of events to return
+    let limit = constantsUtil.PAGE_LIMIT;
+    //Which page of events to retrieve
     let offset = req.body.page * limit;
-
     //The tags to filter events by
     let tags = [];
     if (req.body.tags) tags = req.body.tags;
-
+    //Number of events
     let rowCount = 0;
+    //Events to return in response
     let events;
 
     try {
       const result = await db.transaction(async (t) => {
-        //Counts number of pages
+        //If tags are being used to filter
         if (tags.length > 0) {
+          //Count number of Events in db that match the filter options
           rowCount = await Event.count({
             include: [
               {
@@ -572,6 +567,7 @@ class EventController {
                 where: { id: tags },
               },
             ],
+            //Inner join Event and Tag tables through the junction table, then count rows
             group: `${Event.tableName}.${Event.primaryKeyAttribute}`,
             having: Sequelize.literal(
               `COUNT(DISTINCT "${Tag.tableName}s".id) = ${tags.length}`,
@@ -581,12 +577,16 @@ class EventController {
             console.error("An error occured while counting events:", err);
             throw err;
           });
+          //Matches found, calculate the number of pages
           if (rowCount.length > 0) {
             console.log(rowCount[0].count);
             //Divide number of rows by the page limit
             numPages = Math.ceil(rowCount[0].count / limit);
           }
-        } else {
+        }
+        //If no tags are being used to filter
+        else {
+          //Count number of Events in db that match the filter options
           rowCount = await Event.count({
             transaction: t,
           }).catch((err) => {
@@ -609,6 +609,7 @@ class EventController {
             ],
             group: `${Event.tableName}.${Event.primaryKeyAttribute}`,
             having: Sequelize.literal(`COUNT(DISTINCT "id") = ${tags.length}`),
+            //Orger by date created, ascending
             order: [["createdAt", "ASC"]],
             offset: offset,
             limit: limit,
@@ -617,6 +618,7 @@ class EventController {
             console.error("An error occured while finding events: ", err);
             throw err;
           });
+        //Find all events that match the filter options (with no tag filtering)
         else
           events = await Event.findAll({
             where: {},

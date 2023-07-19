@@ -31,51 +31,46 @@ class UpdateEventHandler {
       ticketTypes: [],
     };
 
+    console.log("Beginning Event update");
+
     //Update an Event
-    console.log("Init Event");
     eventData.event = await this.UpdateEvent(data.event, currUser, t);
-    console.log("EVENT DONE");
-    //console.log(eventData.event);
+    console.log("Event Updated");
 
     //Update Event Image
     if (eventImgFilename != "") {
-      console.log("Init Event Image");
       eventData.eventImg = await this.UpdateEventImage(
         eventImgFilename,
         data.event.id,
         t,
       );
-      console.log("EVENT IMG DONE");
-      //console.log(eventData.eventImg);
+      console.log("EventImg Updated");
     }
 
     //Update Tag associations
-    console.log("Init Tags");
     eventData.tags = await this.UpdateTaggedWith(data.tags, data.event.id, t);
-    console.log("TAGS DONE");
+    console.log("Tags Updated");
 
     //Update Act associations
-    console.log("Init Acts");
     eventData.acts = await this.UpdateActs(
       data.acts,
       data.newActs,
       data.event.id,
       t,
     );
-    console.log("ACTS DONE");
+    console.log("Acts Updated");
 
     //Update Ticket Type associations
-    console.log("Init Ticket Types");
     eventData.ticketTypes = await this.UpdateTicketTypes(
       data.ticketTypes,
       data.newTicketTypes,
       data.event.id,
       t,
     );
-    console.log("TICKET TYPES DONE");
+    console.log("TicketTypes Updated");
 
     //Return the updated event db data
-    console.log("Event updated!");
+    console.log("Event update completed!");
     console.log(eventData);
     return eventData;
   }

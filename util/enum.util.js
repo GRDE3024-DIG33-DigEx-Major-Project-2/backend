@@ -3,6 +3,7 @@
  *
  */
 
+//Global enum helpers
 class EnumUtil {
   //User types
   userTypes = {

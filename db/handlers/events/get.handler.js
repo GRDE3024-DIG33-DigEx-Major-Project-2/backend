@@ -3,13 +3,7 @@
  *
  */
 
-const enumUtil = require("../../../util/enum.util");
 const { db } = require("../../../db/models/db");
-const authUtil = require("../../../util/auth.util");
-const s3Util = require("../../../util/s3.util");
-const sharp = require("sharp");
-const path = require("path");
-const { UUIDV4 } = require("sequelize");
 //Defined models in Sequelize instance
 const {
   Act,
@@ -40,7 +34,6 @@ class GetEventHandler {
 
     //Get all event-related rows
     try {
-      // const result = await db.transaction(async (t) => {
       //Find event
       await Event.findOne({ where: { id: eventId }, transaction: transaction })
         .then(async (event) => {
@@ -53,7 +46,6 @@ class GetEventHandler {
             });
           }
           data.event = event.dataValues;
-          //console.log("FOUND EVENT");
 
           //Find event image
           await EventImage.findOne({
@@ -70,7 +62,7 @@ class GetEventHandler {
                 updatedAt: eventImg.dataValues.updatedAt,
               };
             } else {
-              //console.log("No event image found");
+              console.log("No event image found");
             }
           });
 
@@ -143,11 +135,10 @@ class GetEventHandler {
           });
         })
         //Return successful response
-        .then(() => {
-          //console.log("Event retrieved!");
-          //console.log(data);
+        .then((getResult) => {
+          console.log("Event retrieved!");
+          console.log(getResult);
         });
-      //  });
     } catch (err) {
       const msg = "Failed to find event-related tables by id";
       console.log(msg, err);
@@ -174,7 +165,6 @@ class GetEventHandler {
       where: { OrganizerId: organizerId },
       transaction: t,
     }).then((events) => {
-      //console.log("Event search complete: " + events);
       //Add event row table to events array
       if (events != null)
         for (let event of events)

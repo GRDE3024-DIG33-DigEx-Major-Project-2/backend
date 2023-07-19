@@ -102,7 +102,7 @@ class UserController {
         await s3Util.uploadProfileImage(
           profileImgFilename,
           req.file.buffer,
-          constantsUtil.IMG_MIMETYPE,
+          constantsUtil.IMG_EXT,
         );
 
         //Existing profile image exists, delete it
