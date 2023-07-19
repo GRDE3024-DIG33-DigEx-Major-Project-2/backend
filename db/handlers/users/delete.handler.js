@@ -86,8 +86,10 @@ class DeleteUserHandler {
               console.log(
                 "Event Image Filename exists! Deleting Image from S3 bucket!",
               );
-              s3Util.deleteFile(filename);
-              console.log("Deleted event image!");
+              await s3Util.deleteEventImage(filename).then((result) => {
+                console.log("Event Image deletion successful");
+                console.log(result);
+              });
             }
           }
 
@@ -185,14 +187,17 @@ class DeleteUserHandler {
 
   /**
    * Deletes the deleted user's profile image if it exists
-   * @param {*} currUser
+   * @param {*} filename
    */
-  DeleteProfileImage(imgUrl) {
-    console.log("Image Url Value Test: " + imgUrl);
+  async DeleteProfileImage(filename) {
+    console.log("Image Url Value Test: " + filename);
     //Delete profile image from S3 bucket
-    if (imgUrl != "") {
+    if (filename != "") {
       console.log("Image Url exists! Deleting Image from S3 bucket!");
-      s3Util.deleteFile(imgUrl);
+      await s3Util.deleteProfileImage(filename).then((result) => {
+        console.log("Profile Image deletion successful");
+        console.log(result);
+      });
     }
   }
 }

@@ -65,9 +65,9 @@ class GetEventHandler {
               data.eventImg = {
                 id: eventImg.dataValues.id,
                 filename: eventImg.dataValues.filename,
-                url: eventImg.get('url'),
+                url: eventImg.get("url"),
                 createdAt: eventImg.dataValues.createdAt,
-                updatedAt: eventImg.dataValues.updatedAt
+                updatedAt: eventImg.dataValues.updatedAt,
               };
             } else {
               //console.log("No event image found");

@@ -12,6 +12,7 @@ const constantsUtil = require("./constants.util");
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
 const region = process.env.BUCKET_REGION;
+//These details are required for AWS SDK authentication for assessors
 const accessKeyId = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.SECRET_KEY;
 
@@ -25,16 +26,15 @@ class S3Utilities {
    * Construct S3 client for S3 handling
    */
   constructor() {
-    
     //For live deployment
-    //this.s3 = new AWS.S3();
+    this.s3 = new AWS.S3();
 
     //For Team members and assessors running on localhost
-    this.s3 = new AWS.S3({
-			region,
-			accessKeyId,
-			secretAccessKey
-    });
+    // this.s3 = new AWS.S3({
+    // 	region,
+    // 	accessKeyId,
+    // 	secretAccessKey
+    // });
   }
 
   /**
@@ -56,16 +56,16 @@ class S3Utilities {
       .withMetadata()
       .toBuffer();
     //Upload image to S3 bucket
-    this.upload(imgBuffer, uniqueFilename, mimetype);
-    return uniqueFilename;
-  }
-
-  /**
-   * Delete an event image from S3
-   * @param {*} filename
-   */
-  deleteEventImage(filename) {
-    this.deleteFile(filename);
+    await this.uploadFile(imgBuffer, uniqueFilename, mimetype)
+      .then((result) => {
+        console.log("Event Image upload success");
+        console.log(result);
+        return uniqueFilename;
+      })
+      .catch((err) => {
+        console.log("S3 Event Image upload failed");
+        console.log(err);
+      });
   }
 
   /**
@@ -86,16 +86,38 @@ class S3Utilities {
       .withMetadata()
       .toBuffer();
     //Upload image to S3 bucket
-    this.upload(imgBuffer, uniqueFilename, mimetype);
-    return uniqueFilename;
+    await this.uploadFile(imgBuffer, uniqueFilename, mimetype)
+      .then((result) => {
+        console.log("Profile Image upload success");
+        //console.log(result);
+        return uniqueFilename;
+      })
+      .catch((err) => {
+        console.log("S3 Profile Image upload failed");
+        console.log(err);
+      });
   }
 
   /**
    * Delete a profile image from S3 bucket
    * @param {*} filename
    */
-  deleteProfileImage(filename) {
-    this.deleteFile(filename);
+  async deleteProfileImage(filename) {
+    return await this.deleteFile(filename).catch((err) => {
+      console.log("An error occured while deleting a Profile Image");
+      console.log(err);
+    });
+  }
+
+  /**
+   * Delete an event image from S3
+   * @param {*} filename
+   */
+  async deleteEventImage(filename) {
+    return await this.deleteFile(filename).catch((err) => {
+      console.log("An error occured while deleting an Event Image");
+      console.log(err);
+    });
   }
 
   /**
@@ -117,7 +139,7 @@ class S3Utilities {
    * @param {*} filename
    * @param {*} mimetype
    */
-  upload(buffer, filename, mimetype) {
+  async uploadFile(buffer, filename, mimetype) {
     console.log("uploading file");
     //Upload options
     const uploadParams = {
@@ -128,21 +150,23 @@ class S3Utilities {
       ACL: "public-read",
     };
     //Upload
-    this.s3.upload(
-      uploadParams,
-      () => {},
-      (err) => {
-        console.log("s3 upload failed");
-        console.log(err);
-      },
-    );
+    return await this.s3
+      .upload(
+        uploadParams,
+        () => {},
+        // (err) => {
+        //   console.log("s3 upload failed");
+        //   console.log(err);
+        // },
+      )
+      .promise();
   }
 
   /**
    * Delete file from S3 bucket
    * @param {*} filename
    */
-  deleteFile(filename) {
+  async deleteFile(filename) {
     console.log("deleting file");
     //Delete options
     const deleteParams = {
@@ -150,14 +174,16 @@ class S3Utilities {
       Key: filename + constantsUtil.IMG_MIMETYPE,
     };
     //Delete
-    this.s3.deleteObject(
-      deleteParams,
-      () => {},
-      (err) => {
-        console.log("s3 delete failed");
-        console.log(err);
-      },
-    );
+    return await this.s3
+      .deleteObject(
+        deleteParams,
+        () => {},
+        // (err) => {
+        //   console.log("s3 delete failed");
+        //   console.log(err);
+        // },
+      )
+      .promise();
   }
 }
 

@@ -126,8 +126,12 @@ class UserController {
       if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
         //If profile image is flagged for removal
         if (req.body.removeImg == true) {
-          s3Util.deleteProfileImage(decodedToken.user.imgFilename);
-          console.log("Old profile image deleted without replacement");
+          await s3Util
+            .deleteProfileImage(decodedToken.user.imgFilename)
+            .then((result) => {
+              console.log("Old profile image deleted without replacement");
+              console.log(result);
+            });
         }
       }
     } catch (error) {
