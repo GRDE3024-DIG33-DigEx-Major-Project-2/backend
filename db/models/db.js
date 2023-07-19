@@ -46,5 +46,8 @@ for (const modelDefiner of modelDefiners) modelDefiner(sequelize);
 //Config table associations
 AdditionalSetup.AddAssociations(sequelize);
 
+//Config model hooks
+AdditionalSetup.AddHooks(sequelize);
+
 //Export the Sequelize instance as db
 module.exports = { db: sequelize };

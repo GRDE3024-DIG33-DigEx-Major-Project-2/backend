@@ -5,7 +5,6 @@
 
 //Import dependencies
 const authUtil = require("../util/auth.util");
-const enumUtil = require("../util/enum.util");
 const jwt = require("jsonwebtoken");
 const { db } = require("../db/models/db");
 //Load required db models for querying
@@ -29,23 +28,32 @@ class AuthController {
 
     //Search for user match in Attendee and Organizer tables
     try {
-      //Find Attendee match
-      let user = await Attendee.findOne({ where: { email: req.body.email } });
-      //Attendee match not found, search for Organizer match
-      if (user == null) {
-        user = await Organizer.findOne({ where: { email: req.body.email } });
+      //Find Attendee match password hash
+      let attendee = await Attendee.findOne({
+        where: { email: req.body.email },
+      });
+      //Attendee match not found, search for Organizer match password hash
+      if (attendee == null) {
+        let organizer = await Organizer.findOne({
+          where: { email: req.body.email },
+        });
         //User not found in Attendee or Organizer tables, send 400 response
-        if (user == null)
+        if (organizer == null)
           return res.status(400).json({
             msg: "Invalid credentials",
           });
         //Organizer match found, verify password and attempt login
         else {
-          if (authUtil.verify(req.body.password, user.password)) {
-            const token = authUtil.generateJWT(user);
+          if (
+            authUtil.verify(req.body.password, organizer.dataValues.password)
+          ) {
+            //Remove password hash from user data before returning to user
+            delete organizer.dataValues.password;
+            //Generate the access token
+            const token = authUtil.generateJWT(organizer);
             return res.status(201).json({
               accessToken: token,
-              user: user,
+              user: organizer,
             });
           }
           //Password invalid, send 400 response
@@ -58,12 +66,14 @@ class AuthController {
       }
       //Attendee match found, verify password and attempt login
       else {
-        if (authUtil.verify(req.body.password, user.password)) {
-          const token = authUtil.generateJWT(user);
+        if (authUtil.verify(req.body.password, attendee.dataValues.password)) {
+          //Remove password hash from user data before returning to user
+          delete attendee.dataValues.password;
+          //Generate the access token
+          const token = authUtil.generateJWT(attendee);
           return res.status(201).json({
             accessToken: token,
-            user: user,
-            userType: enumUtil.userTypes.attendee,
+            user: attendee,
           });
         }
         //Password invalid, send 400 response

@@ -57,7 +57,7 @@ class UserController {
       });
     }
     //Create user in db
-    const user = await CreateUserHandler.CreateUser(req.body, res);
+    let user = await CreateUserHandler.CreateUser(req.body, res);
     //Send back 201 status wih the newly created user instance
     return res.status(201).json({ user: user });
   };
@@ -146,7 +146,7 @@ class UserController {
       let newData;
 
       const result = await db.transaction(async (t) => {
-        await UpdateUserHandler.Update(
+        newData = await UpdateUserHandler.Update(
           req.body,
           profileImgFilename,
           decodedToken.user,
@@ -154,14 +154,14 @@ class UserController {
         );
         console.log("User updated!");
 
-        if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-          newData = await Attendee.findByPk(decodedToken.user.id, {
-            transaction: t,
-          });
-        else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-          newData = await Organizer.findByPk(decodedToken.user.id, {
-            transaction: t,
-          });
+        // if (decodedToken.user.userType == enumUtil.userTypes.attendee)
+        //   newData = await Attendee.findByPk(decodedToken.user.id, {
+        //     transaction: t,
+        //   });
+        // else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
+        //   newData = await Organizer.findByPk(decodedToken.user.id, {
+        //     transaction: t,
+        //   });
 
         //Send back 201 status wih the newly updated access token
         const token = authUtil.generateJWT(newData);

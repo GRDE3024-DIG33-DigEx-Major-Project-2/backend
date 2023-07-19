@@ -29,6 +29,7 @@ class UpdateUserHandler {
         currUser,
         t,
       );
+    //Update the Organizer
     else if (currUser.userType == enumUtil.userTypes.organizer)
       user = await this.UpdateOrganizer(
         newData,
@@ -52,23 +53,29 @@ class UpdateUserHandler {
     console.log("Updating Attendee");
 
     newData.imgFilename = profileImgFilename;
-    console.log(newData);
 
     //Update user
-    await Attendee.update(newData, {
-      transaction: transaction,
-      where: {
-        id: currUser.id,
+    await Attendee.update(
+      {
+        firstName: newData.firstName,
+        lastName: newData.lastName,
+        dob: newData.dob,
+        imgFilename: newData.imgFilename,
+        bio: newData.bio,
       },
-    }).then(async () => {
-      //Return the updated attendee row
-      await Attendee.findOne({
-        where: { id: currUser.id },
+      {
         transaction: transaction,
-      }).then((value) => {
-        updatedUser = value.dataValues;
-      });
+        individualHooks: true,
+        returning: true,
+        where: {
+          id: currUser.id,
+        },
+      },
+    ).then(async (updateResult) => {
+      //Assign the updated attendee row
+      updatedUser = updateResult[1][0].dataValues;
     });
+    //Return the updated user
     return updatedUser;
   }
 
@@ -84,22 +91,28 @@ class UpdateUserHandler {
     console.log("Updating Organizer");
 
     newData.imgFilename = profileImgFilename;
-    console.log(newData);
 
-    await Organizer.update(newData, {
-      transaction: transaction,
-      where: {
-        id: currUser.id,
+    await Organizer.update(
+      {
+        organizationName: newData.organizationName,
+        phoneNumber: newData.phoneNumber,
+        imgFilename: newData.imgFilename,
+        bio: newData.bio,
       },
-    }).then(async () => {
-      //Return the updated organizer row
-      await Organizer.findOne({
-        where: { id: currUser.id },
+      {
         transaction: transaction,
-      }).then((value) => {
-        updatedUser = value.dataValues;
-      });
+        individualHooks: true,
+        returning: true,
+        where: {
+          id: currUser.id,
+        },
+      },
+    ).then(async (updateResult) => {
+      //Assign the updated attendee row
+      updatedUser = updateResult[1][0].dataValues;
     });
+
+    //Return the updated user
     return updatedUser;
   }
 }

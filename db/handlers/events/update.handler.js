@@ -87,7 +87,6 @@ class UpdateEventHandler {
 
     await Event.update(
       {
-        OrganizerId: currUser.id,
         title: event.title,
         venueName: event.venueName,
         description: event.description,
@@ -101,7 +100,6 @@ class UpdateEventHandler {
         country: event.country,
         isFree: event.isFree,
         purchaseUrl: event.purchaseUrl,
-        status: event.status,
       },
       {
         transaction: transaction,
@@ -264,11 +262,16 @@ class UpdateEventHandler {
     //Update acts in db
     if (updatedActs != null)
       for (let updatedAct of updatedActs)
-        await Act.update(updatedAct, {
-          transaction: transaction,
-          returning: true,
-          where: { id: updatedAct.id },
-        })
+        await Act.update(
+          {
+            name: updatedAct.name,
+          },
+          {
+            transaction: transaction,
+            returning: true,
+            where: { id: updatedAct.id },
+          },
+        )
           //Add updated record to array
           .then((updateResult) => {
             console.log("Updated act");
@@ -378,11 +381,17 @@ class UpdateEventHandler {
     //Update ticket types in db
     if (updatedTicketTypes != null)
       for (let updatedTicketType of updatedTicketTypes)
-        await TicketType.update(updatedTicketType, {
-          transaction: transaction,
-          returning: true,
-          where: { id: updatedTicketType.id },
-        })
+        await TicketType.update(
+          {
+            name: updatedTicketType.name,
+            price: updatedTicketType.price,
+          },
+          {
+            transaction: transaction,
+            returning: true,
+            where: { id: updatedTicketType.id },
+          },
+        )
           //Add updated record to array
           .then((updateResult) => {
             console.log("Updated ticket type");

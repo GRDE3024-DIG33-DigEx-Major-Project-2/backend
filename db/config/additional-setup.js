@@ -54,6 +54,42 @@ class AdditionalSetup {
     Event.belongsToMany(Tag, { through: "TaggedWith" }); //Junction table for Many-to-Many
     Tag.belongsToMany(Event, { through: "TaggedWith" });
   }
+
+  /**
+   * Adds hooks to Sequelize model definitions
+   * @param {*} sequelize
+   */
+  AddHooks(sequelize) {
+    //Defined models in Sequelize instance
+    const {
+      Organizer,
+      Attendee,
+      Act,
+      Event,
+      EventImage,
+      TicketType,
+      Tag,
+      EventAct,
+      EventTicket,
+      FavouritedBy,
+      TaggedWith,
+    } = sequelize.models;
+
+    //Add hook to not return password on user creation
+    Attendee.addHook("afterCreate", (record) => {
+      delete record.dataValues.password;
+    });
+    Organizer.addHook("afterCreate", (record) => {
+      delete record.dataValues.password;
+    });
+    //Add hook to not return password on user update
+    Attendee.addHook("afterUpdate", (record) => {
+      delete record.dataValues.password;
+    });
+    Organizer.addHook("afterUpdate", (record) => {
+      delete record.dataValues.password;
+    });
+  }
 }
 
 module.exports = new AdditionalSetup();
