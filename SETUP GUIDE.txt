@@ -13,10 +13,31 @@ Pre-requisites:
 - pgAdmin4 installed on OS
     - Windows installations: https://www.pgadmin.org/download/pgadmin-4-windows/
     - macOS installations: https://www.pgadmin.org/download/pgadmin-4-macos/
+- AWS SDK access key and secret key are provided in the .env file.
+    - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
+- AWS S3 object in src/util/s3.util.js connstructor should look like:
+    - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
+
+/////////////////////////////////////////////
+
+  constructor() {
+    
+    //For live deployment
+    //this.s3 = new AWS.S3();
+
+    //For Team members and assessors running on localhost
+    this.s3 = new AWS.S3({
+			region,
+			accessKeyId,
+			secretAccessKey
+    });
+  }
+
+/////////////////////////////////////////////
 
 
 Steps:
-1.  Make sure the pre-requisites are installed on your OS
+1.  Make sure the pre-requisites are met
 2.  Open pgAdmin4
 3.  Configure your Master Password if prompted
 4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
@@ -39,6 +60,7 @@ Steps:
     -   Execute the line "npm run migrate-dev-up" to migrate the code-first models to the localhost "postgres" database "public" schema
     -   Execute the line "npm run seed-dev-up" to seed the localhost "postgres" database tables with data
     -   Execute the line "npm run prod" to begin running the backend on your localhost in production mode
+
 
 
 Notes:

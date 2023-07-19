@@ -11,6 +11,10 @@ const constantsUtil = require("./constants.util");
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
+const region = process.env.BUCKET_REGION;
+const accessKeyId = process.env.ACCESS_KEY;
+const secretAccessKey = process.env.SECRET_KEY;
+
 //Load shared credentials
 var credentials = new AWS.SharedIniFileCredentials({ profile: "Gigney" });
 AWS.config.credentials = credentials;
@@ -21,7 +25,16 @@ class S3Utilities {
    * Construct S3 client for S3 handling
    */
   constructor() {
-    this.s3 = new AWS.S3();
+    
+    //For live deployment
+    //this.s3 = new AWS.S3();
+
+    //For Team members and assessors running on localhost
+    this.s3 = new AWS.S3({
+			region,
+			accessKeyId,
+			secretAccessKey
+    });
   }
 
   /**

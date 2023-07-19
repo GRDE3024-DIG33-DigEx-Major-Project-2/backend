@@ -1,10 +1,10 @@
 # Backend Localhost Setup and Deployment Guide
 
-Summary: 
+# Summary: 
 This is a setup guide on how to run the backend application on your localhost
 
 
-Pre-requisites:
+# Pre-requisites:
 - Node.js installed on OS
     - Node.js installation guide: https://www.pluralsight.com/guides/getting-started-with-nodejs
     - Node.js should be setup globally through the OS environment variables
@@ -13,10 +13,31 @@ Pre-requisites:
 - pgAdmin4 installed on OS
     - Windows installations: https://www.pgadmin.org/download/pgadmin-4-windows/
     - macOS installations: https://www.pgadmin.org/download/pgadmin-4-macos/
+- AWS SDK access key and secret key are provided in the .env file.
+    - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
+- AWS S3 object in src/util/s3.util.js connstructor should look like:
+    - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
+
+/////////////////////////////////////////////
+
+  constructor() {
+    
+    //For live deployment
+    //this.s3 = new AWS.S3();
+
+    //For Team members and assessors running on localhost
+    this.s3 = new AWS.S3({
+			region,
+			accessKeyId,
+			secretAccessKey
+    });
+  }
+
+/////////////////////////////////////////////
 
 
-Steps:
-1.  Make sure the pre-requisites are installed on your OS
+# Steps:
+1.  Make sure the pre-requisites are met
 2.  Open pgAdmin4
 3.  Configure your Master Password if prompted
 4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
@@ -41,7 +62,8 @@ Steps:
     -   Execute the line "npm run prod" to begin running the backend on your localhost in production mode
 
 
-Notes:
+
+# Notes:
 -   In case of AWS SDK credentials issues:
     -   If the AWS SDK runs into issues regarding credentials, it means that the source code doesn't have the AWS access key and secret key in it.
     -   As Github doesn't allow AWS credentials to be in repositories (and it is something you should never do), we intended to add temporary credentials into the source code for the A2/A3 submissions.
@@ -51,6 +73,7 @@ Notes:
     -   Execute the line "npm run dev" for the Nodemon-enabled application or if you run into any issues with the script for production
     -   Execute the line "npm run migrate-dev-down" to drop all tables in the database along with table data
     -   Execute the line "npm run seed-dev-down" to drop all table data without dropping tables
+
 
 
 # GIGNEY BACKEND
