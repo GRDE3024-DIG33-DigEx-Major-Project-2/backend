@@ -16,6 +16,9 @@ const swaggerUi = require("swagger-ui-express");
 //Set port number for app to listen to
 const port = process.env.PORT || 3000;
 
+//Clear console at the beginning of each startup
+console.clear();
+
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
 app = express();

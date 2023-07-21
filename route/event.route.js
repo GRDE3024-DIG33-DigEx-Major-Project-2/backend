@@ -216,6 +216,25 @@ const upload = multer({ storage: storage });
  *                      items:
  *                          type: string
  *                          description: The id (Primary Key) of a Tag row in the database.
+ *                  keywords:
+ *                      type: string
+ *                      description: Keywords that may match an act name, event title, or venue (Not Functional)
+ *                  startDate:
+ *                      type: string
+ *                      description: The date the event starts (Not Functional)
+ *                  priceRange:
+ *                      type: object
+ *                      description: Contains the min-max for ticket price (Not Functional)
+ *                      properties:
+ *                          minPrice:
+ *                              type: string
+ *                              description: The minimum price for the event's tickets
+ *                          maxPrice:
+ *                              type: string
+ *                              description: The maximum price for the event's tickets
+ *                  city:
+ *                      type: string
+ *                      description: The city the event is held in
  *              required:
  *                  - page
  *          FavouritedEventsReq:

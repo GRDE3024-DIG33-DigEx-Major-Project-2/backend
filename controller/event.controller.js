@@ -9,7 +9,16 @@ const { db } = require("../db/models/db");
 const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
 //Defined models in Sequelize instance
-const { Event, EventImage, FavouritedBy, Tag } = db.models;
+const {
+  Event,
+  EventImage,
+  FavouritedBy,
+  Tag,
+  Act,
+  EventAct,
+  TicketType,
+  EventTicket,
+} = db.models;
 //Db create event handler
 const CreateEventHandler = require("../db/handlers/events/create.handler");
 //Db update event handler
@@ -18,7 +27,8 @@ const UpdateEventHandler = require("../db/handlers/events/update.handler");
 const GetEventHandler = require("../db/handlers/events/get.handler");
 //Db delete event handler
 const DeleteEventHandler = require("../db/handlers/events/delete.handler");
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
+const e = require("cors");
 
 class EventController {
   /**
@@ -539,6 +549,7 @@ class EventController {
         msg: "Request body is empty!",
       });
     }
+
     //Number of pages that meet the search criteria
     let numPages = 0;
     //Array of owned events for page
@@ -547,93 +558,368 @@ class EventController {
     let limit = constantsUtil.PAGE_LIMIT;
     //Which page of events to retrieve
     let offset = req.body.page * limit;
-    //The tags to filter events by
-    let tags = [];
-    if (req.body.tags) tags = req.body.tags;
     //Number of events
     let rowCount = 0;
     //Events to return in response
     let events;
 
+    //Filter options for searching events through sequelize
+    let filterOptions = {
+      //The tags to filter events by -- If defined, assign request content, else empty array
+      tags: req.body.tags ? req.body.tags : [],
+      //The keywords to filter events by -- If defined and doesn't equal null, assign request content to lower case, else empty array
+      keywords:
+        req.body.keywords && req.body.keywords != null
+          ? req.body.keywords.toLowerCase()
+          : "",
+      //Set the start date to filter events by
+      startDate: req.body.startDate
+        ? req.body.startDate
+        : "1950-01-01 00:00:00",
+      //The price range for the event tickets -- If defined, assign request content, else null
+      //priceRange: (req.body.priceRange) ? req.body.priceRange : { minPrice: 0, maxPrice: 10000 },
+      priceRange: req.body.priceRange ? req.body.priceRange : null,
+      //Set up for matching the city -- If defined and doesn't equal null, assign request content, else array of all cities
+      cities:
+        req.body.city && req.body.city != null
+          ? [req.body.city]
+          : constantsUtil.CITIES,
+    };
+
+    let tagWhere = {
+      //Has association with all tags
+      id: filterOptions.tags,
+    };
+
+    //Act table conditions
+    let countActIncludes = {
+      model: Act,
+      as: "Acts",
+    };
+    let findActIncludes = {
+      model: Act,
+      as: "Acts",
+    };
+
+    //Search criteria for counting events
+    let countConditions = {
+      where: {},
+      include: [countActIncludes],
+      group: `${Event.tableName}.${Event.primaryKeyAttribute}`,
+      having: null,
+      transaction: null,
+      logging: console.log,
+      subQuery: false,
+    };
+
+    //Search criteria for finding page of events
+    let findConditions = {
+      where: {},
+      subQuery: false,
+      include: [findActIncludes],
+      group: [
+        `${Event.tableName}.${Event.primaryKeyAttribute}`,
+        "Acts->EventAct.id",
+        "Acts.id",
+      ],
+      having: null,
+      transaction: null,
+      logging: console.log,
+      limit: limit,
+      offset: offset,
+    };
+
+    //No keyword filter
+    if (filterOptions.keywords == "") {
+      console.log("SETTING KEYWORDS FILTER");
+
+      countConditions.where = {
+        [Op.and]: [
+          {
+            //Starting earliest on the start date specified
+            startDate: {
+              [Op.gte]: filterOptions.startDate,
+            },
+          },
+          {
+            //Is in one of the specified cities
+            city: {
+              [Op.or]: filterOptions.cities,
+            },
+          },
+        ],
+      };
+      findConditions.where = {
+        [Op.and]: [
+          {
+            //Starting earliest on the start date specified
+            startDate: {
+              [Op.gte]: filterOptions.startDate,
+            },
+          },
+          {
+            //Is in one of the specified cities
+            city: {
+              [Op.or]: filterOptions.cities,
+            },
+          },
+        ],
+      };
+    }
+    //Has keyword filter
+    else {
+      countConditions.where = {
+        [Op.or]: [
+          {
+            [Op.and]: [
+              {
+                //Keyword match found in Event title
+                title: {
+                  [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
+                },
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+                //Is in one of the specified cities
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+          {
+            [Op.and]: [
+              {
+                //Keyword match found in Event venue
+                venueName: {
+                  [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
+                },
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+                //Is in one of the specified cities
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+          {
+            [Op.and]: [
+              //Keyword match found in Act name
+              {
+                "$Acts.name$": {
+                  [Sequelize.Op.iLike]: `%${filterOptions.keywords}%`,
+                },
+              },
+              //Starting on this state specified
+              {
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+              },
+              //Is in one of the specified cities
+              {
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      findConditions.where = {
+        [Op.or]: [
+          {
+            [Op.and]: [
+              {
+                //Keyword match found in Event title
+                title: { [Sequelize.Op.iLike]: `%${filterOptions.keywords}%` },
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+                //Is in one of the specified cities
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+          {
+            [Op.and]: [
+              {
+                //Keyword match found in Event venue
+                venueName: {
+                  [Sequelize.Op.iLike]: `%${filterOptions.keywords}%`,
+                },
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+                //Is in one of the specified cities
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+          {
+            [Op.and]: [
+              //Keyword match found in Act name
+              {
+                "$Acts.name$": {
+                  [Sequelize.Op.iLike]: `%${filterOptions.keywords}%`,
+                },
+              },
+              //Starting on this state specified
+              {
+                //Starting earliest on the start date specified
+                startDate: {
+                  [Op.gte]: filterOptions.startDate,
+                },
+              },
+              //Is in one of the specified cities
+              {
+                city: {
+                  [Op.or]: filterOptions.cities,
+                },
+              },
+            ],
+          },
+        ],
+      };
+    }
+
+    //Has tag filter
+    if (filterOptions.tags.length > 0) {
+      console.log();
+      countConditions.having = Sequelize.literal(
+        `COUNT(DISTINCT 'Tags.id') = ${filterOptions.tags.length}`,
+      );
+      //Tag table conditions
+      countConditions.include.push({
+        model: Tag,
+        where: tagWhere,
+      });
+
+      findConditions.having = Sequelize.literal(
+        `COUNT(DISTINCT 'Tags.id') = ${filterOptions.tags.length}`,
+      );
+      //Tag table conditions
+      findConditions.include.push({
+        model: Tag,
+        where: tagWhere,
+      });
+      findConditions.group.push("Tags.id");
+      findConditions.group.push("Tags->TaggedWith.id");
+    }
+
+    //Has ticket price filter
+    if (filterOptions.priceRange != null) {
+      //TicketType table conditions
+      countConditions.include.push({
+        model: TicketType,
+        //as: 'TicketType',
+        where: {
+          price: {
+            [Op.between]: [
+              filterOptions.priceRange.minPrice,
+              filterOptions.priceRange.maxPrice,
+            ],
+          },
+        },
+        //include: [],
+      });
+      //TicketType table conditions
+      findConditions.include.push({
+        model: TicketType,
+        //as: 'TicketType',
+        where: {
+          price: {
+            [Op.between]: [
+              filterOptions.priceRange.minPrice,
+              filterOptions.priceRange.maxPrice,
+            ],
+          },
+        },
+        //include: [],
+      });
+
+      findConditions.group.push("TicketTypes.id");
+      findConditions.group.push("TicketTypes->EventTicket.id");
+    }
+
+    // console.log("FILTER OPTIONS TEST");
+    // console.log(filterOptions);
+
     try {
       const result = await db.transaction(async (t) => {
-        //If tags are being used to filter
-        if (tags.length > 0) {
-          //Count number of Events in db that match the filter options
-          rowCount = await Event.count({
-            include: [
-              {
-                model: Tag,
-                where: { id: tags },
-              },
-            ],
-            //Inner join Event and Tag tables through the junction table, then count rows
-            group: `${Event.tableName}.${Event.primaryKeyAttribute}`,
-            having: Sequelize.literal(
-              `COUNT(DISTINCT "${Tag.tableName}s".id) = ${tags.length}`,
-            ),
-            transaction: t,
-          }).catch((err) => {
-            console.error("An error occured while counting events:", err);
-            throw err;
-          });
-          //Matches found, calculate the number of pages
-          if (rowCount.length > 0) {
-            console.log(rowCount[0].count);
-            //Divide number of rows by the page limit
-            numPages = Math.ceil(rowCount[0].count / limit);
-          }
-        }
-        //If no tags are being used to filter
-        else {
-          //Count number of Events in db that match the filter options
-          rowCount = await Event.count({
-            transaction: t,
-          }).catch((err) => {
-            console.error("An error occured while counting events:", err);
-            throw err;
-          });
+        //Set transaction instance for conditions
+        countConditions.transaction = t;
+        findConditions.transaction = t;
+
+        console.log("BEGINNING EVENT COUNT SEARCH");
+
+        //Count number of Events in db that match the filter options
+        rowCount = await Event.count(countConditions).catch((err) => {
+          console.error("An error occured while counting events:", err);
+          throw err;
+        });
+        //Matches found, calculate the number of pages
+        if (rowCount.length > 0) {
+          console.log("Row Count: " + rowCount[0].count);
           //Divide number of rows by the page limit
-          if (rowCount > 0) numPages = Math.ceil(rowCount / limit);
+          numPages = Math.ceil(rowCount[0].count / limit);
+        } else {
+          console.log("No Rows Found");
         }
 
-        //Find all events that include the tags specified
-        if (tags.length > 0)
-          events = await Event.findAll({
-            include: [
-              {
-                model: Tag,
-                where: { id: tags },
-                through: { attributes: [] },
-              },
-            ],
-            group: `${Event.tableName}.${Event.primaryKeyAttribute}`,
-            having: Sequelize.literal(`COUNT(DISTINCT "id") = ${tags.length}`),
-            //Orger by date created, ascending
-            order: [["createdAt", "ASC"]],
-            offset: offset,
-            limit: limit,
-            transaction: t,
-          }).catch((err) => {
-            console.error("An error occured while finding events: ", err);
-            throw err;
-          });
-        //Find all events that match the filter options (with no tag filtering)
-        else
-          events = await Event.findAll({
-            where: {},
-            order: [["createdAt", "ASC"]],
-            offset: offset,
-            limit: limit,
-            transaction: t,
-          }).catch((err) => {
-            console.error("An error occured while finding events: ", err);
-            throw err;
-          });
+        //console.log(findConditions);
 
-        for (let ev of events) {
-          let val = await GetEventHandler.FindOneById(ev.dataValues.id, res, t);
-          data.push(val);
+        console.log("BEGINNING EVENT PAGE SEARCH");
+        //Find all events that match the filter criteria
+        events = await Event.findAll(findConditions).catch((err) => {
+          console.error("An error occured while finding events: ", err);
+          throw err;
+        });
+
+        console.log("FINISHED BOTH QUERIES");
+        console.log("Number of Events Found: " + events);
+
+        //Events that are filtered by tag criteria
+        let filteredData;
+
+        //Filter out the non-tag matches
+        if (events.tags && filterOptions.tags.length > 0) {
+          filteredData = events.filter(
+            (event) => event.tags.length === filterOptions.tags.length,
+          );
+          console.log(filteredData);
+
+          //Retrieve all table data for each of the found events
+          for (let ev of filteredData) {
+            let val = await GetEventHandler.FindOneById(
+              ev.dataValues.id,
+              res,
+              t,
+            );
+            data.push(val);
+          }
+        } else {
+          //Retrieve all table data for each of the found events
+          for (let ev of events) {
+            let val = await GetEventHandler.FindOneById(
+              ev.dataValues.id,
+              res,
+              t,
+            );
+            data.push(val);
+          }
         }
 
         console.log("Number Of Events for the page: ", data.length);

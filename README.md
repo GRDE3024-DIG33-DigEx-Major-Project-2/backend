@@ -8,14 +8,11 @@ This is a setup guide on how to run the backend application on your localhost
 - Node.js installed on OS
     - Node.js installation guide: https://www.pluralsight.com/guides/getting-started-with-nodejs
     - Node.js should be setup globally through the OS environment variables
-- PostgreSQL installed on OS
+- PostgreSQL installed on OS (Make sure you install pgAdmin4 through this installer as well)
     - Installers: https://www.postgresql.org/download/
-- pgAdmin4 installed on OS
-    - Windows installations: https://www.pgadmin.org/download/pgadmin-4-windows/
-    - macOS installations: https://www.pgadmin.org/download/pgadmin-4-macos/
-- AWS SDK access key and secret key are provided in the .env file.
+- AWS SDK access key and secret key are provided in the backend project folder's .env file.
     - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
-- AWS S3 object in src/util/s3.util.js connstructor should look like:
+- AWS S3 object in the backend's src/util/s3.util.js constructor should look like the code snippet below:
     - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
 
 /////////////////////////////////////////////
@@ -37,18 +34,18 @@ This is a setup guide on how to run the backend application on your localhost
 
 
 # Steps:
-1.  Make sure the pre-requisites are met
+1.  Make sure the pre-requisites specified above are met
 2.  Open pgAdmin4
-3.  Configure your Master Password if prompted
+3.  Set your Master Password to "localhost".
 4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
 5.  In the right-click options, navigate to Register->Server
-6.  Under the "General" tab, set the "Name" to "postgres" (make sure the PGDATABASE .env variable matches this Name)
+6.  Under the "General" tab, set the "Name" to "postgres" (make sure the backend project folder's PGDATABASE .env variable matches this Name)
 7.  Under the "Connection" tab:
-    -   Set "Host name/address" to "localhost" (make sure the PGHOST .env variable matches your computer's localhost IP address)
-    -   Set "Port" to "5432" (make sure the PGPORT .env variable matches this port number)
+    -   Set "Host name/address" to "localhost" (make sure the backend project folder's PGHOST .env variable matches your computer's localhost IP address)
+    -   Set "Port" to "5432" (make sure the backend project folder's PGPORT .env variable matches this port number)
     -   Set "Maintenance database" to "postgres"
-    -   Set "Username" to "postgres" (make sure the PGNAME .env variable matches this Username)
-    -   Set "Password" to "localhost" (make sure the PGPASSWORD .env variable matches this Password)
+    -   Set "Username" to "postgres" (make sure the backend project folder's PGNAME .env variable matches this Username)
+    -   Set "Password" to the same as your Master Password, which should be "localhost" (make sure the backend project folder's PGPASSWORD .env variable matches this Password)
     -   Enable "Save Password?"
 8.  Click "Save" and connect to this server through pgAdmin4
 9.  Under the Server's Databases dropdown, the "postgres" database should be listed
@@ -117,7 +114,15 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
-1. Get events by filters
+- Is Free Event?
+- Finish off backend search event filters
+- Frontend restructure
+- Frontend comments and cleanup
+- Frontend search events functionality
+- Ticket price filter
+- Venue filter
+- City filter
+- 
 2. Sequelize model validation and constraints
 3. Endpoint testing and patching
 4. A3 Group and Independent report
@@ -128,10 +133,13 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 9. Url VIRTUAL field consistency
 
 # BACKLOG
+
+- Get events by filters
 - Better security for secrets/credentials in dev and prod environments
 - Next seed data iteration
 - Dynamic tag creation
 - JWT Refresh Token
+- Better location filter
 - createResult bug in update event handler for act arr and ticketType arr
 - Clean up image extension and resize handling
 - Rollback transactions through Sequelize

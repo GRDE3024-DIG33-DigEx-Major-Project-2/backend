@@ -11,6 +11,15 @@ class ConstantsUtil {
   IMG_EXT = ".jpeg";
   //Number of events to return for pagination
   PAGE_LIMIT = 10;
+  //The possible cities that events can reside in
+  CITIES = [
+    "Sydney",
+    "Balmain",
+    "Surry Hills",
+    "Parramatta",
+    "Marrickville",
+    "Lane Cove",
+  ];
 }
 
 //Export ConstantsUtil
