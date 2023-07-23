@@ -114,6 +114,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
+- Search event start date ordering (THINK ABOUT ENDED EVENTS)
 - Is Free Event?
 - Finish off backend search event filters
 - Frontend restructure
@@ -122,7 +123,6 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Ticket price filter
 - Venue filter
 - City filter
-- 
 2. Sequelize model validation and constraints
 3. Endpoint testing and patching
 4. A3 Group and Independent report
