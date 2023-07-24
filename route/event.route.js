@@ -245,7 +245,7 @@ const upload = multer({ storage: storage });
  *                      description: The page you want to retrieve (0 would be the first page)
  *              required:
  *                  - page
- *          OwnedEventsRequest:
+ *          OwnedEventsReq:
  *              type: object
  *              properties:
  *                  page:
@@ -263,6 +263,8 @@ const upload = multer({ storage: storage });
  * /event:
  *  post:
  *      description: Create an event. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
@@ -287,6 +289,8 @@ router.post("/", upload.single("event-img"), eventController.Create);
  * /event:
  *  put:
  *      description: Update an event. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
@@ -311,6 +315,8 @@ router.put("/", upload.single("event-img"), eventController.Update);
  * /event/toggle-favourite:
  *  post:
  *      description: Toggle event favourite. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
@@ -332,6 +338,8 @@ router.post("/toggle-favourite", eventController.ToggleFavourite);
  * /event/tags:
  *  get:
  *      description: Get all tags
+ *      tags:
+ *          - Event Route
  *      responses:
  *          '200':
  *              description: All tags
@@ -348,6 +356,8 @@ router.get("/tags", eventController.GetAllTags);
  *          name: eventId
  *          required: true
  *      description: Get event by id
+ *      tags:
+ *          - Event Route
  *      responses:
  *          '200':
  *              description: The event
@@ -361,6 +371,8 @@ router.get("/:id", eventController.GetById);
  * /event/search-page:
  *  post:
  *      description: Returns page of events that match the filter and total page count. Max 10 events per page.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
@@ -379,13 +391,15 @@ router.post("/search-page", eventController.SearchEvents);
  * @swagger
  * /event/favourites:
  *  post:
- *      description: Returns page of favourited events that match the filter and total page count. Max 10 events per page.
+ *      description: Returns page of favourited events that match the filter and total page count. Max 10 events per page. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/FavouritedEventsRequest'
+ *                      $ref: '#/components/schemas/FavouritedEventsReq'
  *      responses:
  *          '200':
  *              description: Page of events with the total page count
@@ -400,13 +414,15 @@ router.post("/favourites", eventController.GetFavourites);
  * @swagger
  * /event/owned-events:
  *  post:
- *      description: Returns page of owned events that match the filter and total page count. Max 10 events per page.
+ *      description: Returns page of owned events that match the filter and total page count. Max 10 events per page. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      requestBody:
  *         required: true
  *         content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/OwnedEventsRequest'
+ *                      $ref: '#/components/schemas/OwnedEventsReq'
  *      responses:
  *          '200':
  *              description: Page of events with the total page count
@@ -424,7 +440,9 @@ router.post("/owned-events", eventController.GetOwnedEvents);
  *      parameters:
  *          name: eventId
  *          required: true
- *      description: Delete event by id
+ *      description: Delete event by id. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - Event Route
  *      responses:
  *          '200':
  *              description: The event deleted successfully

@@ -82,7 +82,6 @@ class GetEventHandler {
                   transaction: transaction,
                 }).then((tag) => {
                   data.tags.push(tag.dataValues);
-                  //console.log(data.tags);
                 });
               }
             } else {

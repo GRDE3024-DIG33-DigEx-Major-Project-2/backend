@@ -21,8 +21,10 @@ const authController = new AuthController();
  *              properties:
  *                  email:
  *                      type: string
+ *                      description: An existing user's email for login
  *                  password:
  *                      type: string
+ *                      description: An existing user's password for login
  *              required:
  *                  - email
  *                  - password
@@ -33,6 +35,8 @@ const authController = new AuthController();
  * /auth/login:
  *  post:
  *      description: Attempts to log a user in. userType can equal organizer or attendee
+ *      tags:
+ *          - Auth Route
  *      requestBody:
  *         required: true
  *         content:
@@ -53,6 +57,8 @@ router.post("/login", authController.Login);
  * /auth/validate:
  *  get:
  *      description: Checks if the sender is authorized through the token in the request Authorization header
+ *      tags:
+ *          - Auth Route
  *      responses:
  *          '200':
  *              description: Token was valid, token data sent back as JSON

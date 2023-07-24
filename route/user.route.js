@@ -79,7 +79,9 @@ const upload = multer({ storage: storage });
  * @swagger
  * /user/register:
  *  post:
- *      description: Register a new user. userType can equal organizer or attendee. firstName, lastName, and dob are Attendees-only. organizationName is Organizer-only
+ *      description: Register a new user. userType can equal organizer or attendee. firstName, lastName, and dob are Attendees-only. organizationName is Organizer-only.
+ *      tags:
+ *          - User Route
  *      requestBody:
  *         required: true
  *         content:
@@ -100,6 +102,8 @@ router.post("/register", userController.Create);
  * /user/reset-password:
  *  put:
  *      description: Resets user password. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - User Route
  *      requestBody:
  *         required: true
  *         content:
@@ -121,6 +125,8 @@ router.put("/reset-password", userController.ResetPassword);
  * /user:
  *  put:
  *      description: Update the user. BEARER TOKEN REQUIRED. Fields may be inaccurate in documentation.
+ *      tags:
+ *          - User Route
  *      requestBody:
  *         required: true
  *         content:
@@ -145,6 +151,8 @@ router.put("/", upload.single("profile-img"), userController.Update);
  * /user:
  *  delete:
  *      description: Delete the user. BEARER TOKEN REQUIRED.
+ *      tags:
+ *          - User Route
  *      responses:
  *          '201':
  *              description:
