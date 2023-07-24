@@ -17,7 +17,7 @@ const swaggerUi = require("swagger-ui-express");
 const port = process.env.PORT || 3000;
 
 //Clear console at the beginning of each startup
-console.clear();
+//console.clear();
 
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
@@ -80,26 +80,7 @@ const options = {
         bearerFormat: "JWT",
       },
     },
-    requestBodies: {
-      // Organizer: {
-      //   description:"Organizer instance",
-      //   required:true,
-      //   content: {
-      //     schema: {
-      //       $ref: swaggerSchemas.organizer,
-      //     }
-      //   },
-      // },
-      // Attendee: {
-      //   description:"Attendee instance",
-      //   required:true,
-      //   content: {
-      //     schema: {
-      //       $ref: swaggerSchemas.attendee,
-      //     }
-      //   },
-      // },
-    },
+    requestBodies: {},
   },
 };
 const specs = swaggerJsdoc(options);

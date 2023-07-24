@@ -8,17 +8,9 @@ const constantsUtil = require("../util/constants.util");
 const { db } = require("../db/models/db");
 const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
+const { Sequelize, Op } = require("sequelize");
 //Defined models in Sequelize instance
-const {
-  Event,
-  EventImage,
-  FavouritedBy,
-  Tag,
-  Act,
-  EventAct,
-  TicketType,
-  EventTicket,
-} = db.models;
+const { Event, EventImage, FavouritedBy, Tag, Act, TicketType } = db.models;
 //Db create event handler
 const CreateEventHandler = require("../db/handlers/events/create.handler");
 //Db update event handler
@@ -27,8 +19,6 @@ const UpdateEventHandler = require("../db/handlers/events/update.handler");
 const GetEventHandler = require("../db/handlers/events/get.handler");
 //Db delete event handler
 const DeleteEventHandler = require("../db/handlers/events/delete.handler");
-const { Sequelize, Op } = require("sequelize");
-const e = require("cors");
 
 class EventController {
   /**
@@ -324,16 +314,14 @@ class EventController {
           EventId: req.body.eventId,
           AttendeeId: decodedToken.user.id,
         });
-        console.log("Favourited event");
-        console.log(result);
+        console.log("Favourited event: ", result);
         //Send back 200 status after creating junction
         return res.status(200).json({ msg: "Favourited event" });
       }
       //Favourited, therefore remove associated junction
       else {
         let result = await FavouritedBy.destroy({ where: { id: junction.id } });
-        console.log("Unfavourited event");
-        console.log(result);
+        console.log("Unfavourited event: ", result);
         //Send back 200 status after removing junction
         return res.status(200).json({ msg: "Unfavourited event" });
       }
@@ -409,7 +397,12 @@ class EventController {
           transaction: t,
           offset: offset,
           limit: limit,
-          order: [["createdAt", "ASC"]],
+          order: [
+            [
+              constantsUtil.DEFAULT_ORDERBY.FIELD,
+              constantsUtil.DEFAULT_ORDERBY.DIRECTION,
+            ],
+          ],
         })
           //Find all data associated with the events across all tables
           .then(async (junctions) => {
@@ -508,7 +501,12 @@ class EventController {
           transaction: t,
           offset: offset,
           limit: limit,
-          order: [["createdAt", "ASC"]],
+          order: [
+            [
+              constantsUtil.DEFAULT_ORDERBY.FIELD,
+              constantsUtil.DEFAULT_ORDERBY.DIRECTION,
+            ],
+          ],
         })
           //Find all data associated with the events across all tables
           .then(async (events) => {
@@ -549,10 +547,6 @@ class EventController {
         msg: "Request body is empty!",
       });
     }
-
-
-    console.log("BODY TEST");
-    console.log(req.body);
 
     //Number of pages that meet the search criteria
     let numPages = 0;
@@ -595,13 +589,10 @@ class EventController {
 
     //Set priceRange to null if maxPrice is 0
     if (filterOptions.priceRange != null)
-    if (filterOptions.priceRange)
-    if (req.body.priceRange.maxPrice != null)
-    if (req.body.priceRange.maxPrice <= 0)
-    filterOptions.priceRange = null;
-
-
-
+      if (filterOptions.priceRange)
+        if (req.body.priceRange.maxPrice != null)
+          if (req.body.priceRange.maxPrice <= 0)
+            filterOptions.priceRange = null;
 
     let tagWhere = {
       //Has association with all tags
@@ -644,6 +635,12 @@ class EventController {
       logging: console.log,
       limit: limit,
       offset: offset,
+      order: [
+        [
+          constantsUtil.DEFAULT_ORDERBY.FIELD,
+          constantsUtil.DEFAULT_ORDERBY.DIRECTION,
+        ],
+      ],
     };
 
     //No keyword filter
@@ -836,41 +833,41 @@ class EventController {
     }
 
     //Has ticket price filter
-    if (filterOptions.priceRange != null && filterOptions.priceRange.minPrice && filterOptions.priceRange.maxPrice)
-    if (filterOptions.priceRange.maxPrice > 0) {
-      console.log("ADDING TICKET PRICE FILTER");
-      //TicketType table conditions
-      countConditions.include.push({
-        model: TicketType,
-        //as: 'TicketType',
-        where: {
-          price: {
-            [Op.between]: [
-              filterOptions.priceRange.minPrice,
-              filterOptions.priceRange.maxPrice,
-            ],
+    if (
+      filterOptions.priceRange != null &&
+      filterOptions.priceRange.minPrice &&
+      filterOptions.priceRange.maxPrice
+    )
+      if (filterOptions.priceRange.maxPrice > 0) {
+        console.log("ADDING TICKET PRICE FILTER");
+        //TicketType table conditions
+        countConditions.include.push({
+          model: TicketType,
+          where: {
+            price: {
+              [Op.between]: [
+                filterOptions.priceRange.minPrice,
+                filterOptions.priceRange.maxPrice,
+              ],
+            },
           },
-        },
-        //include: [],
-      });
-      //TicketType table conditions
-      findConditions.include.push({
-        model: TicketType,
-        //as: 'TicketType',
-        where: {
-          price: {
-            [Op.between]: [
-              filterOptions.priceRange.minPrice,
-              filterOptions.priceRange.maxPrice,
-            ],
+        });
+        //TicketType table conditions
+        findConditions.include.push({
+          model: TicketType,
+          where: {
+            price: {
+              [Op.between]: [
+                filterOptions.priceRange.minPrice,
+                filterOptions.priceRange.maxPrice,
+              ],
+            },
           },
-        },
-        //include: [],
-      });
+        });
 
-      findConditions.group.push("TicketTypes.id");
-      findConditions.group.push("TicketTypes->EventTicket.id");
-    }
+        findConditions.group.push("TicketTypes.id");
+        findConditions.group.push("TicketTypes->EventTicket.id");
+      }
 
     try {
       const result = await db.transaction(async (t) => {
@@ -893,8 +890,6 @@ class EventController {
         } else {
           console.log("No Rows Found");
         }
-
-        //console.log(findConditions);
 
         console.log("BEGINNING EVENT PAGE SEARCH");
         //Find all events that match the filter criteria
@@ -936,7 +931,7 @@ class EventController {
             data.push(val);
           }
         }
-        //console.clear();
+
         console.log("Request Body: ", req.body);
         console.log("Number Of Events for the page: ", data.length);
         console.log("Number of Total Events: ", rowCount);

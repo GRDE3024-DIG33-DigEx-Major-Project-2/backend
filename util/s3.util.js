@@ -30,11 +30,11 @@ class S3Utilities {
     this.s3 = new AWS.S3();
 
     //For Team members and assessors running on localhost
-    // this.s3 = new AWS.S3({
-    // 	region,
-    // 	accessKeyId,
-    // 	secretAccessKey
-    // });
+    this.s3 = new AWS.S3({
+    	region,
+    	accessKeyId,
+    	secretAccessKey
+    });
   }
 
   /**
@@ -145,16 +145,7 @@ class S3Utilities {
       ACL: "public-read",
     };
     //Upload
-    return await this.s3
-      .upload(
-        uploadParams,
-        () => {},
-        // (err) => {
-        //   console.log("s3 upload failed");
-        //   console.log(err);
-        // },
-      )
-      .promise();
+    return await this.s3.upload(uploadParams, () => {}).promise();
   }
 
   /**
@@ -169,16 +160,7 @@ class S3Utilities {
       Key: filename + constantsUtil.IMG_EXT,
     };
     //Delete
-    return await this.s3
-      .deleteObject(
-        deleteParams,
-        () => {},
-        // (err) => {
-        //   console.log("s3 delete failed");
-        //   console.log(err);
-        // },
-      )
-      .promise();
+    return await this.s3.deleteObject(deleteParams, () => {}).promise();
   }
 }
 

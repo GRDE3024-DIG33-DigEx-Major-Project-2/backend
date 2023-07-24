@@ -154,15 +154,6 @@ class UserController {
         );
         console.log("User updated!");
 
-        // if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-        //   newData = await Attendee.findByPk(decodedToken.user.id, {
-        //     transaction: t,
-        //   });
-        // else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-        //   newData = await Organizer.findByPk(decodedToken.user.id, {
-        //     transaction: t,
-        //   });
-
         //Send back 201 status wih the newly updated access token
         const token = authUtil.generateJWT(newData);
         return res.status(201).json({

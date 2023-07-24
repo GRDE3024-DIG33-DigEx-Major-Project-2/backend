@@ -39,13 +39,22 @@ Steps:
 3.  Set your Master Password to "localhost".
 4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
 5.  In the right-click options, navigate to Register->Server
-6.  Under the "General" tab, set the "Name" to "postgres" (make sure the backend project folder's PGDATABASE .env variable matches this Name)
+6.  Under the "General" tab, set the "Name" to "postgres" 
+    -   Make sure the backend project folder's PGDATABASE .env variable matches this "Name"
+    -   Make sure the json object "development"'s "database" field in the backend file src/db/config/config.json matches this "Name"
 7.  Under the "Connection" tab:
-    -   Set "Host name/address" to "localhost" (make sure the backend project folder's PGHOST .env variable matches your computer's localhost IP address)
-    -   Set "Port" to "5432" (make sure the backend project folder's PGPORT .env variable matches this port number)
+    -   Set "Host name/address" to "localhost" 
+        -   Make sure the backend project folder's PGHOST .env variable matches your computer's localhost IP address
+        -   Make sure the json object "development"'s "host" field in the backend file src/db/config/config.json is set to "localhost" or your computer's localhost IP address
+    -   Set "Port" to "5432" 
+        -   Make sure the backend project folder's PGPORT .env variable matches this port number
     -   Set "Maintenance database" to "postgres"
-    -   Set "Username" to "postgres" (make sure the backend project folder's PGNAME .env variable matches this Username)
-    -   Set "Password" to the same as your Master Password, which should be "localhost" (make sure the backend project folder's PGPASSWORD .env variable matches this Password)
+    -   Set "Username" to "postgres" 
+        -   Make sure the backend project folder's PGNAME .env variable matches this "Username"
+        -   Make sure the json object "development"'s "username" field in the backend file src/db/config/config.json is set to this "Username"
+    -   Set "Password" to the same as your Master Password, which should be "localhost" 
+        -   Make sure the backend project folder's PGPASSWORD .env variable matches this "Password"
+        -   Make sure the json object "development"'s "password" field in the backend file src/db/config/config.json is set to this "Password"
     -   Enable "Save Password?"
 8.  Click "Save" and connect to this server through pgAdmin4
 9.  Under the Server's Databases dropdown, the "postgres" database should be listed

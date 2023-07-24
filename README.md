@@ -39,13 +39,22 @@ This is a setup guide on how to run the backend application on your localhost
 3.  Set your Master Password to "localhost".
 4.  On the left toolbar, right-click one of the Server Groups (create one if none exist)
 5.  In the right-click options, navigate to Register->Server
-6.  Under the "General" tab, set the "Name" to "postgres" (make sure the backend project folder's PGDATABASE .env variable matches this Name)
+6.  Under the "General" tab, set the "Name" to "postgres" 
+    -   Make sure the backend project folder's PGDATABASE .env variable matches this "Name"
+    -   Make sure the json object "development"'s "database" field in the backend file src/db/config/config.json matches this "Name"
 7.  Under the "Connection" tab:
-    -   Set "Host name/address" to "localhost" (make sure the backend project folder's PGHOST .env variable matches your computer's localhost IP address)
-    -   Set "Port" to "5432" (make sure the backend project folder's PGPORT .env variable matches this port number)
+    -   Set "Host name/address" to "localhost" 
+        -   Make sure the backend project folder's PGHOST .env variable matches your computer's localhost IP address
+        -   Make sure the json object "development"'s "host" field in the backend file src/db/config/config.json is set to "localhost" or your computer's localhost IP address
+    -   Set "Port" to "5432" 
+        -   Make sure the backend project folder's PGPORT .env variable matches this port number
     -   Set "Maintenance database" to "postgres"
-    -   Set "Username" to "postgres" (make sure the backend project folder's PGNAME .env variable matches this Username)
-    -   Set "Password" to the same as your Master Password, which should be "localhost" (make sure the backend project folder's PGPASSWORD .env variable matches this Password)
+    -   Set "Username" to "postgres" 
+        -   Make sure the backend project folder's PGNAME .env variable matches this "Username"
+        -   Make sure the json object "development"'s "username" field in the backend file src/db/config/config.json is set to this "Username"
+    -   Set "Password" to the same as your Master Password, which should be "localhost" 
+        -   Make sure the backend project folder's PGPASSWORD .env variable matches this "Password"
+        -   Make sure the json object "development"'s "password" field in the backend file src/db/config/config.json is set to this "Password"
     -   Enable "Save Password?"
 8.  Click "Save" and connect to this server through pgAdmin4
 9.  Under the Server's Databases dropdown, the "postgres" database should be listed
@@ -108,7 +117,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
     - Utility files are self-explanatory. Try and name them with the subextension .util (enum.util.js as an example).
 
 
-# FILES
+# FILES -- OUTDATED
 - .env 
     - It holds database connection parameters and the app port number.
 - app.js 
@@ -118,31 +127,36 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
-- Search event start date ordering (THINK ABOUT ENDED EVENTS)
-- Finish connecting search event data in frontend
-- Phone number field formatting for Organizers
-- TaggedWith seed data
-- TicketPrice & EventTicket seed data rough version
-- Ammend readme guide with db/config/config.json explanation
+* Endpoint testing and patching
+* Set up A3 api app
+- Searching events
+    - Search event start date ordering (THINK ABOUT ENDED EVENTS)
+    - Ticket price filter
+- Seed Data
+    - TaggedWith seed data
+    - TicketPrice & EventTicket seed data rough version
+- DB
+    - Sequelize model validation and constraints
+    - Finish db CRUD handler abstractions
+Other
+    - A3 Group and Independent report
+    - Code comments + cleanup
+    - Update JSDocs and api doc Swagger UI
 
-- Dynamic search with filter change
-- Is Free Event?
+
+# RYAN-FRONTEND TASKS
+- Endpoint handlers in frontend app
 - Frontend restructure
 - Frontend comments and cleanup
 - Frontend search events functionality
-- Ticket price filter
-- Venue filter
-- City filter
-2. Sequelize model validation and constraints
-3. Endpoint testing and patching
-4. A3 Group and Independent report
-5. Code comments + cleanup
-6. Update JSDocs
-7. Finish db CRUD handler abstraction
-8. BUG - WHEN UPDATING EVENT AND SENDING EXISTING IMAGE THAT YOU DONT WANT CHANGED, THE RESPONSE FOR EVENTIMG IS NULL REGARDLESS OF ADJUSTMENTS
-9. Url VIRTUAL field consistency
+- Finish connecting search event data in frontend
+
 
 # BACKLOG
+- Dynamic search with filter change
+- Is Free Event?
+- Phone number field formatting for Organizers
+- Phone number field formatting for Organizers
 - Finish off backend search event filters
 - Get events by filters
 - Better security for secrets/credentials in dev and prod environments
@@ -165,6 +179,11 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # PREVIOUS TASKS
+- Venue filter
+- City filter
+- BUG - WHEN UPDATING EVENT AND SENDING EXISTING IMAGE THAT YOU DONT WANT CHANGED, THE RESPONSE FOR EVENTIMG IS NULL REGARDLESS OF ADJUSTMENTS
+- Url VIRTUAL field consistency
+- Ammend readme guide with db/config/config.json explanation
 - ~~Registration endpoint ~~
 - ~~Login endpoint~~
 - ~~Password encryption/decryption~~

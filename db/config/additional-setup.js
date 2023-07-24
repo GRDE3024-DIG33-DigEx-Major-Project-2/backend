@@ -10,19 +10,8 @@ class AdditionalSetup {
    */
   AddAssociations(sequelize) {
     //Defined models in Sequelize instance
-    const {
-      Organizer,
-      Attendee,
-      Act,
-      Event,
-      EventImage,
-      TicketType,
-      Tag,
-      EventAct,
-      EventTicket,
-      FavouritedBy,
-      TaggedWith,
-    } = sequelize.models;
+    const { Organizer, Attendee, Act, Event, EventImage, TicketType, Tag } =
+      sequelize.models;
 
     //Organizer-Event
     Organizer.hasMany(Event, {
@@ -61,19 +50,7 @@ class AdditionalSetup {
    */
   AddHooks(sequelize) {
     //Defined models in Sequelize instance
-    const {
-      Organizer,
-      Attendee,
-      Act,
-      Event,
-      EventImage,
-      TicketType,
-      Tag,
-      EventAct,
-      EventTicket,
-      FavouritedBy,
-      TaggedWith,
-    } = sequelize.models;
+    const { Organizer, Attendee } = sequelize.models;
 
     //Add hook to not return password on user creation
     Attendee.addHook("afterCreate", (record) => {

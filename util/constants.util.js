@@ -20,6 +20,12 @@ class ConstantsUtil {
     "Marrickville",
     "Lane Cove",
   ];
+
+  //Default order fields for event page search queries
+  DEFAULT_ORDERBY = {
+    FIELD: "createdAt",
+    DIRECTION: "ASC",
+  };
 }
 
 //Export ConstantsUtil
