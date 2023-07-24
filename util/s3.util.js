@@ -29,12 +29,12 @@ class S3Utilities {
     //For live deployment
     this.s3 = new AWS.S3();
 
-    //For Team members and assessors running on localhost
-    this.s3 = new AWS.S3({
-    	region,
-    	accessKeyId,
-    	secretAccessKey
-    });
+    // //For Team members and assessors running on localhost
+    // this.s3 = new AWS.S3({
+    // 	region,
+    // 	accessKeyId,
+    // 	secretAccessKey
+    // });
   }
 
   /**
