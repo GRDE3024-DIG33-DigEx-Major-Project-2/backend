@@ -550,6 +550,10 @@ class EventController {
       });
     }
 
+
+    console.log("BODY TEST");
+    console.log(req.body);
+
     //Number of pages that meet the search criteria
     let numPages = 0;
     //Array of owned events for page
@@ -585,6 +589,19 @@ class EventController {
           ? [req.body.city]
           : constantsUtil.CITIES,
     };
+
+    console.log("PRICE RANGE TEST");
+    console.log(filterOptions.priceRange);
+
+    //Set priceRange to null if maxPrice is 0
+    if (filterOptions.priceRange != null)
+    if (filterOptions.priceRange)
+    if (req.body.priceRange.maxPrice != null)
+    if (req.body.priceRange.maxPrice <= 0)
+    filterOptions.priceRange = null;
+
+
+
 
     let tagWhere = {
       //Has association with all tags
@@ -797,7 +814,6 @@ class EventController {
 
     //Has tag filter
     if (filterOptions.tags.length > 0) {
-      console.log();
       countConditions.having = Sequelize.literal(
         `COUNT(DISTINCT 'Tags.id') = ${filterOptions.tags.length}`,
       );
@@ -820,7 +836,9 @@ class EventController {
     }
 
     //Has ticket price filter
-    if (filterOptions.priceRange != null) {
+    if (filterOptions.priceRange != null && filterOptions.priceRange.minPrice && filterOptions.priceRange.maxPrice)
+    if (filterOptions.priceRange.maxPrice > 0) {
+      console.log("ADDING TICKET PRICE FILTER");
       //TicketType table conditions
       countConditions.include.push({
         model: TicketType,
@@ -853,9 +871,6 @@ class EventController {
       findConditions.group.push("TicketTypes.id");
       findConditions.group.push("TicketTypes->EventTicket.id");
     }
-
-    // console.log("FILTER OPTIONS TEST");
-    // console.log(filterOptions);
 
     try {
       const result = await db.transaction(async (t) => {
@@ -921,7 +936,8 @@ class EventController {
             data.push(val);
           }
         }
-
+        //console.clear();
+        console.log("Request Body: ", req.body);
         console.log("Number Of Events for the page: ", data.length);
         console.log("Number of Total Events: ", rowCount);
         console.log("Number of Pages: ", numPages);

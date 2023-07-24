@@ -76,6 +76,10 @@ This is a setup guide on how to run the backend application on your localhost
 # GIGNEY BACKEND
 This is the backend REST API for Gigeny
 
+# LIVE URLS
+A2: https://a2.gigney.ryanriddiford.com
+A3: TBD
+
 
 # RESOURCES
 Sequelize Docs for ORM:
@@ -115,8 +119,14 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 # CURRENT TASKS
 - Search event start date ordering (THINK ABOUT ENDED EVENTS)
+- Finish connecting search event data in frontend
+- Phone number field formatting for Organizers
+- TaggedWith seed data
+- TicketPrice & EventTicket seed data rough version
+- Ammend readme guide with db/config/config.json explanation
+
+- Dynamic search with filter change
 - Is Free Event?
-- Finish off backend search event filters
 - Frontend restructure
 - Frontend comments and cleanup
 - Frontend search events functionality
@@ -133,7 +143,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 9. Url VIRTUAL field consistency
 
 # BACKLOG
-
+- Finish off backend search event filters
 - Get events by filters
 - Better security for secrets/credentials in dev and prod environments
 - Next seed data iteration
