@@ -127,6 +127,8 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
+* Delete image access
+* Seed event data and images
 * Endpoint testing and patching
 * Set up A3 api app
 - Searching events
@@ -145,6 +147,7 @@ Other
 
 
 # RYAN-FRONTEND TASKS
+- Fix frontend venue duplicates in filter
 - Endpoint handlers in frontend app
 - Frontend restructure
 - Frontend comments and cleanup

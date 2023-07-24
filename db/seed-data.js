@@ -5,6 +5,7 @@
 //Import dependencies
 const { v4: uuidv4 } = require("uuid");
 const AuthUtil = require("../util/auth.util");
+const enumUtil = require("../util/enum.util");
 
 /**
  * Seed data for use in seeder files
@@ -744,10 +745,13 @@ class SeedData {
 
   /**
    * Events to seed database with
-   * @returns Array of Events
+   * @returns Object of arrays containing grouped events by genre
    */
   getEvents(organizers) {
-    return [
+
+
+
+    let rockEvents = [
       {
         id: uuidv4(),
         OrganizerId: organizers[0].id,
@@ -767,67 +771,11 @@ class SeedData {
         purchaseUrl: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      },
-      {
-        id: uuidv4(),
-        OrganizerId: organizers[0].id,
-        title: "Blue Stomp",
-        venueName: "The Hifi",
-        description:
-          "Blue Stomp bring the heavy blues guitar licks and lead singer, Chud Grungley's, melancholy voice together in an act that sounds like it's straight out of the Mississippi delta. Supported by Dirtwire",
-        summary: "PAID SHOW IN SYDNEY",
-        startDate: "2023-09-08 17:30:00",
-        endDate: "2023-09-08 20:30:00",
-        address: "42 Willoughby Road, Crows Nest",
-        city: "Sydney",
-        region: "NSW",
-        postcode: "2065",
-        country: "Australia",
-        isFree: false,
-        purchaseUrl: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: uuidv4(),
-        OrganizerId: organizers[1].id,
-        title: "Bandoliero",
-        venueName: "Jacks Music Shack",
-        description:
-          "The Mexican mononym, Bandoliero, brings his rasgueado style music to Sydney for the first time",
-        summary: "PAID SHOW IN SYDNEY",
-        startDate: "2023-09-08 18:30:00",
-        endDate: "2023-09-08 20:30:00",
-        address: "18 Victoria Road, Parramatta",
-        city: "Sydney",
-        region: "NSW",
-        postcode: "2000",
-        country: "Australia",
-        isFree: false,
-        purchaseUrl: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: uuidv4(),
-        OrganizerId: organizers[1].id,
-        title: "VibeFest 2024",
-        venueName: "The Domain",
-        description:
-          "Sydney's largest annual, electronic music fest! Line up to be announced",
-        summary: "PAID SHOW IN SYDNEY",
-        startDate: "2024-02-24 11:00:00",
-        endDate: "2024-02-24 23:00:00",
-        address: "1 Art Gallery Road",
-        city: "Sydney",
-        region: "NSW",
-        postcode: "2000",
-        country: "Australia",
-        isFree: false,
-        purchaseUrl: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
+      }
+
+    ];
+
+    let countryEvents = [
       // COUNTRY
       {
         id: uuidv4(),
@@ -934,6 +882,33 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
 
+    ];
+
+    let classicalEvents = [
+      {
+        id: uuidv4(),
+        OrganizerId: organizers[1].id,
+        title: "Bandoliero",
+        venueName: "Jacks Music Shack",
+        description:
+          "The Mexican mononym, Bandoliero, brings his rasgueado style music to Sydney for the first time",
+        summary: "PAID SHOW IN SYDNEY",
+        startDate: "2023-09-08 18:30:00",
+        endDate: "2023-09-08 20:30:00",
+        address: "18 Victoria Road, Parramatta",
+        city: "Sydney",
+        region: "NSW",
+        postcode: "2000",
+        country: "Australia",
+        isFree: false,
+        purchaseUrl: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+
+
+    let jazzEvents = [
       // JAZZ
       {
         id: uuidv4(),
@@ -1079,7 +1054,10 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+
+    let electronicEvents = [
       // ELECTRONIC
       {
         id: uuidv4(),
@@ -1095,6 +1073,27 @@ class SeedData {
         city: "Sydney Olympic Park",
         region: "NSW",
         postcode: "2127",
+        country: "Australia",
+        isFree: false,
+        purchaseUrl: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+
+      {
+        id: uuidv4(),
+        OrganizerId: organizers[1].id,
+        title: "VibeFest 2024",
+        venueName: "The Domain",
+        description:
+          "Sydney's largest annual, electronic music fest! Line up to be announced",
+        summary: "PAID SHOW IN SYDNEY",
+        startDate: "2024-02-24 11:00:00",
+        endDate: "2024-02-24 23:00:00",
+        address: "1 Art Gallery Road",
+        city: "Sydney",
+        region: "NSW",
+        postcode: "2000",
         country: "Australia",
         isFree: false,
         purchaseUrl: null,
@@ -1186,6 +1185,11 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
 
+    ];
+
+
+
+    let reggaeEvents = [
       // REGGAE
       {
         id: uuidv4(),
@@ -1290,7 +1294,9 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+    let danceEvents = [
       // DANCE
       {
         id: uuidv4(),
@@ -1396,7 +1402,10 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+
+    let metalEvents = [
       // METAL
       {
         id: uuidv4(),
@@ -1503,6 +1512,9 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
 
+    ];
+
+    let hiphopEvents = [
       // HIP HOP
       {
         id: uuidv4(),
@@ -1607,7 +1619,10 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+
+    let popEvents = [
       // POP
       {
         id: uuidv4(),
@@ -1713,7 +1728,9 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+    let soloEvents = [
       // SOLO
       {
         id: uuidv4(),
@@ -1819,7 +1836,9 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+    let instrumentalEvents = [
       // INSTRUMENTAL
       {
         id: uuidv4(),
@@ -1925,7 +1944,9 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+    let rapEvents = [
       // RAP
       {
         id: uuidv4(),
@@ -2031,7 +2052,9 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+    ];
 
+    let internationalEvents = [
       // INTERNATIONAL
       {
         id: uuidv4(),
@@ -2138,6 +2161,52 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
     ];
+
+
+    let bluesEvents = [
+      {
+        id: uuidv4(),
+        OrganizerId: organizers[0].id,
+        title: "Blue Stomp",
+        venueName: "The Hifi",
+        description:
+          "Blue Stomp bring the heavy blues guitar licks and lead singer, Chud Grungley's, melancholy voice together in an act that sounds like it's straight out of the Mississippi delta. Supported by Dirtwire",
+        summary: "PAID SHOW IN SYDNEY",
+        startDate: "2023-09-08 17:30:00",
+        endDate: "2023-09-08 20:30:00",
+        address: "42 Willoughby Road, Crows Nest",
+        city: "Sydney",
+        region: "NSW",
+        postcode: "2065",
+        country: "Australia",
+        isFree: false,
+        purchaseUrl: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+
+
+    let events = {
+      rockEvents: rockEvents,
+      countryEvents: countryEvents,
+      jazzEvents: jazzEvents,
+      electronicEvents: electronicEvents,
+      reggaeEvents: reggaeEvents,
+      danceEvents: danceEvents,
+      metalEvents: metalEvents,
+      hiphopEvents: hiphopEvents,
+      popEvents: popEvents,
+      soloEvents: soloEvents,
+      instrumentalEvents: instrumentalEvents,
+      rapEvents: rapEvents,
+      internationalEvents: internationalEvents,
+      bluesEvents: bluesEvents,
+      classicalEvents: classicalEvents
+    };
+
+
+    return events;
   }
 
   /**
@@ -2167,7 +2236,7 @@ class SeedData {
       {
         id: uuidv4(),
         TicketTypeId: tickets[0].id,
-        EventId: events[1].id,
+        EventId: events.rockEvents[0].id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -2182,97 +2251,97 @@ class SeedData {
     return [
       {
         id: uuidv4(),
-        name: "Rock",
+        name: enumUtil.genres.rock,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Blues",
+        name: enumUtil.genres.blues,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Hip-hop",
+        name: enumUtil.genres.hiphop,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Indie",
+        name: enumUtil.genres.indie,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Country",
+        name: enumUtil.genres.country,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Dance",
+        name: enumUtil.genres.dance,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Classical",
+        name: enumUtil.genres.classical,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Jazz",
+        name: enumUtil.genres.jazz,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Reggae",
+        name: enumUtil.genres.reggae,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Electronic",
+        name: enumUtil.genres.electronic,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Pop",
+        name: enumUtil.genres.pop,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Metal",
+        name: enumUtil.genres.metal,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Solo",
+        name: enumUtil.genres.solo,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Instrumental",
+        name: enumUtil.genres.instrumental,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "Rap",
+        name: enumUtil.genres.rap,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        name: "International",
+        name: enumUtil.genres.international,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -2294,37 +2363,128 @@ class SeedData {
     ];
   }
 
+
+
+
+  /**
+   * Builds tag-event junction rows for a specific tag
+   * @param {*} events 
+   * @param {*} tag 
+   * @returns Array of Event-Tag junction rows
+   */
+  buildTagJunctions(events, tag) {
+    let arr = [];
+    //Append new junction for each event with the tag specified
+    for (let ev of events) {
+      arr.push(
+        {
+          id: uuidv4(),
+          EventId: ev.id,
+          TagId: tag.id,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      )
+    }
+    //Return junctions of that tag
+    return arr;
+  }
+
+
+
   /**
    * Junction for Tags of Events
    * @param {*} events
    * @param {*} tags
-   * @returns
+   * @returns Array of Event-Tag junction rows
    */
   getTaggedWith(events, tags) {
-    return [
-      {
-        id: uuidv4(),
-        EventId: events[0].id,
-        TagId: tags[0].id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: uuidv4(),
-        EventId: events[1].id,
-        TagId: tags[0].id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
+
+      //Object of arrays containing grouped junctions by tag
+      let tagJunctions = {
+        rockEvents: this.buildTagJunctions(events.rockEvents, tags.find(x => x.name === enumUtil.genres.rock)),
+        countryEvents: this.buildTagJunctions(events.countryEvents, tags.find(x => x.name === enumUtil.genres.country)),
+        jazzEvents: this.buildTagJunctions(events.jazzEvents, tags.find(x => x.name === enumUtil.genres.jazz)),
+        electronicEvents: this.buildTagJunctions(events.electronicEvents, tags.find(x => x.name === enumUtil.genres.electronic)),
+        reggaeEvents: this.buildTagJunctions(events.reggaeEvents, tags.find(x => x.name === enumUtil.genres.reggae)),
+        danceEvents: this.buildTagJunctions(events.danceEvents, tags.find(x => x.name === enumUtil.genres.dance)),
+        metalEvents: this.buildTagJunctions(events.metalEvents, tags.find(x => x.name === enumUtil.genres.metal)),
+        hiphopEvents: this.buildTagJunctions(events.hiphopEvents, tags.find(x => x.name === enumUtil.genres.hiphop)),
+        popEvents: this.buildTagJunctions(events.popEvents, tags.find(x => x.name === enumUtil.genres.pop)),
+        soloEvents: this.buildTagJunctions(events.soloEvents, tags.find(x => x.name === enumUtil.genres.solo)),
+        instrumentalEvents: this.buildTagJunctions(events.instrumentalEvents, tags.find(x => x.name === enumUtil.genres.instrumental)),
+        rapEvents: this.buildTagJunctions(events.rapEvents, tags.find(x => x.name === enumUtil.genres.rap)),
+        internationalEvents: this.buildTagJunctions(events.internationalEvents, tags.find(x => x.name === enumUtil.genres.international)),
+        bluesEvents: this.buildTagJunctions(events.bluesEvents, tags.find(x => x.name === enumUtil.genres.blues)),
+        classicalEvents: this.buildTagJunctions(events.classicalEvents, tags.find(x => x.name === enumUtil.genres.classical))
+      };
+
+      //Flatten into one array, then return it
+      return Object.values(tagJunctions).flat();
+
   }
+
+
+  /**
+ * Builds Event images by genre
+ * @param {*} events 
+ * @param {*} filename Filename of event image
+ * @returns Array of Event Images
+ */
+  buildEventImages(events, filename) {
+    //Subdirectory on s3 bucket to seed data event images
+    let SUB_DIRECTORY = "seed-event-images/";
+    //Array containing event image objects
+    let arr = [];
+    //Append new junction for each event with the tag specified
+    for (let ev of events) {
+      arr.push(
+        {
+          id: uuidv4(),
+          EventId: ev.id,
+          filename: SUB_DIRECTORY + filename,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+      )
+    }
+    //Return junctions of that tag
+    return arr;
+  }
+
 
   /**
    * Event Image array
-   * @returns
+   * @returns Array of Event Image rows
    */
-  getEventImgs() {
-    return [];
+  getEventImgs(events) {
+
+    let concertCrowdStr = "ConcertCrowd";
+    let imgCount = 1;
+
+    //Object of arrays containing grouped junctions by tag
+    let eventImgs = {
+      rockEvents: this.buildEventImages(events.rockEvents, concertCrowdStr+imgCount++),
+      countryEvents: this.buildEventImages(events.countryEvents, concertCrowdStr+imgCount++),
+      jazzEvents: this.buildEventImages(events.jazzEvents, concertCrowdStr+imgCount++),
+      electronicEvents: this.buildEventImages(events.electronicEvents, concertCrowdStr+imgCount++),
+      reggaeEvents: this.buildEventImages(events.reggaeEvents, concertCrowdStr+imgCount++),
+      danceEvents: this.buildEventImages(events.danceEvents, concertCrowdStr+imgCount++),
+      metalEvents: this.buildEventImages(events.metalEvents, concertCrowdStr+imgCount++),
+      hiphopEvents: this.buildEventImages(events.hiphopEvents, concertCrowdStr+imgCount++),
+      popEvents: this.buildEventImages(events.popEvents, concertCrowdStr+imgCount++),
+      soloEvents: this.buildEventImages(events.soloEvents, concertCrowdStr+imgCount++),
+      instrumentalEvents: this.buildEventImages(events.instrumentalEvents, concertCrowdStr+imgCount++),
+      rapEvents: this.buildEventImages(events.rapEvents, concertCrowdStr+imgCount++),
+      internationalEvents: this.buildEventImages(events.internationalEvents, concertCrowdStr+imgCount++),
+      bluesEvents: this.buildEventImages(events.bluesEvents, concertCrowdStr+imgCount++),
+      classicalEvents: this.buildEventImages(events.classicalEvents, concertCrowdStr+imgCount++)
+    };
+
+    console.log("FILENAME TEST: " + eventImgs.rockEvents[0].filename);
+    console.log("FILENAME TEST: " + eventImgs.countryEvents[0].filename);
+
+    return Object.values(eventImgs).flat();
   }
 
   /**
@@ -2337,14 +2497,14 @@ class SeedData {
     return [
       {
         id: uuidv4(),
-        EventId: events[0].id,
+        EventId: events.rockEvents[0].id,
         ActId: acts[0].id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
         id: uuidv4(),
-        EventId: events[1].id,
+        EventId: events.metalEvents[0].id,
         ActId: acts[0].id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -2363,7 +2523,7 @@ class SeedData {
       {
         id: uuidv4(),
         AttendeeId: attendees[0].id,
-        EventId: events[0].id,
+        EventId: events.rockEvents[0].id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },

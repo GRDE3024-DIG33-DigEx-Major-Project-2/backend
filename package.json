@@ -80,13 +80,13 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon app.js",
     "prod": "cross-env NODE_ENV=production node app.js",
-    "migrate-dev-up": "npx sequelize-cli db:migrate --env development",
+    "migrate-dev-up": "npx sequelize-cli db:migrate --env development --debug",
     "migrate-prod-up": "npx sequelize-cli db:migrate --env production",
-    "migrate-dev-down": "npx sequelize-cli db:migrate:undo:all --env development",
+    "migrate-dev-down": "npx sequelize-cli db:migrate:undo:all --env development --debug",
     "migrate-prod-down": "npx sequelize-cli db:migrate:undo:all --env production",
-    "seed-dev-up": "sequelize db:seed:all --env development",
+    "seed-dev-up": "sequelize db:seed:all --env development --debug",
     "seed-prod-up": "sequelize db:seed:all --env production",
-    "seed-dev-down": "npx sequelize-cli db:seed:undo:all --env development",
+    "seed-dev-down": "npx sequelize-cli db:seed:undo:all --env development --debug",
     "seed-prod-down": "npx sequelize-cli db:seed:undo:all --env production",
     "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\""
   },
