@@ -19,7 +19,6 @@ class EnumUtil {
     draft: "D",
   };
 
-
   //Pre-defined event genres
   genres = {
     rock: "Rock",
@@ -38,9 +37,7 @@ class EnumUtil {
     blues: "Blues",
     indie: "Indie",
     classical: "Classical",
-    
   };
-
 }
 
 //Export EnumUtil

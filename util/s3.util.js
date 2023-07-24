@@ -81,7 +81,7 @@ class S3Utilities {
     await this.uploadFile(imgBuffer, uniqueFilename, mimetype)
       .then((result) => {
         console.log("Profile Image upload success");
-        //console.log(result);
+        console.log(result);
         return uniqueFilename;
       })
       .catch((err) => {

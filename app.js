@@ -1,7 +1,6 @@
 /**
  * Startup file of express app
  *
- * Author: Team X
  */
 
 //IMPORT DEPENDENCIES ---------------------------------------------------------------------------
@@ -16,12 +15,9 @@ const swaggerUi = require("swagger-ui-express");
 //Set port number for app to listen to
 const port = process.env.PORT || 3000;
 
-//Clear console at the beginning of each startup
-//console.clear();
-
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
-app = express();
+const app = express();
 app.use(express.static("public"));
 app.use(express.json());
 app.use(
@@ -48,7 +44,7 @@ const options = {
     openapi: "3.1.0",
     info: {
       title: "Gignet Express API with Swagger",
-      version: "0.1.0",
+      version: "0.2.0",
       description:
         "This is a REST API application for Gigney made with Express and documented with Swagger UI",
       license: {
@@ -63,7 +59,7 @@ const options = {
       },
       //Live HTTPS API through the domain
       {
-        url: "https://gigney.ryanriddiford.com",
+        url: "https://a2.gigney.ryanriddiford.com",
       },
       //Live HTTP API through the EC2 instance
       {

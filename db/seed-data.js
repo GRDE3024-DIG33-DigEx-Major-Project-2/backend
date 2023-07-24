@@ -748,9 +748,6 @@ class SeedData {
    * @returns Object of arrays containing grouped events by genre
    */
   getEvents(organizers) {
-
-
-
     let rockEvents = [
       {
         id: uuidv4(),
@@ -771,8 +768,7 @@ class SeedData {
         purchaseUrl: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      }
-
+      },
     ];
 
     let countryEvents = [
@@ -881,7 +877,6 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
-
     ];
 
     let classicalEvents = [
@@ -906,7 +901,6 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
     ];
-
 
     let jazzEvents = [
       // JAZZ
@@ -1056,7 +1050,6 @@ class SeedData {
       },
     ];
 
-
     let electronicEvents = [
       // ELECTRONIC
       {
@@ -1184,10 +1177,7 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
-
     ];
-
-
 
     let reggaeEvents = [
       // REGGAE
@@ -1404,7 +1394,6 @@ class SeedData {
       },
     ];
 
-
     let metalEvents = [
       // METAL
       {
@@ -1511,7 +1500,6 @@ class SeedData {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
-
     ];
 
     let hiphopEvents = [
@@ -1620,7 +1608,6 @@ class SeedData {
         updatedAt: new Date().toISOString(),
       },
     ];
-
 
     let popEvents = [
       // POP
@@ -2162,7 +2149,6 @@ class SeedData {
       },
     ];
 
-
     let bluesEvents = [
       {
         id: uuidv4(),
@@ -2186,7 +2172,6 @@ class SeedData {
       },
     ];
 
-
     let events = {
       rockEvents: rockEvents,
       countryEvents: countryEvents,
@@ -2202,9 +2187,8 @@ class SeedData {
       rapEvents: rapEvents,
       internationalEvents: internationalEvents,
       bluesEvents: bluesEvents,
-      classicalEvents: classicalEvents
+      classicalEvents: classicalEvents,
     };
-
 
     return events;
   }
@@ -2363,34 +2347,27 @@ class SeedData {
     ];
   }
 
-
-
-
   /**
    * Builds tag-event junction rows for a specific tag
-   * @param {*} events 
-   * @param {*} tag 
+   * @param {*} events
+   * @param {*} tag
    * @returns Array of Event-Tag junction rows
    */
   buildTagJunctions(events, tag) {
     let arr = [];
     //Append new junction for each event with the tag specified
     for (let ev of events) {
-      arr.push(
-        {
-          id: uuidv4(),
-          EventId: ev.id,
-          TagId: tag.id,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      )
+      arr.push({
+        id: uuidv4(),
+        EventId: ev.id,
+        TagId: tag.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     }
     //Return junctions of that tag
     return arr;
   }
-
-
 
   /**
    * Junction for Tags of Events
@@ -2399,38 +2376,80 @@ class SeedData {
    * @returns Array of Event-Tag junction rows
    */
   getTaggedWith(events, tags) {
+    //Object of arrays containing grouped junctions by tag
+    let tagJunctions = {
+      rockEvents: this.buildTagJunctions(
+        events.rockEvents,
+        tags.find((x) => x.name === enumUtil.genres.rock),
+      ),
+      countryEvents: this.buildTagJunctions(
+        events.countryEvents,
+        tags.find((x) => x.name === enumUtil.genres.country),
+      ),
+      jazzEvents: this.buildTagJunctions(
+        events.jazzEvents,
+        tags.find((x) => x.name === enumUtil.genres.jazz),
+      ),
+      electronicEvents: this.buildTagJunctions(
+        events.electronicEvents,
+        tags.find((x) => x.name === enumUtil.genres.electronic),
+      ),
+      reggaeEvents: this.buildTagJunctions(
+        events.reggaeEvents,
+        tags.find((x) => x.name === enumUtil.genres.reggae),
+      ),
+      danceEvents: this.buildTagJunctions(
+        events.danceEvents,
+        tags.find((x) => x.name === enumUtil.genres.dance),
+      ),
+      metalEvents: this.buildTagJunctions(
+        events.metalEvents,
+        tags.find((x) => x.name === enumUtil.genres.metal),
+      ),
+      hiphopEvents: this.buildTagJunctions(
+        events.hiphopEvents,
+        tags.find((x) => x.name === enumUtil.genres.hiphop),
+      ),
+      popEvents: this.buildTagJunctions(
+        events.popEvents,
+        tags.find((x) => x.name === enumUtil.genres.pop),
+      ),
+      soloEvents: this.buildTagJunctions(
+        events.soloEvents,
+        tags.find((x) => x.name === enumUtil.genres.solo),
+      ),
+      instrumentalEvents: this.buildTagJunctions(
+        events.instrumentalEvents,
+        tags.find((x) => x.name === enumUtil.genres.instrumental),
+      ),
+      rapEvents: this.buildTagJunctions(
+        events.rapEvents,
+        tags.find((x) => x.name === enumUtil.genres.rap),
+      ),
+      internationalEvents: this.buildTagJunctions(
+        events.internationalEvents,
+        tags.find((x) => x.name === enumUtil.genres.international),
+      ),
+      bluesEvents: this.buildTagJunctions(
+        events.bluesEvents,
+        tags.find((x) => x.name === enumUtil.genres.blues),
+      ),
+      classicalEvents: this.buildTagJunctions(
+        events.classicalEvents,
+        tags.find((x) => x.name === enumUtil.genres.classical),
+      ),
+    };
 
-      //Object of arrays containing grouped junctions by tag
-      let tagJunctions = {
-        rockEvents: this.buildTagJunctions(events.rockEvents, tags.find(x => x.name === enumUtil.genres.rock)),
-        countryEvents: this.buildTagJunctions(events.countryEvents, tags.find(x => x.name === enumUtil.genres.country)),
-        jazzEvents: this.buildTagJunctions(events.jazzEvents, tags.find(x => x.name === enumUtil.genres.jazz)),
-        electronicEvents: this.buildTagJunctions(events.electronicEvents, tags.find(x => x.name === enumUtil.genres.electronic)),
-        reggaeEvents: this.buildTagJunctions(events.reggaeEvents, tags.find(x => x.name === enumUtil.genres.reggae)),
-        danceEvents: this.buildTagJunctions(events.danceEvents, tags.find(x => x.name === enumUtil.genres.dance)),
-        metalEvents: this.buildTagJunctions(events.metalEvents, tags.find(x => x.name === enumUtil.genres.metal)),
-        hiphopEvents: this.buildTagJunctions(events.hiphopEvents, tags.find(x => x.name === enumUtil.genres.hiphop)),
-        popEvents: this.buildTagJunctions(events.popEvents, tags.find(x => x.name === enumUtil.genres.pop)),
-        soloEvents: this.buildTagJunctions(events.soloEvents, tags.find(x => x.name === enumUtil.genres.solo)),
-        instrumentalEvents: this.buildTagJunctions(events.instrumentalEvents, tags.find(x => x.name === enumUtil.genres.instrumental)),
-        rapEvents: this.buildTagJunctions(events.rapEvents, tags.find(x => x.name === enumUtil.genres.rap)),
-        internationalEvents: this.buildTagJunctions(events.internationalEvents, tags.find(x => x.name === enumUtil.genres.international)),
-        bluesEvents: this.buildTagJunctions(events.bluesEvents, tags.find(x => x.name === enumUtil.genres.blues)),
-        classicalEvents: this.buildTagJunctions(events.classicalEvents, tags.find(x => x.name === enumUtil.genres.classical))
-      };
-
-      //Flatten into one array, then return it
-      return Object.values(tagJunctions).flat();
-
+    //Flatten into one array, then return it
+    return Object.values(tagJunctions).flat();
   }
 
-
   /**
- * Builds Event images by genre
- * @param {*} events 
- * @param {*} filename Filename of event image
- * @returns Array of Event Images
- */
+   * Builds Event images by genre
+   * @param {*} events
+   * @param {*} filename Filename of event image
+   * @returns Array of Event Images
+   */
   buildEventImages(events, filename) {
     //Subdirectory on s3 bucket to seed data event images
     let SUB_DIRECTORY = "seed-event-images/";
@@ -2438,52 +2457,89 @@ class SeedData {
     let arr = [];
     //Append new junction for each event with the tag specified
     for (let ev of events) {
-      arr.push(
-        {
-          id: uuidv4(),
-          EventId: ev.id,
-          filename: SUB_DIRECTORY + filename,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      )
+      arr.push({
+        id: uuidv4(),
+        EventId: ev.id,
+        filename: SUB_DIRECTORY + filename,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     }
     //Return junctions of that tag
     return arr;
   }
-
 
   /**
    * Event Image array
    * @returns Array of Event Image rows
    */
   getEventImgs(events) {
-
     let concertCrowdStr = "ConcertCrowd";
     let imgCount = 1;
 
     //Object of arrays containing grouped junctions by tag
     let eventImgs = {
-      rockEvents: this.buildEventImages(events.rockEvents, concertCrowdStr+imgCount++),
-      countryEvents: this.buildEventImages(events.countryEvents, concertCrowdStr+imgCount++),
-      jazzEvents: this.buildEventImages(events.jazzEvents, concertCrowdStr+imgCount++),
-      electronicEvents: this.buildEventImages(events.electronicEvents, concertCrowdStr+imgCount++),
-      reggaeEvents: this.buildEventImages(events.reggaeEvents, concertCrowdStr+imgCount++),
-      danceEvents: this.buildEventImages(events.danceEvents, concertCrowdStr+imgCount++),
-      metalEvents: this.buildEventImages(events.metalEvents, concertCrowdStr+imgCount++),
-      hiphopEvents: this.buildEventImages(events.hiphopEvents, concertCrowdStr+imgCount++),
-      popEvents: this.buildEventImages(events.popEvents, concertCrowdStr+imgCount++),
-      soloEvents: this.buildEventImages(events.soloEvents, concertCrowdStr+imgCount--),
-      instrumentalEvents: this.buildEventImages(events.instrumentalEvents, concertCrowdStr+imgCount--),
-      rapEvents: this.buildEventImages(events.rapEvents, concertCrowdStr+imgCount--),
-      internationalEvents: this.buildEventImages(events.internationalEvents, concertCrowdStr+imgCount--),
-      bluesEvents: this.buildEventImages(events.bluesEvents, concertCrowdStr+imgCount--),
-      classicalEvents: this.buildEventImages(events.classicalEvents, concertCrowdStr+imgCount--)
+      rockEvents: this.buildEventImages(
+        events.rockEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      countryEvents: this.buildEventImages(
+        events.countryEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      jazzEvents: this.buildEventImages(
+        events.jazzEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      electronicEvents: this.buildEventImages(
+        events.electronicEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      reggaeEvents: this.buildEventImages(
+        events.reggaeEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      danceEvents: this.buildEventImages(
+        events.danceEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      metalEvents: this.buildEventImages(
+        events.metalEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      hiphopEvents: this.buildEventImages(
+        events.hiphopEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      popEvents: this.buildEventImages(
+        events.popEvents,
+        concertCrowdStr + imgCount++,
+      ),
+      soloEvents: this.buildEventImages(
+        events.soloEvents,
+        concertCrowdStr + imgCount--,
+      ),
+      instrumentalEvents: this.buildEventImages(
+        events.instrumentalEvents,
+        concertCrowdStr + imgCount--,
+      ),
+      rapEvents: this.buildEventImages(
+        events.rapEvents,
+        concertCrowdStr + imgCount--,
+      ),
+      internationalEvents: this.buildEventImages(
+        events.internationalEvents,
+        concertCrowdStr + imgCount--,
+      ),
+      bluesEvents: this.buildEventImages(
+        events.bluesEvents,
+        concertCrowdStr + imgCount--,
+      ),
+      classicalEvents: this.buildEventImages(
+        events.classicalEvents,
+        concertCrowdStr + imgCount--,
+      ),
     };
-
-    console.log("FILENAME TEST: " + eventImgs.soloEvents[0].filename);
-    console.log("FILENAME TEST: " + eventImgs.instrumentalEvents[0].filename);
-    console.log("FILENAME TEST: " + eventImgs.classicalEvents[0].filename);
 
     return Object.values(eventImgs).flat();
   }

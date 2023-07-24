@@ -13,7 +13,6 @@ module.exports = {
    * @param {*} Sequelize
    */
   async up(queryInterface, Sequelize) {
-
     //Get user data (Attendees and Organizers)
     let organizers = SeedData.getOrganizers();
     let attendees = SeedData.getAttendees();
@@ -21,10 +20,10 @@ module.exports = {
     let events = SeedData.getEvents(organizers);
     let tickets = SeedData.getTicketTypes();
     let tags = SeedData.getTags();
-    let acts = SeedData.getActs(); 
+    let acts = SeedData.getActs();
     let eventTickets = SeedData.getEventTickets(events, tickets);
     let taggedWith = SeedData.getTaggedWith(events, tags);
-    let eventImgs = SeedData.getEventImgs(events);   
+    let eventImgs = SeedData.getEventImgs(events);
     let eventActs = SeedData.getEventActs(events, acts);
     //Get junction data for Attendee and Event
     let favouritedBy = SeedData.getFavouritedBy(attendees, events);

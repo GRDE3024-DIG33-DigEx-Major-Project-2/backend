@@ -67,7 +67,7 @@ class CreateUserHandler {
    * @returns {boolean | any} TRUE if email is taken, FALSE if not
    */
   async IsEmailTaken(userType, email, res) {
-    let result;
+    let result = true;
     //Check Attendees for the email
     if (userType == enumUtil.userTypes.attendee)
       await Attendee.findOne({ where: { email: email } })
