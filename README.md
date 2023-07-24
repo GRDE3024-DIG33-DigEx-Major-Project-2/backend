@@ -82,8 +82,10 @@ This is a setup guide on how to run the backend application on your localhost
 
 
 
+
+
 # GIGNEY BACKEND
-This is the backend REST API for Gigeny
+This is the backend REST API for Gigney
 
 # LIVE URLS
 A2: https://a2.gigney.ryanriddiford.com
@@ -98,12 +100,8 @@ https://swagger.io/docs/specification/about/
 Sequelize Migrations and Seeding Docs:
 https://sequelize.org/docs/v6/other-topics/migrations/
 
-//EXAMPLE
-//   Man.hasOne(RightArm);      // ManId in RigthArm
-//   RightArm.belongsTo(Man);   // ManId in RigthArm
 
-
-# FOLDERS
+# FOLDERS -- OUTDATED
 - db
     - Database ORM configurations.
 - db/models 
@@ -127,10 +125,6 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
-* Delete image access
-* Seed event data and images
-* Endpoint testing and patching
-* Set up A3 api app
 - Searching events
     - Search event start date ordering (THINK ABOUT ENDED EVENTS)
     - Ticket price filter
@@ -144,6 +138,9 @@ Other
     - A3 Group and Independent report
     - Code comments + cleanup
     - Update JSDocs and api doc Swagger UI
+    - Set up A3 api app
+    - Endpoint testing and debugging
+    - Endpoint request body validation middleware
 
 
 # RYAN-FRONTEND TASKS
@@ -155,68 +152,52 @@ Other
 - Finish connecting search event data in frontend
 
 
-# BACKLOG
+# BACKEND BACKLOG
+- Seed user profile images
+- Access Denied on S3 Bucket object delete (this was working prior)
 - Dynamic search with filter change
-- Is Free Event?
-- Phone number field formatting for Organizers
+- Handling if event is free or paid
 - Phone number field formatting for Organizers
 - Finish off backend search event filters
-- Get events by filters
 - Better security for secrets/credentials in dev and prod environments
-- Next seed data iteration
+- Seed data third iteration
 - Dynamic tag creation
 - JWT Refresh Token
-- Better location filter
+- Revamp location filter to use more than just the City field
 - createResult bug in update event handler for act arr and ticketType arr
 - Clean up image extension and resize handling
-- Rollback transactions through Sequelize
-- Fix up comments so they have the correct meaning
-- Exclude password hash in db Organizer/Attendee response JSON
-- Remove password hash from user access token
-- Fix Migrations Down function
-- **CONFIGURE AUTHORIZATION HEADER FUNCTIONALITY IN SWAGGER UI**
-- **MIGRATIONS FILE**
-- **A2/A3 SUBDIRECTORY**
-
-
 
 
 # PREVIOUS TASKS
+- Seed event images
+- Rollback transactions through Sequelize
+- Seed data second iteration
+- Exclude password hash in db Organizer/Attendee response JSON
+- Remove password hash from user access token
+- Fix Migrations Down function
 - Venue filter
 - City filter
 - BUG - WHEN UPDATING EVENT AND SENDING EXISTING IMAGE THAT YOU DONT WANT CHANGED, THE RESPONSE FOR EVENTIMG IS NULL REGARDLESS OF ADJUSTMENTS
-- Url VIRTUAL field consistency
-- Ammend readme guide with db/config/config.json explanation
-- ~~Registration endpoint ~~
-- ~~Login endpoint~~
-- ~~Password encryption/decryption~~
-- ~~JWT config~~
-- ~~Begin pseudocode (and code) for for endpoints for features~~
-- ~~Initial Seed Data~~
+- Registration endpoint
+- Login endpoint
+- Password encryption/decryption
+- JWT setup
+- Begin pseudocode (and skeleton code) for endpoints
+- Initial Seed Data
 - Create event
 - Get Event By ID
-- Add pre-set tags for now
+- Pre-set tags
 - Enum helpers for reusability (example being userType field)
-- Delete Attendee (cascading deletes)
-- Delete Organizer (cascading deletes)
-- Delete Event (cascading deletes)
+- Delete Attendee
+- Delete Organizer
+- Delete Event
 - Profile image add/update/delete
 - Event image add/update/delete
-- Helper functions
--  Get your favourited/owned events
--  Toggle event favourite
--  Update event
+- Get your favourited/owned events
+- Toggle event favourite
+- Update event
 - Delete old image in update endpoints
-- Update event image handling + test
+- Update event image handling
 - Profile image upload in post and put endpoints
-- **AWS ORG INSTEAD?**
-- **Confirm if Performer table will be used**
-- **Should we have existing act checks, or just create a new act instance every time?**
-- **Implement JWT token values in endpoints**
-- **TRELLO BOARD DIVYING TASKS?**
-- **S3 BUCKET PERMISSIONS**
-- **CONFIRM IF EVENTS WILL HAVE MULTIPLE IMAGES**
-
-# OTHER NOTES AND REMINDERS
-- Notice the sub extention on some files (test.route.js as an example). I find it makes things a bit more organized and easier to understand.
-- Some AWS services (S3 in particular) may not work properly as I may need to add a better way of sharing access.
+- Implement JWT token values in endpoints
+- S3 BUCKET PERMISSIONS
