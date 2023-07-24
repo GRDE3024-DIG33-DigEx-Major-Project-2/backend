@@ -2473,16 +2473,17 @@ class SeedData {
       metalEvents: this.buildEventImages(events.metalEvents, concertCrowdStr+imgCount++),
       hiphopEvents: this.buildEventImages(events.hiphopEvents, concertCrowdStr+imgCount++),
       popEvents: this.buildEventImages(events.popEvents, concertCrowdStr+imgCount++),
-      soloEvents: this.buildEventImages(events.soloEvents, concertCrowdStr+imgCount++),
-      instrumentalEvents: this.buildEventImages(events.instrumentalEvents, concertCrowdStr+imgCount++),
-      rapEvents: this.buildEventImages(events.rapEvents, concertCrowdStr+imgCount++),
-      internationalEvents: this.buildEventImages(events.internationalEvents, concertCrowdStr+imgCount++),
-      bluesEvents: this.buildEventImages(events.bluesEvents, concertCrowdStr+imgCount++),
-      classicalEvents: this.buildEventImages(events.classicalEvents, concertCrowdStr+imgCount++)
+      soloEvents: this.buildEventImages(events.soloEvents, concertCrowdStr+imgCount--),
+      instrumentalEvents: this.buildEventImages(events.instrumentalEvents, concertCrowdStr+imgCount--),
+      rapEvents: this.buildEventImages(events.rapEvents, concertCrowdStr+imgCount--),
+      internationalEvents: this.buildEventImages(events.internationalEvents, concertCrowdStr+imgCount--),
+      bluesEvents: this.buildEventImages(events.bluesEvents, concertCrowdStr+imgCount--),
+      classicalEvents: this.buildEventImages(events.classicalEvents, concertCrowdStr+imgCount--)
     };
 
-    console.log("FILENAME TEST: " + eventImgs.rockEvents[0].filename);
-    console.log("FILENAME TEST: " + eventImgs.countryEvents[0].filename);
+    console.log("FILENAME TEST: " + eventImgs.soloEvents[0].filename);
+    console.log("FILENAME TEST: " + eventImgs.instrumentalEvents[0].filename);
+    console.log("FILENAME TEST: " + eventImgs.classicalEvents[0].filename);
 
     return Object.values(eventImgs).flat();
   }
