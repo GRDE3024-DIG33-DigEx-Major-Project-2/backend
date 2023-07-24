@@ -47,7 +47,7 @@ class S3Utilities {
   async uploadEventImg(uniqueFilename, buffer, mimetype) {
     //Sharp-processed image buffer
     let imgBuffer = await sharp(buffer)
-      .resize(320, 320)
+      .resize(350, 350)
       .jpeg({ quality: 80 })
       .withMetadata()
       .toBuffer();
@@ -73,10 +73,7 @@ class S3Utilities {
   async uploadProfileImage(uniqueFilename, buffer, mimetype) {
     //Sharp-processed image buffer
     let imgBuffer = await sharp(buffer)
-      .resize({
-        fit: sharp.fit.contain,
-        width: 600,
-      })
+      .resize(1440, 548)
       .jpeg({ quality: 80 })
       .withMetadata()
       .toBuffer();
