@@ -57,13 +57,17 @@ const options = {
       {
         url: `http://localhost:3000`,
       },
-      //Live HTTPS API through the domain
+      //A2 -- Live HTTPS API through the domain
       {
         url: "https://a2.gigney.ryanriddiford.com",
       },
-      //Live HTTP API through the EC2 instance
+      //A2 -- Live HTTP API through the EC2 instance
       {
         url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com",
+      },
+      //A3 Live HTTPS API through the domain
+      {
+        url: "https://a2.gigney.ryanriddiford.com",
       },
     ],
   },
