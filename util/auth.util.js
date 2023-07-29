@@ -40,18 +40,39 @@ class AuthUtils {
   }
 
   /**
-   * Generates a JWT that is used for authenticating user
+   * Generates a JWT access token that is used for authenticating user
    * @param {*} user The user requesting the JWT
    * @returns {String} JWT that identifies the user
    */
-  generateJWT(user) {
+  generateAccessToken(user) {
     return jwt.sign(
       {
         user: user,
       },
-      process.env.JWTSECRET,
+      process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "30min",
+        expiresIn: "1min",
+        issuer: "gigney",
+        audience: user.email,
+      },
+    );
+  }
+
+  /**
+   * Generates a JWT refresh token that is used for creating access tokens
+   * @param {*} user The user requesting the JWT
+   * @returns {String} JWT that identifies the user
+   */
+  generateRefreshToken(user) {
+    return jwt.sign(
+      {
+        user: user,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "1y",
+        issuer: "gigney",
+        audience: user.email,
       },
     );
   }
@@ -61,9 +82,9 @@ class AuthUtils {
    * @param {*} token
    * @returns Returns decoded token result
    */
-  decodeJWT(token) {
+  decodeJWT(token, secret) {
     //Verify JWT
-    return jwt.verify(token, process.env.JWTSECRET, (err, tokenData) => {
+    return jwt.verify(token, secret, (err, tokenData) => {
       //Token invalid, return false
       if (err) {
         console.log(err);

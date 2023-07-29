@@ -27,40 +27,11 @@ class EventController {
    * @param {*} res
    */
   Create = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
+    //User data from access token
+    let tokenData = req.user;
     //S3 filename of image, excluding the extension
     let eventImgFilename = "";
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Prevent non-organizers from creating events
-    if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
-      const msg = "Only Organizers may create events";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
+
     //Upload event image
     if (req.file && req.file.buffer) {
       eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
@@ -77,13 +48,14 @@ class EventController {
         });
       }
     }
+
     //Create Event-related tables
     try {
       const result = await db.transaction(async (t) => {
         const eventData = await CreateEventHandler.Create(
           req.body,
           eventImgFilename,
-          decodedToken.user,
+          tokenData.user,
           t,
         );
         //Send back 201 status wih the newly created event instance
@@ -111,40 +83,11 @@ class EventController {
    * @param {*} res
    */
   Update = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
+    //User data from access token
+    let tokenData = req.user;
     //S3 filename of image, excluding the extension
     let eventImgFilename = "";
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Prevent non-organizers from updating events
-    if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
-      const msg = "Only Organizers may create events";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
+
     //Upload event image
     if (req.file && req.file.buffer) {
       eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
@@ -210,7 +153,7 @@ class EventController {
         const eventData = await UpdateEventHandler.Update(
           req.body,
           eventImgFilename,
-          decodedToken.user,
+          tokenData.user,
           t,
         );
 
@@ -247,10 +190,22 @@ class EventController {
   GetById = async (req, res) => {
     let eventId = req.params.id;
     let event;
+    console.log("Getting event");
     try {
       const result = await db.transaction(async (t) => {
         await GetEventHandler.FindOneById(eventId, res, t).then((data) => {
-          event = data;
+          console.log("processing data");
+          console.log(data);
+          //Found event
+          if (data != null) {
+            event = data;
+          }
+          //No event with that id found
+          else {
+            res.status(400).json({
+              msg: "The event with that id doesn't exist",
+            });
+          }
         });
       });
     } catch (err) {
@@ -271,48 +226,25 @@ class EventController {
    * @param {*} res
    */
   ToggleFavourite = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Prevent non-attendees from favouriting events
-    if (decodedToken.user.userType != enumUtil.userTypes.attendee) {
-      const msg = "Only Attendees may favourite events";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
+    //User data from access token
+    let tokenData = req.user.user;
+
+    //Not an Event-associated id -- send 400 error response
+    if ((await Event.findByPk(req.body.eventId)) == null)
+      return res
+        .status(400)
+        .json({ msg: "Event ID is not associated with an Event" });
 
     //Look for existing favourite association
     await FavouritedBy.findOne({
-      where: { AttendeeId: decodedToken.user.id, EventId: req.body.eventId },
+      where: { AttendeeId: tokenData.id, EventId: req.body.eventId },
     }).then(async (junction) => {
+      console.log("INSIDE AWAIT: " + junction);
       //Not favourited, therefore add new junction
       if (junction == null) {
         let result = await FavouritedBy.create({
           EventId: req.body.eventId,
-          AttendeeId: decodedToken.user.id,
+          AttendeeId: tokenData.id,
         });
         console.log("Favourited event: ", result);
         //Send back 200 status after creating junction
@@ -334,38 +266,8 @@ class EventController {
    * @param {*} res
    */
   GetFavourites = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Only attendees have a favourites list
-    if (decodedToken.user.userType != enumUtil.userTypes.attendee) {
-      const msg = "Only attendees have a favourites list";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
+    //User data from access token
+    let tokenData = req.user;
 
     //The limit of events to return
     let limit = constantsUtil.PAGE_LIMIT;
@@ -381,7 +283,7 @@ class EventController {
         //Counts number of pages
         await FavouritedBy.count({
           where: {
-            AttendeeId: decodedToken.user.id,
+            AttendeeId: tokenData.user.id,
           },
           transaction: t,
         }).then((result) => {
@@ -392,7 +294,7 @@ class EventController {
         //Find page of attendee-event junctions
         await FavouritedBy.findAll({
           where: {
-            AttendeeId: decodedToken.user.id,
+            AttendeeId: tokenData.user.id,
           },
           transaction: t,
           offset: offset,
@@ -438,38 +340,8 @@ class EventController {
    * @param {*} res
    */
   GetOwnedEvents = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Only Organizers have owned events
-    if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
-      const msg = "Only Organizers have owned events";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
+    //User data from access token
+    let tokenData = req.user.user;
 
     //The limit of events to return
     let limit = constantsUtil.PAGE_LIMIT;
@@ -485,7 +357,7 @@ class EventController {
         //Counts number of pages
         await Event.count({
           where: {
-            OrganizerId: decodedToken.user.id,
+            OrganizerId: tokenData.id,
           },
           transaction: t,
         }).then((result) => {
@@ -496,7 +368,7 @@ class EventController {
         //Find page of owned events event rows
         await Event.findAll({
           where: {
-            OrganizerId: decodedToken.user.id,
+            OrganizerId: tokenData.id,
           },
           transaction: t,
           offset: offset,
@@ -541,13 +413,6 @@ class EventController {
    * @param {*} res
    */
   SearchEvents = async (req, res) => {
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-
     //Number of pages that meet the search criteria
     let numPages = 0;
     //Array of owned events for page
@@ -980,36 +845,12 @@ class EventController {
   DeleteEvent = async (req, res) => {
     //The id of the event to delete
     let eventId = req.params.id;
-    //Decoded access token data
-    let decodedToken;
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
-    //Prevent non-organizers from deleting events
-    if (decodedToken.user.userType != enumUtil.userTypes.organizer) {
-      const msg = "Only Organizers may delete events";
-      console.log(msg);
-      return res.status(403).json({
-        msg: msg,
-      });
-    }
-
+    //User data from access token
+    let tokenData = req.user;
+    console.log("Finding event to delete");
     //Verify that the user owns the Event requesting deletion
     let event = await Event.findByPk(eventId);
-    if (event.dataValues.OrganizerId != decodedToken.user.id) {
+    if (event.dataValues.OrganizerId != tokenData.user.id) {
       const msg = "Organizer is not associated with the Event specified";
       console.log(msg);
       return res.status(403).json({

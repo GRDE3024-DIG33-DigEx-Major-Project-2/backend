@@ -28,13 +28,6 @@ class UserController {
    * @param {*} res
    */
   Create = async (req, res) => {
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "The user content is empty!",
-      });
-    }
-
     //Find if an Attendee or Organizer is already associated with the email
     let isAttendee = await CreateUserHandler.IsEmailTaken(
       enumUtil.userTypes.attendee,
@@ -50,12 +43,12 @@ class UserController {
     //If email is taken regardless of user type, return 400 response
     if (isAttendee == true || isOrganiser == true) {
       let msg = "Email is taken already";
-
       console.log(msg);
       return res.status(400).json({
         msg: msg,
       });
     }
+
     //Create user in db
     let user = await CreateUserHandler.CreateUser(req.body, res);
     //Send back 201 status wih the newly created user instance
@@ -68,32 +61,11 @@ class UserController {
    * @param {*} res
    */
   Update = async (req, res) => {
-    //Decoded access token data
-    let decodedToken;
+    //User data from access token
+    let tokenData = req.user;
     //S3 filename of image, excluding the extension
     let profileImgFilename = "";
-    //If body is empty, send 400 response
-    if (!Object.keys(req.body).length) {
-      return res.status(400).json({
-        msg: "Request body is empty!",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
+
     //Upload profile image
     if (req.file && req.file.buffer) {
       profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
@@ -106,11 +78,8 @@ class UserController {
         );
 
         //Existing profile image exists, delete it
-        if (
-          decodedToken.user.imgFilename != null &&
-          decodedToken.user.imgFilename != ""
-        ) {
-          s3Util.deleteProfileImage(decodedToken.user.imgFilename);
+        if (tokenData.imgFilename != null && tokenData.imgFilename != "") {
+          s3Util.deleteProfileImage(tokenData.imgFilename);
           console.log("Old profile image deleted");
         }
       } catch (error) {
@@ -123,11 +92,11 @@ class UserController {
 
     //Remove image without replacement
     try {
-      if (req.body.imgFilename == "" && decodedToken.user.imgFilename != "") {
+      if (req.body.imgFilename == "" && tokenData.imgFilename != "") {
         //If profile image is flagged for removal
         if (req.body.removeImg == true) {
           await s3Util
-            .deleteProfileImage(decodedToken.user.imgFilename)
+            .deleteProfileImage(tokenData.imgFilename)
             .then((result) => {
               console.log("Old profile image deleted without replacement");
               console.log(result);
@@ -149,15 +118,20 @@ class UserController {
         newData = await UpdateUserHandler.Update(
           req.body,
           profileImgFilename,
-          decodedToken.user,
+          tokenData,
           t,
         );
         console.log("User updated!");
 
         //Send back 201 status wih the newly updated access token
-        const token = authUtil.generateJWT(newData);
+        const accessToken = authUtil.generateAccessToken(newData);
+        const refreshToken = authUtil.generateRefreshToken(newData);
+
+        //Set refresh token as HTTP Only cookie
+        res.cookie("refreshToken", refreshToken, { httpOnly: true });
+
         return res.status(201).json({
-          accessToken: token,
+          accessToken: accessToken,
           user: newData,
         });
       });
@@ -180,51 +154,30 @@ class UserController {
    * @param {*} res
    */
   ResetPassword = async (req, res) => {
-    let decodedToken;
+    //The user row in the db
     let user;
-
-    //Check for old password and new password in body
-    if (!req.body.oldPassword || !req.body.newPassword) {
-      return res.status(400).json({
-        msg: "Please provide an old password and new password",
-      });
-    }
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
+    //User data from access token
+    let tokenData = req.user;
 
     //Find the user in the db for password verification
-    if (decodedToken.user.userType == enumUtil.userTypes.attendee)
-      user = await Attendee.findByPk(decodedToken.user.id);
-    else if (decodedToken.user.userType == enumUtil.userTypes.organizer)
-      user = await Organizer.findByPk(decodedToken.user.id);
+    if (tokenData.userType == enumUtil.userTypes.attendee)
+      user = await Attendee.findByPk(tokenData.id);
+    else if (tokenData.userType == enumUtil.userTypes.organizer)
+      user = await Organizer.findByPk(tokenData.id);
 
     //Verify current password
     if (authUtil.verify(req.body.oldPassword, user.password)) {
       //Update the user's password
       try {
         const result = await db.transaction(async (t) => {
-          if (decodedToken.user.userType == enumUtil.userTypes.attendee) {
+          if (tokenData.userType == enumUtil.userTypes.attendee) {
             await Attendee.update(
               {
                 password: req.body.newPassword,
               },
               {
                 where: {
-                  id: decodedToken.user.id,
+                  id: tokenData.id,
                 },
               },
             ).then((value) => {
@@ -233,16 +186,14 @@ class UserController {
                 .status(200)
                 .json({ msg: "Successfully updated password" });
             });
-          } else if (
-            decodedToken.user.userType == enumUtil.userTypes.organizer
-          ) {
+          } else if (tokenData.userType == enumUtil.userTypes.organizer) {
             await Organizer.update(
               {
                 password: req.body.newPassword,
               },
               {
                 where: {
-                  id: decodedToken.user.id,
+                  id: tokenData.id,
                 },
               },
             ).then((value) => {
@@ -277,31 +228,13 @@ class UserController {
    * @returns
    */
   Delete = async (req, res) => {
-    let decodedToken;
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-    //Get JWT from the authorization header
-    const token = req.headers.authorization.split(" ")[1];
-    //Retrieve user data from access token
-    try {
-      decodedToken = authUtil.decodeJWT(token);
-    } catch (err) {
-      //Log error, send error response
-      const msg = "Failed to verify access token";
-      console.log(msg, err);
-      return res.status(500).json({
-        msg: msg,
-        error: err,
-      });
-    }
+    //User data from access token
+    let tokenData = req.user.user;
 
     //Delete User-related data and images
     try {
       const result = await db.transaction(async (t) => {
-        const deleteResult = await DeleteUserHandler.Delete(
-          decodedToken.user,
-          t,
-        );
+        const deleteResult = await DeleteUserHandler.Delete(tokenData, t);
         //Send back 200 status once user has been deleted
         return res.status(200).json(deleteResult);
       });

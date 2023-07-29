@@ -37,13 +37,12 @@ class GetEventHandler {
       //Find event
       await Event.findOne({ where: { id: eventId }, transaction: transaction })
         .then(async (event) => {
+          console.log("check 1");
+          console.log(event);
           //Event not found
           if (event == null) {
-            const msg = "Failed to find event";
-            console.log(msg);
-            return res.status(500).json({
-              msg: msg,
-            });
+            console.log("is null check");
+            return null;
           }
           data.event = event.dataValues;
 
@@ -141,13 +140,13 @@ class GetEventHandler {
     } catch (err) {
       const msg = "Failed to find event-related tables by id";
       console.log(msg, err);
-      res.status(500).json({
+      return res.status(500).json({
         msg: msg,
         error: err,
       });
     }
     //Return event obj
-    return data;
+    if (data.event != null) return data;
   }
 
   /**

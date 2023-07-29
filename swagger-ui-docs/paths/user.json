@@ -1,0 +1,106 @@
+{
+  "/user/register": {
+    "post": {
+      "description": "Register a new user. userType can equal organizer or attendee. firstName, lastName, and dob are Attendees-only. organizationName is Organizer-only.",
+      "tags": ["User Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Register"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "User created, returns the user object in JSON"
+        },
+        "400": {
+          "description": "A problem occurred when trying to register a new user"
+        }
+      }
+    }
+  },
+  "/user/reset-password": {
+    "put": {
+      "description": "Resets the user's password. BEARER TOKEN REQUIRED.",
+      "tags": ["User Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResetPassword"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "User password successfully updated"
+        },
+        "400": {
+          "description": "A problem occurred when trying to reset the password"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  },
+  "/user": {
+    "put": {
+      "description": "Update the user. BEARER TOKEN REQUIRED. Fields may be inaccurate in documentation.",
+      "tags": ["User Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/UpdateUser"
+            }
+          },
+          "encoding": {
+            "profile-img": {
+              "contentType": "image/png, image/jpeg"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": null
+        },
+        "400": {
+          "description": "A problem occurred when trying to update the user"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    },
+    "delete": {
+      "description": "Delete the user. BEARER TOKEN REQUIRED.",
+      "tags": ["User Route"],
+      "responses": {
+        "201": {
+          "description": null
+        },
+        "400": {
+          "description": "A problem occurred when trying to delete the user"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  }
+}

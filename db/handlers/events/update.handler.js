@@ -85,29 +85,28 @@ class UpdateEventHandler {
   async UpdateEvent(event, currUser, transaction) {
     let updatedEvent;
 
-    await Event.update(
-      {
-        title: event.title,
-        venueName: event.venueName,
-        description: event.description,
-        summary: event.summary,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        address: event.address,
-        city: event.city,
-        region: event.region,
-        postcode: event.postcode,
-        country: event.country,
-        isFree: event.isFree,
-        purchaseUrl: event.purchaseUrl,
+    //Initialise update data object with correct fields
+    let updateData = {};
+    if (event.title) updateData.title = event.title;
+    if (event.venueName) updateData.venueName = event.venueName;
+    if (event.description) updateData.description = event.description;
+    if (event.summary) updateData.summary = event.summary;
+    if (event.startDate) updateData.startDate = event.startDate;
+    if (event.endDate) updateData.endDate = event.endDate;
+    if (event.address) updateData.address = event.address;
+    if (event.city) updateData.city = event.city;
+    //if (event.region) updateData.region = event.region;
+    if (event.postcode) updateData.postcode = event.postcode;
+    if (event.country) updateData.country = event.country;
+    if (event.isFree) updateData.isFree = event.isFree;
+    if (event.purchaseUrl) updateData.purchaseUrl = event.purchaseUrl;
+
+    await Event.update(updateData, {
+      transaction: transaction,
+      where: {
+        OrganizerId: currUser.id,
       },
-      {
-        transaction: transaction,
-        where: {
-          OrganizerId: currUser.id,
-        },
-      },
-    ).then(async (numFieldsChanged) => {
+    }).then(async (numFieldsChanged) => {
       //Return the updated event row
       console.log(event.id);
       await Event.findByPk(event.id).then((value) => {
@@ -131,18 +130,17 @@ class UpdateEventHandler {
       where: { EventId: eventId },
     });
 
+    //Initialise update data object with correct fields
+    let updateData = {};
+    if (eventImgFilename) updateData.filename = eventImgFilename;
+
     //If Event Image exists, update it
     if (existingImg != null) {
       console.log("Updating existing EventImage");
-      await EventImage.update(
-        {
-          filename: eventImgFilename,
-        },
-        {
-          transaction: transaction,
-          where: { EventId: eventId },
-        },
-      ).then(async (numFieldsChanged) => {
+      await EventImage.update(updateData, {
+        transaction: transaction,
+        where: { EventId: eventId },
+      }).then(async (numFieldsChanged) => {
         //Return the updated event row
         updatedEventImg = await EventImage.findOne({
           where: { EventId: eventId },
@@ -196,7 +194,8 @@ class UpdateEventHandler {
         oldIds = oldJunctions.map((x) => x.dataValues.TagId);
 
         //Build array of new junction tag ids
-        newIds = newTags.map((x) => x.id);
+        if (Array.isArray(newTags)) newIds = newTags.map((x) => x.id);
+        else newIds = [];
 
         //Remove disassociated tags from junction table
         for (let oldId of oldIds) {
@@ -260,27 +259,28 @@ class UpdateEventHandler {
     let values = [];
 
     //Update acts in db
-    if (updatedActs != null)
+    if (Array.isArray(updatedActs))
       for (let updatedAct of updatedActs)
-        await Act.update(
-          {
-            name: updatedAct.name,
-          },
-          {
-            transaction: transaction,
-            returning: true,
-            where: { id: updatedAct.id },
-          },
-        )
-          //Add updated record to array
-          .then((updateResult) => {
-            console.log("Updated act");
-            console.log(updateResult[1]);
-            values.push(updateResult[1]);
-          });
+        if (updatedAct.name)
+          await Act.update(
+            {
+              name: updatedAct.name,
+            },
+            {
+              transaction: transaction,
+              returning: true,
+              where: { id: updatedAct.id },
+            },
+          )
+            //Add updated record to array
+            .then((updateResult) => {
+              console.log("Updated act");
+              console.log(updateResult[1]);
+              values.push(updateResult[1]);
+            });
 
     //Add new acts to db
-    if (newActs != null)
+    if (Array.isArray(newActs))
       for (let newAct of newActs) {
         await Act.create({
           name: newAct.name,
@@ -379,28 +379,26 @@ class UpdateEventHandler {
     //Updated ticket types
     let values = [];
     //Update ticket types in db
-    if (updatedTicketTypes != null)
-      for (let updatedTicketType of updatedTicketTypes)
-        await TicketType.update(
-          {
-            name: updatedTicketType.name,
-            price: updatedTicketType.price,
-          },
-          {
-            transaction: transaction,
-            returning: true,
-            where: { id: updatedTicketType.id },
-          },
-        )
+    if (Array.isArray(updatedTicketTypes))
+      for (let updatedTicketType of updatedTicketTypes) {
+        let updateData = {};
+        if (updatedTicketType.name) updateData.name = updatedTicketType.name;
+        if (updatedTicketType.price) updateData.price = updatedTicketType.price;
+        await TicketType.update(updateData, {
+          transaction: transaction,
+          returning: true,
+          where: { id: updatedTicketType.id },
+        })
           //Add updated record to array
           .then((updateResult) => {
             console.log("Updated ticket type");
             console.log(updateResult[1]);
             values.push(updateResult[1]);
           });
+      }
 
     //Add new ticket types to db
-    if (newTicketTypes != null)
+    if (Array.isArray(newTicketTypes))
       for (let newTicketType of newTicketTypes) {
         await TicketType.create(newTicketType, {
           transaction: transaction,

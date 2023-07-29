@@ -1,0 +1,236 @@
+{
+  "/event": {
+    "post": {
+      "description": "Create an event. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/CreateEvent"
+            }
+          }
+        },
+        "encoding": {
+          "event-img": {
+            "contentType": "image/png, image/jpeg"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Event created"
+        },
+        "400": {
+          "description": "A problem occurred when trying to create an event"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    },
+    "put": {
+      "description": "Update an event. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "$ref": "#/components/schemas/UpdateEvent"
+            }
+          }
+        },
+        "encoding": {
+          "event-img": {
+            "contentType": "image/png, image/jpeg"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Event updated"
+        },
+        "400": {
+          "description": "A problem occurred when trying to update an event"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  },
+  "/event/toggle-favourite": {
+    "post": {
+      "description": "Toggle event favourite. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ToggleEvent"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Event favorited/unfavorited"
+        },
+        "400": {
+          "description": "A problem occurred when trying to toggle event favorite status"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  },
+  "/event/tags": {
+    "get": {
+      "description": "Get all tags",
+      "tags": ["Event Route"],
+      "responses": {
+        "200": {
+          "description": "All tags"
+        },
+        "400": {
+          "description": "A problem occurred when trying to get all tags"
+        }
+      }
+    }
+  },
+  "/event/{eventId}": {
+    "get": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "required": true
+        }
+      ],
+      "description": "Get an event by id",
+      "tags": ["Event Route"],
+      "responses": {
+        "200": {
+          "description": "The event"
+        },
+        "400": {
+          "description": "A problem occurred when trying to get the event"
+        }
+      }
+    },
+    "delete": {
+      "parameters": [
+        {
+          "name": "eventId",
+          "required": true
+        }
+      ],
+      "description": "Delete an event by id. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "responses": {
+        "200": {
+          "description": "The event deleted successfully"
+        },
+        "400": {
+          "description": "A problem occurred when trying to delete the event"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  },
+  "/event/search-page": {
+    "post": {
+      "description": "Returns a page of events that match the filter and total page count. Max 10 events per page.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SearchEvents"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Page of events with the total page count"
+        },
+        "400": {
+          "description": "A problem occurred when trying to search events"
+        }
+      }
+    }
+  },
+  "/event/favourites": {
+    "post": {
+      "description": "Returns a page of favorited events that match the filter and total page count. Max 10 events per page. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/FavouritedEvents"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Page of events with the total page count"
+        },
+        "400": {
+          "description": "A problem occurred when trying to search events"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  },
+  "/event/owned-events": {
+    "post": {
+      "description": "Returns a page of owned events that match the filter and total page count. Max 10 events per page. BEARER TOKEN REQUIRED.",
+      "tags": ["Event Route"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OwnedEvents"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Page of events with the total page count"
+        },
+        "400": {
+          "description": "A problem occurred when trying to search events"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
+    }
+  }
+}

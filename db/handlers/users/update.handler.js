@@ -22,19 +22,19 @@ class UpdateUserHandler {
     let user;
     console.log("Beginning user update");
     //Update the Attendee
-    if (currUser.userType == enumUtil.userTypes.attendee)
+    if (currUser.user.userType == enumUtil.userTypes.attendee)
       user = await this.UpdateAttendee(
         newData,
         profileImgFilename,
-        currUser,
+        currUser.user,
         t,
       );
     //Update the Organizer
-    else if (currUser.userType == enumUtil.userTypes.organizer)
+    else if (currUser.user.userType == enumUtil.userTypes.organizer)
       user = await this.UpdateOrganizer(
         newData,
         profileImgFilename,
-        currUser,
+        currUser.user,
         t,
       );
 
@@ -52,28 +52,29 @@ class UpdateUserHandler {
     let updatedUser;
     console.log("Updating Attendee");
 
-    newData.imgFilename = profileImgFilename;
+    //Initialise update data object with correct fields
+    let updateData = {};
+    if (newData.firstName) updateData.firstName = newData.firstName;
+    if (newData.lastName) updateData.lastName = newData.lastName;
+    if (newData.dob) updateData.dob = newData.dob;
+    if (newData.bio) updateData.bio = newData.bio;
+    if (profileImgFilename) updateData.imgFilename = profileImgFilename;
 
     //Update user
-    await Attendee.update(
-      {
-        firstName: newData.firstName,
-        lastName: newData.lastName,
-        dob: newData.dob,
-        imgFilename: newData.imgFilename,
-        bio: newData.bio,
+    await Attendee.update(updateData, {
+      transaction: transaction,
+      individualHooks: true,
+      returning: true,
+      where: {
+        id: currUser.id,
       },
-      {
-        transaction: transaction,
-        individualHooks: true,
-        returning: true,
-        where: {
-          id: currUser.id,
-        },
-      },
-    ).then(async (updateResult) => {
+    }).then(async (updateResult) => {
       //Assign the updated attendee row
-      updatedUser = updateResult[1][0].dataValues;
+      if (updateResult[1][0].dataValues != null) {
+        updatedUser = updateResult[1][0].dataValues;
+        if (updatedUser.imgFilename && updatedUser.imgFilename != null)
+          updatedUser.imgUrl = updateResult[1][0].get("imgUrl");
+      }
     });
     //Return the updated user
     return updatedUser;
@@ -90,26 +91,28 @@ class UpdateUserHandler {
     let updatedUser;
     console.log("Updating Organizer");
 
-    newData.imgFilename = profileImgFilename;
+    //Initialise update data object with correct fields
+    let updateData = {};
+    if (newData.organizationName)
+      updateData.organizationName = newData.organizationName;
+    if (newData.phoneNumber) updateData.phoneNumber = newData.phoneNumber;
+    if (newData.bio) updateData.bio = newData.bio;
+    if (profileImgFilename) updateData.imgFilename = profileImgFilename;
 
-    await Organizer.update(
-      {
-        organizationName: newData.organizationName,
-        phoneNumber: newData.phoneNumber,
-        imgFilename: newData.imgFilename,
-        bio: newData.bio,
+    await Organizer.update(updateData, {
+      transaction: transaction,
+      individualHooks: true,
+      returning: true,
+      where: {
+        id: currUser.id,
       },
-      {
-        transaction: transaction,
-        individualHooks: true,
-        returning: true,
-        where: {
-          id: currUser.id,
-        },
-      },
-    ).then(async (updateResult) => {
-      //Assign the updated attendee row
-      updatedUser = updateResult[1][0].dataValues;
+    }).then(async (updateResult) => {
+      //Assign the updated organizer row
+      if (updateResult[1][0].dataValues != null) {
+        updatedUser = updateResult[1][0].dataValues;
+        if (updatedUser.imgFilename && updatedUser.imgFilename != null)
+          updatedUser.imgUrl = updateResult[1][0].get("imgUrl");
+      }
     });
 
     //Return the updated user

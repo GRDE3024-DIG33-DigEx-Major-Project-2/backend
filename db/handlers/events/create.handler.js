@@ -85,7 +85,7 @@ class CreateEventHandler {
         endDate: event.endDate,
         address: event.address,
         city: event.city,
-        region: event.region,
+        region: "NSW",
         postcode: event.postcode,
         country: event.country,
         isFree: event.isFree,
@@ -126,17 +126,18 @@ class CreateEventHandler {
     //Array of Tags now associated with the event
     let arr = [];
     //Create tag junctions
-    for (let tag of tags) {
-      junctionArr.push(
-        await TaggedWith.create(
-          {
-            EventId: eventId,
-            TagId: tag.id,
-          },
-          { transaction: transaction },
-        ),
-      );
-    }
+    if (Array.isArray(tags))
+      for (let tag of tags) {
+        junctionArr.push(
+          await TaggedWith.create(
+            {
+              EventId: eventId,
+              TagId: tag.id,
+            },
+            { transaction: transaction },
+          ),
+        );
+      }
     console.log("Created tag junctions!");
     //Get Tag table rows that share a junction with the Event
     for (let junction of junctionArr) {
@@ -172,25 +173,26 @@ class CreateEventHandler {
   async CreateActs(acts, eventId, transaction) {
     let arr = [];
     //Create each act and event-act junction
-    for (let act of acts) {
-      //Create the act
-      let actObj = await Act.create(
-        {
-          name: act.name,
-        },
-        { transaction: transaction },
-      );
-      //Append act to created acts array
-      arr.push(actObj);
-      //Create the junction
-      let junction = await EventAct.create(
-        {
-          ActId: actObj.id,
-          EventId: eventId,
-        },
-        { transaction: transaction },
-      );
-    }
+    if (Array.isArray(acts))
+      for (let act of acts) {
+        //Create the act
+        let actObj = await Act.create(
+          {
+            name: act.name,
+          },
+          { transaction: transaction },
+        );
+        //Append act to created acts array
+        arr.push(actObj);
+        //Create the junction
+        let junction = await EventAct.create(
+          {
+            ActId: actObj.id,
+            EventId: eventId,
+          },
+          { transaction: transaction },
+        );
+      }
     return arr;
   }
 
@@ -204,26 +206,27 @@ class CreateEventHandler {
   async CreateTicketTypes(ticketTypes, eventId, transaction) {
     let arr = [];
     //Create each ticket and event-ticket junction
-    for (let tier of ticketTypes) {
-      //Create the ticket type
-      let ticketType = await TicketType.create(
-        {
-          name: tier.name,
-          price: tier.price,
-        },
-        { transaction: transaction },
-      );
-      //Add ticket type to array of created ticket
-      arr.push(ticketType);
-      //Create the junction
-      let junction = await EventTicket.create(
-        {
-          TicketTypeId: ticketType.id,
-          EventId: eventId,
-        },
-        { transaction: transaction },
-      );
-    }
+    if (Array.isArray(ticketTypes))
+      for (let tier of ticketTypes) {
+        //Create the ticket type
+        let ticketType = await TicketType.create(
+          {
+            name: tier.name,
+            price: tier.price,
+          },
+          { transaction: transaction },
+        );
+        //Add ticket type to array of created ticket
+        arr.push(ticketType);
+        //Create the junction
+        let junction = await EventTicket.create(
+          {
+            TicketTypeId: ticketType.id,
+            EventId: eventId,
+          },
+          { transaction: transaction },
+        );
+      }
     return arr;
   }
 }

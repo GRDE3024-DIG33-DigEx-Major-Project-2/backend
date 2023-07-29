@@ -10,6 +10,8 @@ const { db } = require("../db/models/db");
 //Load required db models for querying
 const { Organizer, Attendee } = db.models;
 
+const GetUserHandler = require("../db/handlers/users/get.handler");
+
 //Endpoint actions for auth router
 class AuthController {
   /**
@@ -18,81 +20,25 @@ class AuthController {
    * @param {*} res
    */
   Login = async (req, res) => {
-    console.log(req.body.email);
-    //Check for email and password in body
-    if (!req.body.email || !req.body.password) {
-      return res.status(400).json({
-        msg: "Please provide an email and password",
-      });
-    }
+    //Get user data from db
+    let user = await GetUserHandler.GetUserByEmail(req.body.email, res);
+    //User found, verify password and attempt login
+    if (user) {
+      if (authUtil.verify(req.body.password, user.password)) {
+        //Remove password hash from user data before returning to user
+        delete user.dataValues.password;
+        //Generate the access token and refresh token
+        const accessToken = authUtil.generateAccessToken(user);
+        const refreshToken = authUtil.generateRefreshToken(user);
+        //Set refresh token as HTTP Only cookie
+        res.cookie("refreshToken", refreshToken, { httpOnly: true });
 
-    //Search for user match in Attendee and Organizer tables
-    try {
-      //Find Attendee match password hash
-      let attendee = await Attendee.findOne({
-        where: { email: req.body.email },
-      });
-      //Attendee match not found, search for Organizer match password hash
-      if (attendee == null) {
-        let organizer = await Organizer.findOne({
-          where: { email: req.body.email },
+        return res.status(201).json({
+          accessToken: accessToken,
+          user: user,
         });
-        //User not found in Attendee or Organizer tables, send 400 response
-        if (organizer == null)
-          return res.status(400).json({
-            msg: "Invalid credentials",
-          });
-        //Organizer match found, verify password and attempt login
-        else {
-          if (
-            authUtil.verify(req.body.password, organizer.dataValues.password)
-          ) {
-            //Remove password hash from user data before returning to user
-            delete organizer.dataValues.password;
-            //Generate the access token
-            const token = authUtil.generateJWT(organizer);
-            return res.status(201).json({
-              accessToken: token,
-              user: organizer,
-            });
-          }
-          //Password invalid, send 400 response
-          else {
-            return res.status(400).json({
-              msg: "Invalid credentials",
-            });
-          }
-        }
       }
-      //Attendee match found, verify password and attempt login
-      else {
-        if (authUtil.verify(req.body.password, attendee.dataValues.password)) {
-          //Remove password hash from user data before returning to user
-          delete attendee.dataValues.password;
-          //Generate the access token
-          const token = authUtil.generateJWT(attendee);
-          return res.status(201).json({
-            accessToken: token,
-            user: attendee,
-          });
-        }
-        //Password invalid, send 400 response
-        else {
-          return res.status(400).json({
-            msg: "Invalid credentials",
-          });
-        }
-      }
-    } catch (reason) {
-      //Catch error, log to console, and send detailed 400 response
-      let msg = "Failed to find user in database";
-      console.log(msg);
-      console.log(reason);
-      return res.status(400).json({
-        msg: msg,
-        error: reason,
-      });
-    }
+    } else return res.status(400).json({ msg: "User does not exist" });
   };
 
   /**
@@ -101,9 +47,6 @@ class AuthController {
    * @param {*} res
    */
   Validate = async (req, res) => {
-    //Deny if authorization header is empty
-    if (req.headers.authorization === undefined) return res.sendStatus(403);
-
     //Get JWT from the authorization header
     const token = req.headers.authorization.split(" ")[1];
 
@@ -128,6 +71,45 @@ class AuthController {
         msg: msg,
         error: err,
       });
+    }
+  };
+
+  /**
+   * Generates a new set of access and refresh tokens for client user auth
+   * @param {*} req
+   * @param {*} res
+   */
+  RefreshToken = async (req, res) => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+
+      if (!refreshToken) {
+        return res
+          .status(401)
+          .json({ msg: "Refresh token not found in cookies" });
+      }
+
+      const refreshTokenData = authUtil.decodeJWT(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
+
+      let user = await GetUserHandler.GetUserByEmail(refreshTokenData.aud, res);
+
+      //Generate the access token and refresh token
+      const accessToken = authUtil.generateAccessToken(user);
+      const newRefreshToken = authUtil.generateRefreshToken(user);
+
+      //Set refresh token as HTTP Only cookie
+      res.cookie("refreshToken", newRefreshToken, { httpOnly: true });
+
+      return res.status(201).json({
+        accessToken: accessToken,
+        user: user,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ msg: "Failed to generate new JWT tokens" });
     }
   };
 }

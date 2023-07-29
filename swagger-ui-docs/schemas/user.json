@@ -1,0 +1,78 @@
+{
+  "Register": {
+    "type": "object",
+    "properties": {
+      "firstName": {
+        "type": "string"
+      },
+      "lastName": {
+        "type": "string"
+      },
+      "dob": {
+        "type": "string"
+      },
+      "email": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "userType": {
+        "type": "string"
+      },
+      "organizationName": {
+        "type": "string"
+      },
+      "phoneNumber": {
+        "type": "string"
+      }
+    },
+    "required": ["email", "password", "userType"]
+  },
+  "ResetPassword": {
+    "type": "object",
+    "properties": {
+      "oldPassword": {
+        "type": "string"
+      },
+      "newPassword": {
+        "type": "string"
+      }
+    },
+    "required": ["oldPassword", "newPassword"]
+  },
+  "UpdateUser": {
+    "type": "object",
+    "properties": {
+      "bio": {
+        "type": "string"
+      },
+      "organizationName": {
+        "type": "string"
+      },
+      "phoneNumber": {
+        "type": "string"
+      },
+      "imgFilename": {
+        "type": "string"
+      },
+      "firstName": {
+        "type": "string"
+      },
+      "lastName": {
+        "type": "string"
+      },
+      "dob": {
+        "type": "string"
+      },
+      "removeImg": {
+        "type": "boolean",
+        "description": "False means don't remove the profile image, True means remove the profile image (without replacement)"
+      },
+      "profile-img": {
+        "type": "string",
+        "format": "base64"
+      }
+    }
+  }
+}

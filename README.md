@@ -128,16 +128,9 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Searching events
     - Search event start date ordering (THINK ABOUT ENDED EVENTS)
     - Ticket price filter
-- Seed Data
-    - TaggedWith seed data
-    - TicketPrice & EventTicket seed data rough version
-- DB
-    - Sequelize model validation and constraints
-    - Finish db CRUD handler abstractions
 Other
     - A3 Group and Independent report
     - Code comments + cleanup
-    - Update JSDocs and api doc Swagger UI
     - Set up A3 api app
     - Endpoint testing and debugging
     - Endpoint request body validation middleware
@@ -152,15 +145,26 @@ Other
 - Finish connecting search event data in frontend
 
 
+# VALIDATION BACKLOG
+- phoneNumber regex for Organizers
+- Revamp validation error messages
+- Filename without file and vice versa
+- startDate and endDate of event must be in future
+- purchaseUrl must be a url format
+- Region can only be NSW (hardset it in db?)
+- startDate and endDate of event must be either both valid times
+- status validation once implemented
+
+
 # BACKEND BACKLOG
 - Seed user profile images
 - Access Denied on S3 Bucket object delete (this was working prior)
 - Dynamic search with filter change
 - Handling if event is free or paid
-- Phone number field formatting for Organizers
 - Finish off backend search event filters
 - Better security for secrets/credentials in dev and prod environments
-- Seed data third iteration
+- Seed Data 
+    - TicketPrice & EventTicket seed data rough version
 - Dynamic tag creation
 - JWT Refresh Token
 - Revamp location filter to use more than just the City field
@@ -168,7 +172,15 @@ Other
 - Clean up image extension and resize handling
 
 
-# PREVIOUS TASKS
+
+
+# PREVIOUS TASKS    
+- TaggedWith seed data
+- Update JSDocs and api doc Swagger UI
+- DB
+    - Sequelize model validation and constraints
+    - Finish db CRUD handler abstractions
+- Make all validation error-handling done by the validate method in the base.validator.js file
 - Seed event images
 - Rollback transactions through Sequelize
 - Seed data second iteration
