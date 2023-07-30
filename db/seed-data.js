@@ -758,7 +758,7 @@ class SeedData {
           "After the success of their debut album R4inbow Sherbert, The Publishers are touring Australia with their latest record, Golden Fleece.",
         summary: "FREE SHOW IN SYDNEY",
         startDate: "2023-08-08 17:00:00",
-        endDate: "023-08-08 19:00:00",
+        endDate: "2023-08-08 19:00:00",
         address: "18 Guilded Street, Leichhardt",
         city: "Sydney",
         region: "NSW",

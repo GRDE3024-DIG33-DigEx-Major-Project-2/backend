@@ -505,11 +505,17 @@ const eventSchemas = {
       isString: true,
       errorMessage: "Invalid keywords field",
     },
-    startDate: {
+    minDate: {
       in: ["body"],
       optional: { options: { nullable: true } },
       isISO8601: true,
-      errorMessage: "Invalid start date field",
+      errorMessage: "Invalid min date field",
+    },
+    maxDate: {
+      in: ["body"],
+      optional: { options: { nullable: true } },
+      isISO8601: true,
+      errorMessage: "Invalid max date field",
     },
     priceRange: {
       in: ["body"],

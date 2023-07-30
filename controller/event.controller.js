@@ -426,6 +426,12 @@ class EventController {
     //Events to return in response
     let events;
 
+    //Default min-max event dates
+    const currYear = new Date().getFullYear();
+    const maxYear = currYear + 100;
+    const maxDate = new Date(maxYear, 0, 1, 0, 0, 0);
+    const minDate = "1950-01-01 00:00:00";
+
     //Filter options for searching events through sequelize
     let filterOptions = {
       //The tags to filter events by -- If defined, assign request content, else empty array
@@ -439,8 +445,11 @@ class EventController {
       startDate: req.body.startDate
         ? req.body.startDate
         : "1950-01-01 00:00:00",
+      //Minimum date for event results
+      minDate: req.body.minDate ? req.body.minDate : minDate,
+      //Maximum date for event results
+      maxDate: req.body.maxDate ? req.body.maxDate : maxDate,
       //The price range for the event tickets -- If defined, assign request content, else null
-      //priceRange: (req.body.priceRange) ? req.body.priceRange : { minPrice: 0, maxPrice: 10000 },
       priceRange: req.body.priceRange ? req.body.priceRange : null,
       //Set up for matching the city -- If defined and doesn't equal null, assign request content, else array of all cities
       cities:
@@ -451,6 +460,10 @@ class EventController {
 
     console.log("PRICE RANGE TEST");
     console.log(filterOptions.priceRange);
+
+    console.log("DATE TEST");
+    console.log(filterOptions.minDate);
+    console.log(filterOptions.maxDate);
 
     //Set priceRange to null if maxPrice is 0
     if (filterOptions.priceRange != null)
@@ -515,10 +528,14 @@ class EventController {
       countConditions.where = {
         [Op.and]: [
           {
-            //Starting earliest on the start date specified
+            //Occuring earliest on the minDate specified
             startDate: {
-              [Op.gte]: filterOptions.startDate,
+              [Op.gte]: filterOptions.minDate,
             },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            }
           },
           {
             //Is in one of the specified cities
@@ -531,10 +548,14 @@ class EventController {
       findConditions.where = {
         [Op.and]: [
           {
-            //Starting earliest on the start date specified
+            //Occuring earliest on the minDate specified
             startDate: {
-              [Op.gte]: filterOptions.startDate,
+              [Op.gte]: filterOptions.minDate,
             },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            }
           },
           {
             //Is in one of the specified cities
@@ -556,10 +577,14 @@ class EventController {
                 title: {
                   [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
                 },
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -574,10 +599,14 @@ class EventController {
                 venueName: {
                   [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
                 },
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -595,10 +624,14 @@ class EventController {
               },
               //Starting on this state specified
               {
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
               },
               //Is in one of the specified cities
               {
@@ -618,10 +651,14 @@ class EventController {
               {
                 //Keyword match found in Event title
                 title: { [Sequelize.Op.iLike]: `%${filterOptions.keywords}%` },
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -636,10 +673,14 @@ class EventController {
                 venueName: {
                   [Sequelize.Op.iLike]: `%${filterOptions.keywords}%`,
                 },
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -657,10 +698,14 @@ class EventController {
               },
               //Starting on this state specified
               {
-                //Starting earliest on the start date specified
-                startDate: {
-                  [Op.gte]: filterOptions.startDate,
-                },
+            //Occuring earliest on the minDate specified
+            startDate: {
+              [Op.gte]: filterOptions.minDate,
+            },
+            //Occuring latest on the maxDate specified
+            endDate: {
+              [Op.lte]: filterOptions.maxDate,
+            },
               },
               //Is in one of the specified cities
               {

@@ -157,6 +157,7 @@ Other
 
 
 # BACKEND BACKLOG
+- tickeType generalAdmission flag (for display in event listing summary)
 - Seed user profile images
 - Access Denied on S3 Bucket object delete (this was working prior)
 - Dynamic search with filter change

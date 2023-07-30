@@ -272,9 +272,13 @@
         "type": "string",
         "description": "Keywords that may match an act name, event title, or venue (Not Functional)"
       },
-      "startDate": {
+      "minDate": {
         "type": "string",
-        "description": "The date the event starts (Not Functional)"
+        "description": "The earliest date for events"
+      },
+      "maxDate": {
+        "type": "string",
+        "description": "The latest date for events"
       },
       "priceRange": {
         "type": "object",
