@@ -4,7 +4,11 @@
 
 //Import dependencies
 const enumUtil = require("../util/enum.util");
-const { PhoneNumberUtil, PhoneNumberType } = require("libphonenumber-js");
+const {
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  validatePhoneNumberLength
+} = require('libphonenumber-js');
 
 /**
  * Custom validator that checks for identical old and new password
@@ -19,6 +23,13 @@ const notIdentical = (oldPassword, { req }) => {
   return true;
 };
 
+
+/**
+ * Validator that handles userType-specific fields for user registration/update
+ * @param {*} userType 
+ * @param {*} param1 
+ * @returns 
+ */
 const userTypeSpecificFields = (userType, { req }) => {
   //The userType value in the request
   userType = req.body.userType;
@@ -45,6 +56,26 @@ const userTypeSpecificFields = (userType, { req }) => {
   }
   return true;
 };
+
+
+/**
+ * Validates if request number is an Australian landline/mobile number
+ * @param {*} phoneNumber 
+ * @param {*} param1 
+ * @returns 
+ */
+const isValidAusNumber = (phoneNumber) => {
+  try {
+    if (!isValidPhoneNumber(phoneNumber, "AU")) {
+throw new Error("Invalid phone number");
+    }
+      return true;
+  } catch (error) {
+    throw new Error("Failed to validate Organizer phone number", error);
+  }
+}
+
+
 
 /**
  * User-related request schemas
@@ -131,23 +162,7 @@ const userSchemas = {
       in: ["body", "phoneNumber"],
       optional: { options: { nullable: true } },
       custom: {
-        options: (val) => {
-          try {
-            const phoneNumber = phoneUtil.parseAndKeepRawInput(val, "AU");
-
-            //Check if the number is either a landline or a mobile number
-            const phoneNumberType = phoneUtil.getNumberType(phoneNumber);
-
-            if (
-              phoneNumberType === PhoneNumberType.FIXED_LINE ||
-              phoneNumberType === PhoneNumberType.MOBILE
-            )
-              return true;
-            else throw new Error("Invalid phone number");
-          } catch (error) {
-            throw new Error("Failed to validate Organizer phone number");
-          }
-        },
+        options: isValidAusNumber,
       },
       isString: true,
       errorMessage: "Invalid phoneNumber",
@@ -165,23 +180,7 @@ const userSchemas = {
       in: ["body", "phoneNumber"],
       optional: { options: { nullable: true } },
       custom: {
-        options: (val) => {
-          try {
-            const phoneNumber = phoneUtil.parseAndKeepRawInput(val, "AU");
-
-            //Check if the number is either a landline or a mobile number
-            const phoneNumberType = phoneUtil.getNumberType(phoneNumber);
-
-            if (
-              phoneNumberType === PhoneNumberType.FIXED_LINE ||
-              phoneNumberType === PhoneNumberType.MOBILE
-            )
-              return true;
-            else throw new Error("Invalid phone number");
-          } catch (error) {
-            throw new Error("Failed to validate Organizer phone number");
-          }
-        },
+        options: isValidAusNumber,
       },
       isString: true,
       errorMessage: "Invalid phoneNumber",
