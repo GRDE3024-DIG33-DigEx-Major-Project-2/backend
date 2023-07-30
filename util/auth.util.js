@@ -51,7 +51,7 @@ class AuthUtils {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "1min",
+        expiresIn: "20min",
         issuer: "gigney",
         audience: user.email,
       },

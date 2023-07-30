@@ -6,18 +6,37 @@ const constantsUtil = require("../util/constants.util");
 var validUrl = require("valid-url");
 
 /**
- * Prevents creation of event with startDate set too early
+ * Prevents creation of event with startDate set too early or before current date
  * @param {*} value
  * @returns
  */
-const isTwoDaysAway = (value) => {
+const eventDateRange = (value) => {
   const currentDate = new Date();
   const targetDate = new Date(value);
 
   const timeDifference = targetDate.getTime() - currentDate.getTime();
 
+  //Avoid events being set in the past
+  if (currentDate > targetDate)
+  throw new Error("Event cannot be in the past");  
+
+  //Restrict event creation to at least two days in future
   if (timeDifference >= 48 * 60 * 60 * 1000) return true;
   else throw new Error("startDate must be at least two days away on set");
+
+};
+
+
+/**
+ * Validate that the optional purchaseUrl is a valid uri
+ * @param {*} uri 
+ * @returns 
+ */
+const uriCheck = (uri) => {
+  if (validUrl.isUri(uri) === undefined) {
+    throw new Error("Invalid purchase url for event");
+  }
+  return true;
 };
 
 /**
@@ -68,7 +87,7 @@ const eventSchemas = {
     "event.startDate": {
       isISO8601: true,
       custom: {
-        options: isTwoDaysAway,
+        options: eventDateRange,
       },
       errorMessage: "Invalid startDate field",
     },
@@ -109,11 +128,7 @@ const eventSchemas = {
     "event.purchaseUrl": {
       optional: { options: { nullable: true } },
       custom: {
-        options: (url) => {
-          if (!validUrl.isUri(url)) {
-            throw new Error("Invalid purchase url for event");
-          }
-        },
+        options: uriCheck,
       },
       isString: true,
       errorMessage: "Invalid purchaseUrl field",
@@ -237,7 +252,7 @@ const eventSchemas = {
       isISO8601: true,
       optional: { options: { nullable: false } },
       custom: {
-        options: isTwoDaysAway,
+        options: eventDateRange,
       },
       errorMessage: "Invalid startDate field",
     },
@@ -285,11 +300,7 @@ const eventSchemas = {
     "event.purchaseUrl": {
       optional: { options: { nullable: true } },
       custom: {
-        options: (url) => {
-          if (!validUrl.isUri(url)) {
-            throw new Error("Invalid purchase url for event");
-          }
-        },
+        options: uriCheck,
       },
       isString: true,
       errorMessage: "Invalid purchaseUrl field",

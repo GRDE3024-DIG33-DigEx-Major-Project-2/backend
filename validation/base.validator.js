@@ -22,7 +22,6 @@ const jwt = require("jsonwebtoken");
  */
 const processTokenData = (req, res, next) => {
   let token;
-
   try {
     //Get JWT from the authorization header
     token = req.headers.authorization.split(" ")[1];
@@ -36,19 +35,25 @@ const processTokenData = (req, res, next) => {
   //Deny if authorization header is empty
   if (token === undefined) {
     console.error("Authorization header is undefined");
-    return res.sendStatus(403);
+    return res.status(403).json({
+      err: "Forbidden",
+    });
   }
+
   let trimmedToken = req.headers.authorization;
   trimmedToken = token.replace("Bearer", "");
   trimmedToken = trimmedToken.replace(" ", "");
+
   if (trimmedToken.length == 0) {
     console.error("Authorization header does not contain access token");
-    return res.sendStatus(403);
+    return res.status(403).json({
+      err: "Forbidden",
+    });
   } else {
     try {
       //Verify JWT
-      jwt.verify(token, process.env.JWTSECRET, (err, tokenData) => {
-        if (err) {
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
+        if (err) {     
           //Token invalid, send 403 response
           return res.status(403).json({
             err: "Forbidden",
