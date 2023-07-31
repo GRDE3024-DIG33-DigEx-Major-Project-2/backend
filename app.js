@@ -93,6 +93,7 @@ const swaggerOptions = {
     //Auth endpoint paths
     "/auth/login": docFiles.paths.auth["/auth/login"],
     "/auth/validate": docFiles.paths.auth["/auth/validate"],
+    "/auth/refresh-tokens": docFiles.paths.auth["/auth/refresh-tokens"],
     //User endpoint paths
     "/user": docFiles.paths.user["/user"],
     "/user/register": docFiles.paths.user["/user/register"],
