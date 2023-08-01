@@ -53,6 +53,11 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: false,
     },
+    //Suburb of the event
+    suburb: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     //Address of the event
     address: {
       type: DataTypes.STRING,

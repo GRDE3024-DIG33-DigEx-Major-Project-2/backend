@@ -26,6 +26,9 @@
           "endDate": {
             "type": "string"
           },
+          "suburb": {
+            "type": "string"
+          },
           "address": {
             "type": "string"
           },
@@ -123,6 +126,9 @@
             "type": "string"
           },
           "endDate": {
+            "type": "string"
+          },
+          "suburb": {
             "type": "string"
           },
           "address": {

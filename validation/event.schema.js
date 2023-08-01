@@ -502,7 +502,6 @@ const eventSchemas = {
     keywords: {
       in: ["body"],
       optional: { options: { nullable: true } },
-      isString: true,
       errorMessage: "Invalid keywords field",
     },
     minDate: {

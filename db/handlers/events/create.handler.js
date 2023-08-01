@@ -83,6 +83,7 @@ class CreateEventHandler {
         summary: event.summary,
         startDate: event.startDate,
         endDate: event.endDate,
+        suburb: event.suburb,
         address: event.address,
         city: event.city,
         region: "NSW",

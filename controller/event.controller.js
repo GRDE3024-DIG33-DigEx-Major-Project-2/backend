@@ -27,6 +27,8 @@ class EventController {
    * @param {*} res
    */
   Create = async (req, res) => {
+    console.clear();
+    console.log("BEGIN CREATE");
     //User data from access token
     let tokenData = req.user;
     //S3 filename of image, excluding the extension
@@ -522,7 +524,7 @@ class EventController {
     };
 
     //No keyword filter
-    if (filterOptions.keywords == "") {
+    if (filterOptions.keywords == null) {
       console.log("SETTING KEYWORDS FILTER");
 
       countConditions.where = {

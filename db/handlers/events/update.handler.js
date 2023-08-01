@@ -93,6 +93,7 @@ class UpdateEventHandler {
     if (event.summary) updateData.summary = event.summary;
     if (event.startDate) updateData.startDate = event.startDate;
     if (event.endDate) updateData.endDate = event.endDate;
+    if (event.suburb) updateData.suburb = event.suburb;
     if (event.address) updateData.address = event.address;
     if (event.city) updateData.city = event.city;
     //if (event.region) updateData.region = event.region;
