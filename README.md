@@ -134,6 +134,7 @@ Other
     - Set up A3 api app
     - Endpoint testing and debugging
     - Endpoint request body validation middleware
+    - **IMPORTANT** NEW UPDATED METHOD OF AWS CREDENTIAL SETUP **IMPORTANT**
 
 
 # RYAN-FRONTEND TASKS

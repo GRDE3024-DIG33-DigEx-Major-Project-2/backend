@@ -17,8 +17,8 @@ const accessKeyId = process.env.ACCESS_KEY;
 const secretAccessKey = process.env.SECRET_KEY;
 
 //Load shared credentials
-var credentials = new AWS.SharedIniFileCredentials({ profile: "Gigney" });
-AWS.config.credentials = credentials;
+// var credentials = new AWS.SharedIniFileCredentials({ profile: "Gigney" });
+// AWS.config.credentials = credentials;
 
 //AWS S3 Bucket file utilities
 class S3Utilities {

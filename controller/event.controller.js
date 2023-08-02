@@ -434,15 +434,40 @@ class EventController {
     const maxDate = new Date(maxYear, 0, 1, 0, 0, 0);
     const minDate = "1950-01-01 00:00:00";
 
+    console.log("DATE RANGE TEST");
+    console.log(req.body.minDate);
+    console.log(req.body.maxDate);
+
+
+
+    //Keyword sanitizer
+    let kw = null;
+    if (req.body.keywords && req.body.keywords != null && req.body.keywords != "" && typeof req.body.keywords === "String") {
+      console.log("Creating keywords string");
+      kw = req.body.keywords.toLowerCase();
+    }
+
+   //Price range sanitizer
+   let priceRange = null;
+   if (req.body.priceRange != null) {
+    if (req.body.priceRange.minPrice != null
+      && req.body.priceRange.maxPrice != null
+      && req.body.priceRange.minPrice != 0
+      && req.body.priceRange.maxPrice != 0) {
+        priceRange = req.body.priceRange;
+    }
+   }
+
+   
+
+
+
     //Filter options for searching events through sequelize
     let filterOptions = {
       //The tags to filter events by -- If defined, assign request content, else empty array
       tags: req.body.tags ? req.body.tags : [],
       //The keywords to filter events by -- If defined and doesn't equal null, assign request content to lower case, else empty array
-      keywords:
-        req.body.keywords && req.body.keywords != null
-          ? req.body.keywords.toLowerCase()
-          : "",
+      keywords: kw,
       //Set the start date to filter events by
       startDate: req.body.startDate
         ? req.body.startDate
@@ -452,7 +477,7 @@ class EventController {
       //Maximum date for event results
       maxDate: req.body.maxDate ? req.body.maxDate : maxDate,
       //The price range for the event tickets -- If defined, assign request content, else null
-      priceRange: req.body.priceRange ? req.body.priceRange : null,
+      priceRange: priceRange,
       //Set up for matching the city -- If defined and doesn't equal null, assign request content, else array of all cities
       cities:
         req.body.city && req.body.city != null
@@ -463,9 +488,9 @@ class EventController {
     console.log("PRICE RANGE TEST");
     console.log(filterOptions.priceRange);
 
-    console.log("DATE TEST");
-    console.log(filterOptions.minDate);
-    console.log(filterOptions.maxDate);
+    // console.log("DATE TEST");
+    // console.log(filterOptions.minDate);
+    // console.log(filterOptions.maxDate);
 
     //Set priceRange to null if maxPrice is 0
     if (filterOptions.priceRange != null)
@@ -524,8 +549,8 @@ class EventController {
     };
 
     //No keyword filter
-    if (filterOptions.keywords == null) {
-      console.log("SETTING KEYWORDS FILTER");
+    if (kw == null) {
+
 
       countConditions.where = {
         [Op.and]: [
@@ -570,6 +595,7 @@ class EventController {
     }
     //Has keyword filter
     else {
+      console.log("SETTING KEYWORDS FILTER");
       countConditions.where = {
         [Op.or]: [
           {
@@ -579,14 +605,14 @@ class EventController {
                 title: {
                   [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
                 },
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -601,14 +627,14 @@ class EventController {
                 venueName: {
                   [Sequelize.Op.iLike]: "%" + filterOptions.keywords + "%",
                 },
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -626,14 +652,14 @@ class EventController {
               },
               //Starting on this state specified
               {
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
               },
               //Is in one of the specified cities
               {
@@ -653,14 +679,14 @@ class EventController {
               {
                 //Keyword match found in Event title
                 title: { [Sequelize.Op.iLike]: `%${filterOptions.keywords}%` },
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -675,14 +701,14 @@ class EventController {
                 venueName: {
                   [Sequelize.Op.iLike]: `%${filterOptions.keywords}%`,
                 },
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
                 //Is in one of the specified cities
                 city: {
                   [Op.or]: filterOptions.cities,
@@ -700,14 +726,14 @@ class EventController {
               },
               //Starting on this state specified
               {
-            //Occuring earliest on the minDate specified
-            startDate: {
-              [Op.gte]: filterOptions.minDate,
-            },
-            //Occuring latest on the maxDate specified
-            endDate: {
-              [Op.lte]: filterOptions.maxDate,
-            },
+                //Occuring earliest on the minDate specified
+                startDate: {
+                  [Op.gte]: filterOptions.minDate,
+                },
+                //Occuring latest on the maxDate specified
+                endDate: {
+                  [Op.lte]: filterOptions.maxDate,
+                },
               },
               //Is in one of the specified cities
               {
@@ -798,7 +824,7 @@ class EventController {
         if (rowCount.length > 0) {
           console.log("Row Count: " + rowCount[0].count);
           //Divide number of rows by the page limit
-          numPages = Math.ceil(rowCount[0].count / limit);
+          numPages = Math.ceil(rowCount.length / limit);
         } else {
           console.log("No Rows Found");
         }
