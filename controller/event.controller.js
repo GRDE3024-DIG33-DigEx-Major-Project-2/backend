@@ -750,7 +750,7 @@ class EventController {
     //Has tag filter
     if (filterOptions.tags.length > 0) {
       countConditions.having = Sequelize.literal(
-        `COUNT(DISTINCT 'Tags.id') = ${filterOptions.tags.length}`,
+        `COUNT(DISTINCT 'Tags.id') >= 1`,
       );
       //Tag table conditions
       countConditions.include.push({
@@ -759,7 +759,7 @@ class EventController {
       });
 
       findConditions.having = Sequelize.literal(
-        `COUNT(DISTINCT 'Tags.id') = ${filterOptions.tags.length}`,
+        `COUNT(DISTINCT 'Tags.id') >= 1`,
       );
       //Tag table conditions
       findConditions.include.push({

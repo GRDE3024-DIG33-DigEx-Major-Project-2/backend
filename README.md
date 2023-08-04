@@ -126,58 +126,69 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 # CURRENT TASKS
 - Searching events
-    - Search event start date ordering (THINK ABOUT ENDED EVENTS)
-    - Ticket price filter
+    - Tag filter UI
+    - Clear all filters
+    - Clear one filter
+    - Unique filter UI logic
+    - No date select as option
+    - Minor scenario bugs
+    - Search location revamp
+    - **Longitute latitude search**
+- Create event upload issue
 Other
     - A3 Group and Independent report
     - Code comments + cleanup
     - Set up A3 api app
     - Endpoint testing and debugging
-    - Endpoint request body validation middleware
     - **IMPORTANT** NEW UPDATED METHOD OF AWS CREDENTIAL SETUP **IMPORTANT**
 
 
 # RYAN-FRONTEND TASKS
 - Fix frontend venue duplicates in filter
 - Endpoint handlers in frontend app
-- Frontend restructure
 - Frontend comments and cleanup
 - Frontend search events functionality
-- Finish connecting search event data in frontend
+- Search event start date ordering (THINK ABOUT ENDED EVENTS)
 
 
 # VALIDATION BACKLOG
-- phoneNumber regex for Organizers
 - Revamp validation error messages
 - Filename without file and vice versa
-- startDate and endDate of event must be in future
-- purchaseUrl must be a url format
-- Region can only be NSW (hardset it in db?)
-- startDate and endDate of event must be either both valid times
 - status validation once implemented
 
 
 # BACKEND BACKLOG
 - Make Suburb required, not nullable. Add Suburb seed data
-- tickeType generalAdmission flag (for display in event listing summary)
+- ticketType generalAdmission flag (for display in event listing summary)
 - Seed user profile images
 - Access Denied on S3 Bucket object delete (this was working prior)
 - Dynamic search with filter change
-- Handling if event is free or paid
+
 - Finish off backend search event filters
 - Better security for secrets/credentials in dev and prod environments
 - Seed Data 
     - TicketPrice & EventTicket seed data rough version
 - Dynamic tag creation
-- JWT Refresh Token
 - Revamp location filter to use more than just the City field
-- createResult bug in update event handler for act arr and ticketType arr
 - Clean up image extension and resize handling
 
 
 
 
-# PREVIOUS TASKS    
+# PREVIOUS TASKS
+ 
+- Endpoint request body validation middleware
+- Ticket price filter
+- Finish connecting search event data in frontend
+- Frontend restructure
+- Handling if event is free or paid
+- createResult bug in update event handler for act arr and ticketType arr
+- JWT Refresh Token
+- phoneNumber regex for Organizers
+- startDate and endDate of event must be either both valid times
+- purchaseUrl must be a url format
+- Region can only be NSW (hardset it in db?)
+- startDate and endDate of event must be in future  
 - TaggedWith seed data
 - Update JSDocs and api doc Swagger UI
 - DB
