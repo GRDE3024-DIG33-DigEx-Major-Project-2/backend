@@ -438,29 +438,30 @@ class EventController {
     console.log(req.body.minDate);
     console.log(req.body.maxDate);
 
-
-
     //Keyword sanitizer
     let kw = null;
-    if (req.body.keywords && req.body.keywords != null && req.body.keywords != "" && typeof req.body.keywords === "String") {
+    if (
+      req.body.keywords &&
+      req.body.keywords != null &&
+      req.body.keywords != "" &&
+      typeof req.body.keywords === "String"
+    ) {
       console.log("Creating keywords string");
       kw = req.body.keywords.toLowerCase();
     }
 
-   //Price range sanitizer
-   let priceRange = null;
-   if (req.body.priceRange != null) {
-    if (req.body.priceRange.minPrice != null
-      && req.body.priceRange.maxPrice != null
-      && req.body.priceRange.minPrice != 0
-      && req.body.priceRange.maxPrice != 0) {
+    //Price range sanitizer
+    let priceRange = null;
+    if (req.body.priceRange != null) {
+      if (
+        req.body.priceRange.minPrice != null &&
+        req.body.priceRange.maxPrice != null &&
+        req.body.priceRange.minPrice != 0 &&
+        req.body.priceRange.maxPrice != 0
+      ) {
         priceRange = req.body.priceRange;
+      }
     }
-   }
-
-   
-
-
 
     //Filter options for searching events through sequelize
     let filterOptions = {
@@ -550,8 +551,6 @@ class EventController {
 
     //No keyword filter
     if (kw == null) {
-
-
       countConditions.where = {
         [Op.and]: [
           {
@@ -562,7 +561,7 @@ class EventController {
             //Occuring latest on the maxDate specified
             endDate: {
               [Op.lte]: filterOptions.maxDate,
-            }
+            },
           },
           {
             //Is in one of the specified cities
@@ -582,7 +581,7 @@ class EventController {
             //Occuring latest on the maxDate specified
             endDate: {
               [Op.lte]: filterOptions.maxDate,
-            }
+            },
           },
           {
             //Is in one of the specified cities

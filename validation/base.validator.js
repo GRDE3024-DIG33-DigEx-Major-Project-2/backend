@@ -53,7 +53,7 @@ const processTokenData = (req, res, next) => {
     try {
       //Verify JWT
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
-        if (err) {     
+        if (err) {
           //Token invalid, send 403 response
           return res.status(403).json({
             err: "Forbidden",
@@ -137,6 +137,8 @@ const validate = (req, res, next) => {
   //Extract error messages from the array of error objects
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+  //Log errors to console
+  for (let msg of extractedErrors) console.log(msg);
   //Return 422 status response with all validation errors (422 is used for validation errors)
   return res.status(422).json({
     errors: extractedErrors,

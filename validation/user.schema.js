@@ -7,8 +7,8 @@ const enumUtil = require("../util/enum.util");
 const {
   isPossiblePhoneNumber,
   isValidPhoneNumber,
-  validatePhoneNumberLength
-} = require('libphonenumber-js');
+  validatePhoneNumberLength,
+} = require("libphonenumber-js");
 
 /**
  * Custom validator that checks for identical old and new password
@@ -23,12 +23,11 @@ const notIdentical = (oldPassword, { req }) => {
   return true;
 };
 
-
 /**
  * Validator that handles userType-specific fields for user registration/update
- * @param {*} userType 
- * @param {*} param1 
- * @returns 
+ * @param {*} userType
+ * @param {*} param1
+ * @returns
  */
 const userTypeSpecificFields = (userType, { req }) => {
   //The userType value in the request
@@ -57,25 +56,22 @@ const userTypeSpecificFields = (userType, { req }) => {
   return true;
 };
 
-
 /**
  * Validates if request number is an Australian landline/mobile number
- * @param {*} phoneNumber 
- * @param {*} param1 
- * @returns 
+ * @param {*} phoneNumber
+ * @param {*} param1
+ * @returns
  */
 const isValidAusNumber = (phoneNumber) => {
   try {
     if (!isValidPhoneNumber(phoneNumber, "AU")) {
-throw new Error("Invalid phone number");
+      throw new Error("Invalid phone number");
     }
-      return true;
+    return true;
   } catch (error) {
     throw new Error("Failed to validate Organizer phone number", error);
   }
-}
-
-
+};
 
 /**
  * User-related request schemas

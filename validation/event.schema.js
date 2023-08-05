@@ -17,20 +17,17 @@ const eventDateRange = (value) => {
   const timeDifference = targetDate.getTime() - currentDate.getTime();
 
   //Avoid events being set in the past
-  if (currentDate > targetDate)
-  throw new Error("Event cannot be in the past");  
+  if (currentDate > targetDate) throw new Error("Event cannot be in the past");
 
   //Restrict event creation to at least two days in future
   if (timeDifference >= 48 * 60 * 60 * 1000) return true;
   else throw new Error("startDate must be at least two days away on set");
-
 };
-
 
 /**
  * Validate that the optional purchaseUrl is a valid uri
- * @param {*} uri 
- * @returns 
+ * @param {*} uri
+ * @returns
  */
 const uriCheck = (uri) => {
   if (validUrl.isUri(uri) === undefined) {
@@ -226,11 +223,15 @@ const eventSchemas = {
         version: "4",
         errorMessage: "event id must be in UUIDV4 format",
       },
+      errorMessage: "event id is required",
     },
     "event.title": {
       in: ["body"],
       isString: true,
-      optional: { options: { nullable: false } },
+      optional: {
+        options: { nullable: false },
+        errorMessage: "event title cannot be null!",
+      },
       errorMessage: "Invalid title field",
     },
     "event.venueName": {
@@ -315,7 +316,8 @@ const eventSchemas = {
         options: (acts) => {
           if (Array.isArray(acts)) {
             for (let val of acts) {
-              if (!val.name) throw new Error("acts must contain a name field");
+              if (!val.name || !val.id)
+                throw new Error("acts must contain a name and id field");
               if (val.name == null) throw new Error("act name cannot be null");
             }
           }
@@ -355,9 +357,9 @@ const eventSchemas = {
         options: (ticketTypes) => {
           if (Array.isArray(ticketTypes)) {
             for (let val of ticketTypes) {
-              if (!val.name || !val.price)
+              if (!val.name || !val.price || !val.id)
                 throw new Error(
-                  "ticketTypes must contain a name and price field",
+                  "ticketTypes must contain an id, name, and price field",
                 );
               if (val.name == null)
                 throw new Error("ticketType name cannot be null");
@@ -456,6 +458,7 @@ const eventSchemas = {
         version: "4",
         errorMessage: "eventImg id must be in UUIDV4 format",
       },
+      errorMessage: "eventImg id is required",
     },
     "eventImg.EventId": {
       in: ["body"],
