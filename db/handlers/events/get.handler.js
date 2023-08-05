@@ -14,6 +14,7 @@ const {
   TaggedWith,
   EventAct,
   Tag,
+  Organizer
 } = db.models;
 
 class GetEventHandler {
@@ -45,6 +46,13 @@ class GetEventHandler {
             return null;
           }
           data.event = event.dataValues;
+          
+          //Find the event Organizer for organizerName field
+          Organizer.findOne({where: {id: data.event.OrganizerId}, transaction: transaction})
+          .then(async (organizer) => {
+            console.log("Found the event's organizer: ", organizer.dataValues.organizationName);
+            data.event.organizationName = organizer.organizationName;
+          });
 
           //Find event image
           await EventImage.findOne({
