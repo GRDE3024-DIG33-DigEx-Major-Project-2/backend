@@ -285,7 +285,7 @@ class UpdateEventHandler {
       for (let newAct of newActs) {
         await Act.create({
           name: newAct.name,
-        })
+        }, {transaction: transaction})
           //Add created record to array
           .then((createResult) => {
             console.log("Created act while updating");
@@ -293,19 +293,20 @@ class UpdateEventHandler {
             values.push(createResult.dataValues);
           });
       }
-
+    try {    
     //Add junction for newly created acts
-    for (let val of values)
-      await EventAct.findOne(
+    for (let val of values) {
+      let actObj = await EventAct.findOne(
         { where: { ActId: val.id, EventId: eventId } },
         { transaction: transaction },
-      ).then(async (actObj) => {
-        //Act junction not found, add it in
+      );  
+    
+      //Act junction not found, add it in
         if (actObj == null) {
           await EventAct.create({
             EventId: eventId,
             ActId: val.id,
-          })
+          }, {transaction: transaction})
             .then((createJuncResult) => {
               console.log("Created EventAct junction while updating Event");
               console.log(createJuncResult);
@@ -314,12 +315,10 @@ class UpdateEventHandler {
               console.log("EventAct junction error while creating");
               console.log(err);
             });
-        }
-      });
-
+        }      
+    }
     //Append updated acts to array for return
     for (let actObj of values) arr.push(actObj);
-
     //Delete act and act associations that don't appear in request body
     await EventAct.findAll(
       {
@@ -341,7 +340,7 @@ class UpdateEventHandler {
       //Check if old act is found in new act ids
       //Delete act-event junction and act from db if not found in new act ids
       for (let oldId of oldActIds)
-        if (newActIds.includes(oldId) == false) {
+        if (newActIds.includes(oldId) === false) {
           console.log("deleting act and act-event junction rows");
           await EventAct.destroy(
             { where: { EventId: eventId, ActId: oldId } },
@@ -357,6 +356,11 @@ class UpdateEventHandler {
           });
         }
     });
+
+  } catch(error) {
+    console.log("An error occured when adding junctions for newly created acts");
+    console.log(error);
+  }
 
     //Return updated act array
     console.log("Finished updating act-related tables");
