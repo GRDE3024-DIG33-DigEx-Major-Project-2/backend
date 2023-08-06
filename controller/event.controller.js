@@ -90,6 +90,16 @@ class EventController {
     //S3 filename of image, excluding the extension
     let eventImgFilename = "";
 
+
+    let count = 0;
+
+
+    console.log(count++);
+
+    //Updated Event-related tables
+    try {
+      const result = await db.transaction(async (t) => {
+
     //Upload event image
     if (req.file && req.file.buffer) {
       eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
@@ -102,13 +112,14 @@ class EventController {
         );
 
         //Search for an old event image
-        EventImage.findOne({
+        await EventImage.findOne({
           where: {
             EventId: req.body.event.id,
           },
+          transaction: t,
         })
           //Delete old event image if found
-          .then((oldEventImg) => {
+          .then(async (oldEventImg) => {
             if (oldEventImg != null) {
               console.log("old event image exists!");
               s3Util.deleteEventImage(oldEventImg.dataValues.filename);
@@ -121,13 +132,14 @@ class EventController {
         });
       }
     }
-
+    console.log(count++);
     //Remove image without replacement
     try {
-      EventImage.findOne({
+      await EventImage.findOne({
         where: {
           EventId: req.body.event.id,
         },
+        transaction: t,
       })
         //Delete old event image and db row if found
         .then(async (oldEventImg) => {
@@ -137,6 +149,7 @@ class EventController {
             //Delete from db
             await EventImage.destroy({
               where: { id: oldEventImg.dataValues.id },
+              transaction: t,
             });
             //Delete image from s3 bucket
             s3Util.deleteEventImage(oldEventImg.dataValues.filename);
@@ -148,10 +161,7 @@ class EventController {
         message: "Image removal failed",
       });
     }
-
-    //Updated Event-related tables
-    try {
-      const result = await db.transaction(async (t) => {
+    console.log(count++);
         const eventData = await UpdateEventHandler.Update(
           req.body,
           eventImgFilename,
@@ -161,6 +171,7 @@ class EventController {
 
         //If EventImg exists and wasn't updated, find and assign it to response data
         if (eventData.eventImg == null) {
+          console.log(count++);
           await EventImage.findOne({
             where: { EventId: req.body.event.id },
             transaction: t,
@@ -168,7 +179,7 @@ class EventController {
             eventData.eventImg = result;
           });
         }
-
+        console.log("SENDING BACK UPDATE");
         //Send back 200 status wih the newly updated object
         return res.status(200).json(eventData);
       });

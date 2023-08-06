@@ -11,14 +11,13 @@ const constantsUtil = require("./constants.util");
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
-const region = process.env.BUCKET_REGION;
+const region = process.env.AWS_REGION;
 //These details are required for AWS SDK authentication for assessors
-const accessKeyId = process.env.ACCESS_KEY;
-const secretAccessKey = process.env.SECRET_KEY;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
-//Load shared credentials
-// var credentials = new AWS.SharedIniFileCredentials({ profile: "Gigney" });
-// AWS.config.credentials = credentials;
+//AWS.config.update({ region: 'ap-southeast-2' });
+
 
 //AWS S3 Bucket file utilities
 class S3Utilities {
@@ -28,6 +27,7 @@ class S3Utilities {
   constructor() {
     //For live deployment
     this.s3 = new AWS.S3();
+//
 
     // //For Team members and assessors running on localhost
     // this.s3 = new AWS.S3({
@@ -150,11 +150,13 @@ class S3Utilities {
    * @param {*} filename
    */
   async deleteFile(filename) {
-    console.log("deleting file");
+    console.clear();
+    console.log("FILENAME: "+filename+constantsUtil.IMG_EXT);
+    console.log(filename + constantsUtil.IMG_EXT);
     //Delete options
     const deleteParams = {
       Bucket: bucketName,
-      Key: filename + constantsUtil.IMG_EXT,
+      Key: "1691306435479dl6ia0i970.jpeg",
     };
     //Delete
     return await this.s3.deleteObject(deleteParams, () => {}).promise();

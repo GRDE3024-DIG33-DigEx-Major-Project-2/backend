@@ -66,6 +66,12 @@ class UserController {
     //S3 filename of image, excluding the extension
     let profileImgFilename = "";
 
+
+    //Updated User data in db
+    try {
+      let newData;
+      const result = await db.transaction(async (t) => {
+
     //Upload profile image
     if (req.file && req.file.buffer) {
       profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
@@ -78,8 +84,8 @@ class UserController {
         );
 
         //Existing profile image exists, delete it
-        if (tokenData.imgFilename != null && tokenData.imgFilename != "") {
-          s3Util.deleteProfileImage(tokenData.imgFilename);
+        if (tokenData.user.imgFilename != null && tokenData.user.imgFilename != "") {
+          await s3Util.deleteProfileImage(tokenData.user.imgFilename);
           console.log("Old profile image deleted");
         }
       } catch (error) {
@@ -90,16 +96,23 @@ class UserController {
       }
     }
 
+
+    console.log("REQ BODY TEST: ", req.body);
+
     //Remove image without replacement
     try {
-      if (req.body.imgFilename == "" && tokenData.imgFilename != "") {
+      if ((req.body.imgFilename == "" || req.body.imgFilename == null || req.body.imgFilename == undefined) 
+      && tokenData.user.imgFilename != "") {
+
         //If profile image is flagged for removal
-        if (req.body.removeImg == true) {
+        if (req.body.removeImg == "true" || req.body.removeImg == true) {
+          console.log("Going to delete img without replacement");
           await s3Util
-            .deleteProfileImage(tokenData.imgFilename)
+            .deleteProfileImage(tokenData.user.imgFilename)
             .then((result) => {
               console.log("Old profile image deleted without replacement");
               console.log(result);
+              
             });
         }
       }
@@ -110,11 +123,7 @@ class UserController {
       });
     }
 
-    //Updated User data in db
-    try {
-      let newData;
 
-      const result = await db.transaction(async (t) => {
         newData = await UpdateUserHandler.Update(
           req.body,
           profileImgFilename,

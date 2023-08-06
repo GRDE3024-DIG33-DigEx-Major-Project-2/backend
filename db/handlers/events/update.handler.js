@@ -37,6 +37,8 @@ class UpdateEventHandler {
     eventData.event = await this.UpdateEvent(data.event, currUser, t);
     console.log("Event Updated");
 
+    console.log(eventData.event);
+
     //Update Event Image
     if (eventImgFilename != "") {
       eventData.eventImg = await this.UpdateEventImage(
@@ -45,6 +47,7 @@ class UpdateEventHandler {
         t,
       );
       console.log("EventImg Updated");
+      console.log(eventData.eventImg);
     }
 
     //Update Tag associations
@@ -59,6 +62,7 @@ class UpdateEventHandler {
       t,
     );
     console.log("Acts Updated");
+    console.log(eventData.acts);
 
     //Update Ticket Type associations
     eventData.ticketTypes = await this.UpdateTicketTypes(
@@ -68,6 +72,7 @@ class UpdateEventHandler {
       t,
     );
     console.log("TicketTypes Updated");
+console.log(eventData.ticketTypes);
 
     //Return the updated event db data
     console.log("Event update completed!");
@@ -106,6 +111,7 @@ class UpdateEventHandler {
       transaction: transaction,
       where: {
         OrganizerId: currUser.id,
+        id:event.id
       },
     }).then(async (numFieldsChanged) => {
       //Return the updated event row
@@ -384,7 +390,7 @@ class UpdateEventHandler {
     //Updated ticket types
     let values = [];
     //Update ticket types in db
-    if (Array.isArray(updatedTicketTypes))
+    if (Array.isArray(updatedTicketTypes)) 
       for (let updatedTicketType of updatedTicketTypes) {
         let updateData = {};
         if (updatedTicketType.name) updateData.name = updatedTicketType.name;
@@ -434,7 +440,7 @@ class UpdateEventHandler {
       //Build array of old junction ticket type ids
       oldTicketTypeIds = currRows.map((x) => x.dataValues.TicketTypeId);
 
-      //Build array of new junction act ids
+      //Build array of new junction ticket type ids
       newTicketTypeIds = values.map((x) => x.id);
 
       //Check if old ticket type is found in new ticket type ids
@@ -445,15 +451,15 @@ class UpdateEventHandler {
           await EventTicket.destroy(
             { where: { EventId: eventId, TicketTypeId: oldId } },
             { transaction: transaction },
-          ).then(async () => {
+          ).then(() => {
             console.log("EventTicket row destroyed");
+          });
             await TicketType.destroy(
               { where: { id: oldId } },
               { transaction: transaction },
             ).then(() => {
               console.log("TicketType row destroyed");
             });
-          });
         }
     });
 
