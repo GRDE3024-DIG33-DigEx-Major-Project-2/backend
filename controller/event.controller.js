@@ -965,6 +965,34 @@ class EventController {
       });
     }
   };
+
+
+
+  /**
+   * Finds if an event is favourited by the user already
+   * @param {*} req 
+   * @param {*} res 
+   * @returns 
+   */
+  IsFavourite = async (req, res) => {
+    let eventId = req.params.id;
+    let tokenData = req.user.user;
+    //Sends false if not favourited
+    let data = false;
+
+    //Search if user has favourited the event already
+    let result = await FavouritedBy.findOne({where: {EventId: eventId, AttendeeId: tokenData.id}});
+
+    //It is favourited, send back true
+    if (result != null)
+    data = true;
+    
+    //Send back 200 with result indicating if event is favourited
+    return res.status(200).json(data);
+    
+  }
+
+
 }
 
 //Export the event controller

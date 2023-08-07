@@ -232,5 +232,22 @@
         }
       ]
     }
-  }
+  },
+    "/event/is-favourited/{eventId}": {
+      "get": {
+        "descriptiopn":"Determines if the event is favourited by the Attendee or not",
+        "tags": ["Event Route"],
+        "responses": {
+          "200": {
+            "description": "Page of events with the total page count"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  
 }

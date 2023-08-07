@@ -107,6 +107,7 @@ const swaggerOptions = {
     "/event/favourites": docFiles.paths.event["/event/favourites"],
     "/event/owned-events": docFiles.paths.event["/event/owned-events"],
     "/event/{eventId}": docFiles.paths.event["/event/{eventId}"],
+    "/event/is-favourited/{eventId}": docFiles.paths.event["/event/is-favourited/{eventId}"],
   },
   components: {
     schemas: {
