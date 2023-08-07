@@ -104,7 +104,12 @@
         "description": "The event image file to upload"
       }
     },
-    "required": ["event", "acts", "tags", "ticketTypes"]
+    "required": [
+      "event",
+      "acts",
+      "tags",
+      "ticketTypes"
+    ]
   },
   "UpdateEvent": {
     "type": "object",
@@ -254,7 +259,12 @@
         "description": "The event image file to upload"
       }
     },
-    "required": ["event", "acts", "tags", "ticketTypes"]
+    "required": [
+      "event",
+      "acts",
+      "tags",
+      "ticketTypes"
+    ]
   },
   "ToggleEvent": {
     "type": "object",
@@ -263,7 +273,9 @@
         "type": "string"
       }
     },
-    "required": ["eventId"]
+    "required": [
+      "eventId"
+    ]
   },
   "SearchEvents": {
     "type": "object",
@@ -311,7 +323,9 @@
         "description": "The city the event is held in"
       }
     },
-    "required": ["page"]
+    "required": [
+      "page"
+    ]
   },
   "FavouritedEvents": {
     "type": "object",
@@ -321,7 +335,9 @@
         "description": "The page you want to retrieve (0 would be the first page)"
       }
     },
-    "required": ["page"]
+    "required": [
+      "page"
+    ]
   },
   "OwnedEvents": {
     "type": "object",
@@ -331,6 +347,23 @@
         "description": "The page you want to retrieve (0 would be the first page)"
       }
     },
-    "required": ["page"]
+    "required": [
+      "page"
+    ]
+  },
+  "IsFavourited": {
+    "type": "object",
+    "properties": {
+      "eventIds": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "An event's id"
+        }
+      }
+    },
+    "required": [
+      "eventIds"
+    ]
   }
 }

@@ -107,7 +107,7 @@ const swaggerOptions = {
     "/event/favourites": docFiles.paths.event["/event/favourites"],
     "/event/owned-events": docFiles.paths.event["/event/owned-events"],
     "/event/{eventId}": docFiles.paths.event["/event/{eventId}"],
-    "/event/is-favourited/{eventId}": docFiles.paths.event["/event/is-favourited/{eventId}"],
+    "/event/is-favourited": docFiles.paths.event["/event/is-favourited"],
   },
   components: {
     schemas: {
@@ -124,6 +124,7 @@ const swaggerOptions = {
       SearchEvents: docFiles.schemas.event["SearchEvents"],
       FavouritedEvents: docFiles.schemas.event["FavouritedEvents"],
       OwnedEvents: docFiles.schemas.event["OwnedEvents"],
+      IsFavourited: docFiles.schemas.event["IsFavourited"],
     },
     securitySchemes: {
       BearerAuth: {

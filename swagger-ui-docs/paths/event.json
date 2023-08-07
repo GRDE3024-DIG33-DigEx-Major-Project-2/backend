@@ -233,10 +233,20 @@
       ]
     }
   },
-    "/event/is-favourited/{eventId}": {
+    "/event/is-favourited": {
       "get": {
         "descriptiopn":"Determines if the event is favourited by the Attendee or not",
         "tags": ["Event Route"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IsFavourited"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Page of events with the total page count"

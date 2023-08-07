@@ -975,17 +975,24 @@ class EventController {
    * @returns 
    */
   IsFavourite = async (req, res) => {
-    let eventId = req.params.id;
+    let eventIds = req.body.eventIds;
     let tokenData = req.user.user;
-    //Sends false if not favourited
-    let data = false;
+    
+    let data = [];
 
     //Search if user has favourited the event already
-    let result = await FavouritedBy.findOne({where: {EventId: eventId, AttendeeId: tokenData.id}});
+    for (let eventId of eventIds) {
+      let result = await FavouritedBy.findOne({where: {EventId: eventId, AttendeeId: tokenData.id}});
+    //It is favourited, push to array as true
+    if (result != null) 
+      data.push({eventId: eventId, isFavourite: true});
+      //It is not favourited, push to array as false
+      else 
+      data.push({eventId: eventId, isFavourite: false});
+    }
+    
 
-    //It is favourited, send back true
-    if (result != null)
-    data = true;
+
     
     //Send back 200 with result indicating if event is favourited
     return res.status(200).json(data);

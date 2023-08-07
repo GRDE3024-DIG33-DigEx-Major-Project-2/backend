@@ -149,17 +149,10 @@ router.delete(
 /**
  * GET -- Finds if event is favourited already. True if favourited, else false
  */
-router.get(
-  "/is-favourited/:id",
+router.post(
+  "/is-favourited",
   processTokenData,
   isAttendee,
-  //UUIDV4 in param check
-  param("id")
-    .exists()
-    .withMessage("id not provided in url param!")
-    .bail()
-    .isUUID(4)
-    .withMessage("id must be UUIDV4 format!"),
   validate,
   eventController.IsFavourite,
 );
