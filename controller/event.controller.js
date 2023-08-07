@@ -19,6 +19,7 @@ const UpdateEventHandler = require("../db/handlers/events/update.handler");
 const GetEventHandler = require("../db/handlers/events/get.handler");
 //Db delete event handler
 const DeleteEventHandler = require("../db/handlers/events/delete.handler");
+const { assert } = require("chai");
 
 class EventController {
   /**
@@ -90,6 +91,13 @@ class EventController {
     //S3 filename of image, excluding the extension
     let eventImgFilename = "";
 
+    console.clear();
+    console.log("ABOUT TO UPDATE");
+    console.log(req.body.newTicketTypes);
+    console.log(req.body.newActs);
+
+
+    
 
     let count = 0;
 
@@ -322,7 +330,7 @@ class EventController {
           //Find all data associated with the events across all tables
           .then(async (junctions) => {
             console.log("Found favourited events");
-            console.log(junctions);
+            //console.log(junctions);
 
             for (let junc of junctions) {
               let val = await GetEventHandler.FindOneById(
@@ -395,8 +403,7 @@ class EventController {
         })
           //Find all data associated with the events across all tables
           .then(async (events) => {
-            console.log("Found owned events");
-            console.log(events);
+            console.log("Found owned events: ", events.length);
             for (let ev of events) {
               let val = await GetEventHandler.FindOneById(
                 ev.dataValues.id,
@@ -499,10 +506,6 @@ class EventController {
 
     console.log("PRICE RANGE TEST");
     console.log(filterOptions.priceRange);
-
-    // console.log("DATE TEST");
-    // console.log(filterOptions.minDate);
-    // console.log(filterOptions.maxDate);
 
     //Set priceRange to null if maxPrice is 0
     if (filterOptions.priceRange != null)

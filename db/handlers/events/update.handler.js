@@ -54,6 +54,7 @@ class UpdateEventHandler {
     eventData.tags = await this.UpdateTaggedWith(data.tags, data.event.id, t);
     console.log("Tags Updated");
 
+
     //Update Act associations
     eventData.acts = await this.UpdateActs(
       data.acts,
@@ -79,6 +80,229 @@ console.log(eventData.ticketTypes);
     console.log(eventData);
     return eventData;
   }
+
+
+  /**
+   * Update Acts in Act table
+   * @param {*} updatedActs
+   * @param {*} eventId
+   * @param {*} transaction
+   */
+  async UpdateActs(updatedActs, newActs, eventId, transaction) {
+    //Array of updated acts
+    let arr = [];
+    //Acts after update
+    let values = [];
+
+    //Update acts in db
+    if (Array.isArray(updatedActs))
+      for (let updatedAct of updatedActs)
+        if (updatedAct.name)
+          await Act.update(
+            {
+              name: updatedAct.name,
+            },
+            {
+              transaction: transaction,
+              returning: true,
+              where: { id: updatedAct.id },
+            },
+          )
+            //Add updated record to array
+            .then(async (updateResult) => {
+              console.log("Updated act: ", updateResult[1]);
+              let updAct = await Act.findOne({where: {id:updatedAct.id},transaction:transaction});
+              values.push(updAct.dataValues);
+            });
+
+    //Add new acts to db
+    if (Array.isArray(newActs))
+      for (let newAct of newActs) {
+        await Act.create({
+          name: newAct.name,
+        }, {transaction: transaction})
+          //Add created record to array
+          .then((createResult) => {
+            console.log("Created act while updating: ", createResult.dataValues);
+            values.push(createResult.dataValues);
+          });
+      }
+    try { 
+      
+      console.log("CHECKING ALL VALUES: ", values);
+    //Add junction for newly created acts
+    for (let val of values) {
+      let actObj = await EventAct.findOne(
+        { where: { ActId: val.id, EventId: eventId } },
+        { transaction: transaction },
+      );  
+    
+      //Act junction not found, add it in
+        if (actObj == null) {
+          await EventAct.create({
+            EventId: eventId,
+            ActId: val.id,
+          }, {transaction: transaction})
+            .then((createJuncResult) => {
+              console.log("Created EventAct junction while updating Event");
+              console.log(createJuncResult);
+            })
+            .catch((err) => {
+              console.log("EventAct junction error while creating");
+              console.log(err);
+            });
+        }      
+    }
+    //Append updated acts to array for return
+    for (let actObj of values) arr.push(actObj);
+    //Delete act and act associations that don't appear in request body
+    await EventAct.findAll(
+      {
+        where: {
+          EventId: eventId,
+        },
+      },
+      { transaction: transaction },
+    ).then(async (currRows) => {
+      let oldActIds = [];
+      let newActIds = [];
+
+      //Build array of old junction act ids
+      oldActIds = currRows.map((x) => x.dataValues.ActId);
+
+      //Build array of new junction act ids
+      newActIds = values.map((x) => x.id);
+
+      //Check if old act is found in new act ids
+      //Delete act-event junction and act from db if not found in new act ids
+      for (let oldId of oldActIds)
+        if (newActIds.includes(oldId) === false) {
+          console.log("deleting act and act-event junction rows");
+          await EventAct.destroy(
+            { where: { EventId: eventId, ActId: oldId } },
+            { transaction: transaction },
+          ).then(async () => {
+            console.log("ActEvent row destroyed");
+            await Act.destroy(
+              { where: { id: oldId } },
+              { transaction: transaction },
+            ).then(() => {
+              console.log("Act row destroyed");
+            });
+          });
+        }
+    });
+
+  } catch(error) {
+    console.log("An error occured when adding junctions for newly created acts");
+    console.log(error);
+  }
+
+    //Return updated act array
+    console.log("Finished updating act-related tables");
+    return arr;
+  }
+
+  /**
+   * Update Event-TicketType junction rows
+   * @param {*} updatedTicketTypes
+   * @param {*} eventId
+   * @param {*} transaction
+   */
+  async UpdateTicketTypes(
+    updatedTicketTypes,
+    newTicketTypes,
+    eventId,
+    transaction,
+  ) {
+    //Array of updated ticket types
+    let arr = [];
+    //Updated ticket types
+    let values = [];
+
+    //Update ticket types in db
+    if (Array.isArray(updatedTicketTypes)) 
+      for (let updatedTicketType of updatedTicketTypes) {
+        let updateData = {};
+        if (updatedTicketType.name) updateData.name = updatedTicketType.name;
+        if (updatedTicketType.price) updateData.price = updatedTicketType.price;
+        await TicketType.update(updateData, {
+          transaction: transaction,
+          returning: true,
+          where: { id: updatedTicketType.id },
+        })
+          //Add updated record to array
+          .then(async (updateResult) => {
+            console.log("Updated ticket type");
+            console.log(updateResult[1]);
+            let updTicket = await TicketType
+            .findOne({where:{id: updatedTicketType.id}, transaction: transaction});
+            values.push(updTicket.dataValues);
+          });
+      }
+
+    //Add new ticket types to db
+    if (Array.isArray(newTicketTypes))
+      for (let newTicketType of newTicketTypes) {
+        await TicketType.create(newTicketType, {
+          transaction: transaction,
+        })
+          //Add created record to array
+          .then(async (createResult) => {
+            console.log("Created ticket type while updating event");
+            console.log(createResult.dataValues);
+            values.push(createResult.dataValues);
+            let newTicketJuncResponse = await EventTicket.create({EventId:eventId, TicketTypeId: createResult.dataValues.id}, {transaction:transaction});
+          console.log("New Ticket Junction response: ", newTicketJuncResponse);
+          });
+      }
+
+    //Append updated ticket types to array for return
+    for (let actObj of values) arr.push(actObj);
+
+    //Delete ticket type and ticket type associations that don't appear in request body
+    await EventTicket.findAll(
+      {
+        where: {
+          EventId: eventId,
+        },
+      },
+      { transaction: transaction },
+    ).then(async (currRows) => {
+      let oldTicketTypeIds = [];
+      let newTicketTypeIds = [];
+
+      //Build array of old junction ticket type ids
+      oldTicketTypeIds = currRows.map((x) => x.dataValues.TicketTypeId);
+
+      //Build array of new junction ticket type ids
+      newTicketTypeIds = values.map((x) => x.id);
+
+      //Check if old ticket type is found in new ticket type ids
+      //Delete event-ticket junction and ticket type from db if not found in new ticket type ids
+      for (let oldId of oldTicketTypeIds)
+        if (newTicketTypeIds.includes(oldId) == false) {
+          console.log("deleting ticket type and event-ticket junction rows");
+          await EventTicket.destroy(
+            { where: { EventId: eventId, TicketTypeId: oldId } },
+            { transaction: transaction },
+          ).then(() => {
+            console.log("EventTicket row destroyed");
+          });
+            await TicketType.destroy(
+              { where: { id: oldId } },
+              { transaction: transaction },
+            ).then(() => {
+              console.log("TicketType row destroyed");
+            });
+        }
+    });
+
+    //Return updated ticket type array
+    console.log("Finished updating ticket type-related tables");
+    return arr;
+  }
+
 
   /**
    * Update Event table row
@@ -253,220 +477,7 @@ console.log(eventData.ticketTypes);
     return arr;
   }
 
-  /**
-   * Update Acts in Act table
-   * @param {*} updatedActs
-   * @param {*} eventId
-   * @param {*} transaction
-   */
-  async UpdateActs(updatedActs, newActs, eventId, transaction) {
-    //Array of updated acts
-    let arr = [];
-    //Acts after update
-    let values = [];
 
-    //Update acts in db
-    if (Array.isArray(updatedActs))
-      for (let updatedAct of updatedActs)
-        if (updatedAct.name)
-          await Act.update(
-            {
-              name: updatedAct.name,
-            },
-            {
-              transaction: transaction,
-              returning: true,
-              where: { id: updatedAct.id },
-            },
-          )
-            //Add updated record to array
-            .then((updateResult) => {
-              console.log("Updated act");
-              console.log(updateResult[1]);
-              values.push(updateResult[1]);
-            });
-
-    //Add new acts to db
-    if (Array.isArray(newActs))
-      for (let newAct of newActs) {
-        await Act.create({
-          name: newAct.name,
-        }, {transaction: transaction})
-          //Add created record to array
-          .then((createResult) => {
-            console.log("Created act while updating");
-            console.log(createResult.dataValues);
-            values.push(createResult.dataValues);
-          });
-      }
-    try {    
-    //Add junction for newly created acts
-    for (let val of values) {
-      let actObj = await EventAct.findOne(
-        { where: { ActId: val.id, EventId: eventId } },
-        { transaction: transaction },
-      );  
-    
-      //Act junction not found, add it in
-        if (actObj == null) {
-          await EventAct.create({
-            EventId: eventId,
-            ActId: val.id,
-          }, {transaction: transaction})
-            .then((createJuncResult) => {
-              console.log("Created EventAct junction while updating Event");
-              console.log(createJuncResult);
-            })
-            .catch((err) => {
-              console.log("EventAct junction error while creating");
-              console.log(err);
-            });
-        }      
-    }
-    //Append updated acts to array for return
-    for (let actObj of values) arr.push(actObj);
-    //Delete act and act associations that don't appear in request body
-    await EventAct.findAll(
-      {
-        where: {
-          EventId: eventId,
-        },
-      },
-      { transaction: transaction },
-    ).then(async (currRows) => {
-      let oldActIds = [];
-      let newActIds = [];
-
-      //Build array of old junction act ids
-      oldActIds = currRows.map((x) => x.dataValues.ActId);
-
-      //Build array of new junction act ids
-      newActIds = values.map((x) => x.id);
-
-      //Check if old act is found in new act ids
-      //Delete act-event junction and act from db if not found in new act ids
-      for (let oldId of oldActIds)
-        if (newActIds.includes(oldId) === false) {
-          console.log("deleting act and act-event junction rows");
-          await EventAct.destroy(
-            { where: { EventId: eventId, ActId: oldId } },
-            { transaction: transaction },
-          ).then(async () => {
-            console.log("ActEvent row destroyed");
-            await Act.destroy(
-              { where: { id: oldId } },
-              { transaction: transaction },
-            ).then(() => {
-              console.log("Act row destroyed");
-            });
-          });
-        }
-    });
-
-  } catch(error) {
-    console.log("An error occured when adding junctions for newly created acts");
-    console.log(error);
-  }
-
-    //Return updated act array
-    console.log("Finished updating act-related tables");
-    return arr;
-  }
-
-  /**
-   * Update Event-TicketType junction rows
-   * @param {*} updatedTicketTypes
-   * @param {*} eventId
-   * @param {*} transaction
-   */
-  async UpdateTicketTypes(
-    updatedTicketTypes,
-    newTicketTypes,
-    eventId,
-    transaction,
-  ) {
-    //Array of updated ticket types
-    let arr = [];
-    //Updated ticket types
-    let values = [];
-    //Update ticket types in db
-    if (Array.isArray(updatedTicketTypes)) 
-      for (let updatedTicketType of updatedTicketTypes) {
-        let updateData = {};
-        if (updatedTicketType.name) updateData.name = updatedTicketType.name;
-        if (updatedTicketType.price) updateData.price = updatedTicketType.price;
-        await TicketType.update(updateData, {
-          transaction: transaction,
-          returning: true,
-          where: { id: updatedTicketType.id },
-        })
-          //Add updated record to array
-          .then((updateResult) => {
-            console.log("Updated ticket type");
-            console.log(updateResult[1]);
-            values.push(updateResult[1]);
-          });
-      }
-
-    //Add new ticket types to db
-    if (Array.isArray(newTicketTypes))
-      for (let newTicketType of newTicketTypes) {
-        await TicketType.create(newTicketType, {
-          transaction: transaction,
-        })
-          //Add created record to array
-          .then((createResult) => {
-            console.log("Created ticket type while updating event");
-            console.log(createResult.dataValues);
-            values.push(createResult.dataValues);
-          });
-      }
-
-    //Append updated ticket types to array for return
-    for (let actObj of values) arr.push(actObj);
-
-    //Delete ticket type and ticket type associations that don't appear in request body
-    await EventTicket.findAll(
-      {
-        where: {
-          EventId: eventId,
-        },
-      },
-      { transaction: transaction },
-    ).then(async (currRows) => {
-      let oldTicketTypeIds = [];
-      let newTicketTypeIds = [];
-
-      //Build array of old junction ticket type ids
-      oldTicketTypeIds = currRows.map((x) => x.dataValues.TicketTypeId);
-
-      //Build array of new junction ticket type ids
-      newTicketTypeIds = values.map((x) => x.id);
-
-      //Check if old ticket type is found in new ticket type ids
-      //Delete event-ticket junction and ticket type from db if not found in new ticket type ids
-      for (let oldId of oldTicketTypeIds)
-        if (newTicketTypeIds.includes(oldId) == false) {
-          console.log("deleting ticket type and event-ticket junction rows");
-          await EventTicket.destroy(
-            { where: { EventId: eventId, TicketTypeId: oldId } },
-            { transaction: transaction },
-          ).then(() => {
-            console.log("EventTicket row destroyed");
-          });
-            await TicketType.destroy(
-              { where: { id: oldId } },
-              { transaction: transaction },
-            ).then(() => {
-              console.log("TicketType row destroyed");
-            });
-        }
-    });
-
-    //Return updated ticket type array
-    console.log("Finished updating ticket type-related tables");
-    return arr;
-  }
 }
 
 //Export handler

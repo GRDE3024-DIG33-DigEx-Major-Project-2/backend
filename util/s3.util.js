@@ -26,7 +26,9 @@ class S3Utilities {
    */
   constructor() {
     //For live deployment
-    this.s3 = new AWS.S3();
+    this.s3 = new AWS.S3({
+      region: 'ap-southeast-2'
+    });
 //
 
     // //For Team members and assessors running on localhost
@@ -106,10 +108,18 @@ class S3Utilities {
    * @param {*} filename
    */
   async deleteEventImage(filename) {
+    //Don't delete seeded event images as they are shared
+    if (!filename.includes('seed-event-images')) {
     return await this.deleteFile(filename).catch((err) => {
       console.log("An error occured while deleting an Event Image");
       console.log(err);
-    });
+    });      
+    }
+    else {
+      console.log("Seeded event images cannot be deleted!");
+      return;
+    }
+
   }
 
   /**
@@ -132,7 +142,6 @@ class S3Utilities {
    * @param {*} mimetype
    */
   async uploadFile(buffer, filename, mimetype) {
-    console.log("uploading file");
     //Upload options
     const uploadParams = {
       Bucket: bucketName,
@@ -150,13 +159,10 @@ class S3Utilities {
    * @param {*} filename
    */
   async deleteFile(filename) {
-    console.clear();
-    console.log("FILENAME: "+filename+constantsUtil.IMG_EXT);
-    console.log(filename + constantsUtil.IMG_EXT);
     //Delete options
     const deleteParams = {
       Bucket: bucketName,
-      Key: "1691306435479dl6ia0i970.jpeg",
+      Key: filename + constantsUtil.IMG_EXT,
     };
     //Delete
     return await this.s3.deleteObject(deleteParams, () => {}).promise();

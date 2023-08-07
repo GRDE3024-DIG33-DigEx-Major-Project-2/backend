@@ -252,9 +252,6 @@ const eventSchemas = {
     "event.startDate": {
       isISO8601: true,
       optional: { options: { nullable: false } },
-      custom: {
-        options: eventDateRange,
-      },
       errorMessage: "Invalid startDate field",
     },
     "event.endDate": {

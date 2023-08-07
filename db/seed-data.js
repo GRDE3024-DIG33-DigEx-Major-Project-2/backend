@@ -764,7 +764,7 @@ class SeedData {
         region: "NSW",
         postcode: "2040",
         country: "Australia",
-        isFree: true,
+        isFree: false,
         purchaseUrl: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

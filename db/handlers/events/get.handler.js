@@ -38,15 +38,12 @@ class GetEventHandler {
       //Find event
       await Event.findOne({ where: { id: eventId }, transaction: transaction })
         .then(async (event) => {
-          console.log("check 1");
-          console.log(event);
           //Event not found
           if (event == null) {
-            console.log("is null check");
+            console.log("Event not found");
             return null;
           }
           data.event = event.dataValues;
-
           //Find the event Organizer for organizerName field
           Organizer.findOne({
             where: { id: data.event.OrganizerId },
