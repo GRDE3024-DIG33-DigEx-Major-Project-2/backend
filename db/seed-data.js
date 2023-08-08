@@ -18,7 +18,7 @@ class SeedData {
   getOrganizers() {
     return [
       {
-        id: uuidv4(),
+        id: "b7dab95d-6197-4b67-af74-839f4c6e2f7b",
         bio: null,
         organizationName: "Adam's Venues",
         phoneNumber: "+61 412 345 678",
@@ -633,7 +633,7 @@ class SeedData {
   getAttendees() {
     return [
       {
-        id: uuidv4(),
+        id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
         firstName: "Zelda",
         lastName: "Peach",
         bio: null,

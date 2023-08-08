@@ -72,6 +72,7 @@
     "sharp": "^0.32.1",
     "side-channel": "^1.0.4",
     "statuses": "^2.0.1",
+    "superagent": "^8.0.9",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
     "toidentifier": "^1.0.1",
@@ -93,16 +94,19 @@
     "seed-prod-up": "sequelize db:seed:all --env production",
     "seed-dev-down": "npx sequelize-cli db:seed:undo:all --env development --debug",
     "seed-prod-down": "npx sequelize-cli db:seed:undo:all --env production",
-    "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\""
+    "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\"",
+    "test": "cross-env NODE_ENV=test jest"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.3.7",
+    "jest": "^29.6.2",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
     "prettier": "^3.0.0",
-    "sequelize-cli": "^6.6.1"
+    "sequelize-cli": "^6.6.1",
+    "supertest": "^6.3.3"
   },
   "nodemonConfig": {
     "events": {

@@ -147,14 +147,14 @@ router.delete(
 
 
 /**
- * GET -- Finds if event is favourited already. True if favourited, else false
+ * POST -- Finds if event is favourited already. True if favourited, else false
  */
 router.post(
   "/is-favourited",
   processTokenData,
   isAttendee,
   validate,
-  eventController.IsFavourite,
+  eventController.IsFavourited,
 );
 
 //Exports the event router

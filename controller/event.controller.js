@@ -974,7 +974,7 @@ class EventController {
    * @param {*} res 
    * @returns 
    */
-  IsFavourite = async (req, res) => {
+  IsFavourited = async (req, res) => {
     let eventIds = req.body.eventIds;
     let tokenData = req.user.user;
     
@@ -995,7 +995,7 @@ class EventController {
 
     
     //Send back 200 with result indicating if event is favourited
-    return res.status(200).json(data);
+    return res.status(200).json({favStatuses: data});
     
   }
 

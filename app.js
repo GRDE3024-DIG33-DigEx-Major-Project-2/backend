@@ -144,8 +144,15 @@ app.use(
   swaggerUi.setup(swaggerOptions, { explorer: true }),
 );
 
+
 //LAUNCH ---------------------------------------------------------------------------
 //Run the app. Listen on specified port
-app.listen(port, () => {
-  console.log("App is running on port " + port);
-});
+if (process.env.NODE_ENV !== 'test') {
+  //Start the server only when not in test mode
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
+
+//Export app for test files
+module.exports = { app };
