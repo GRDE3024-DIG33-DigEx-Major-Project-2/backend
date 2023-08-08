@@ -139,7 +139,7 @@ class UserController {
         //Set refresh token as HTTP Only cookie
         res.cookie("refreshToken", refreshToken, { httpOnly: true });
 
-        return res.status(201).json({
+        return res.status(200).json({
           accessToken: accessToken,
           user: newData,
         });

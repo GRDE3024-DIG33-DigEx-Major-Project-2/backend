@@ -414,6 +414,8 @@ class EventController {
             }
           });
 
+          console.log("YOUR EVENTS");
+          console.log(data);
         //Return 200 response with the event data array and page count
         return res.status(200).json({ events: data, pageCount: numPages });
       });
