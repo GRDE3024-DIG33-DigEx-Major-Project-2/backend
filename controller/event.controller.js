@@ -19,7 +19,6 @@ const UpdateEventHandler = require("../db/handlers/events/update.handler");
 const GetEventHandler = require("../db/handlers/events/get.handler");
 //Db delete event handler
 const DeleteEventHandler = require("../db/handlers/events/delete.handler");
-const { assert } = require("chai");
 
 class EventController {
   /**

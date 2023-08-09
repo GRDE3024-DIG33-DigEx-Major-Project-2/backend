@@ -12,25 +12,9 @@ Pre-requisites:
     - Installers: https://www.postgresql.org/download/
 - AWS SDK access key and secret key are provided in the backend project folder's .env file.
     - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
-- AWS S3 object in the backend's src/util/s3.util.js constructor should look like the code snippet below:
-    - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
 
-/////////////////////////////////////////////
 
-  constructor() {
-    
-    //For live deployment
-    //this.s3 = new AWS.S3();
-
-    //For Team members and assessors running on localhost
-    this.s3 = new AWS.S3({
-			region,
-			accessKeyId,
-			secretAccessKey
-    });
-  }
-
-/////////////////////////////////////////////
+//TODO aws cli step
 
 
 Steps:
