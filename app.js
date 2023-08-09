@@ -18,6 +18,18 @@ const port = process.env.PORT || 3000;
 //EXPRESS APP SETUP ---------------------------------------------------------------------------
 //Initialise Express app and configure services
 const app = express();
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3456",
+      "https:main.d27kan9z07m8v9.amplifyapp.com",
+      "https:main.d2r6b1gwt7kgsa.amplifyapp.com",
+    ],
+    credentials: true,
+  }),
+);
+//Enable cookies
+app.use(cookieParser());
 //Use defined static paths
 app.use(express.static("Public"));
 //Use body parsing middleware
@@ -27,12 +39,6 @@ app.use(
     extended: true,
   }),
 );
-//Enable cookies
-app.use(cookieParser());
-//Enable unrestricted CORS
-app.use("*", cors());
-
-console.clear();
 
 //ROUTING SETUP ---------------------------------------------------------------------------
 //Setup auth router
@@ -65,8 +71,8 @@ const docFiles = {
 const swaggerOptions = {
   openapi: "3.1.0",
   info: {
-    title: "Gignet Express API with Swagger",
-    version: "0.2.0",
+    title: "Final Version of Gigney API",
+    version: "1.0.0",
     description:
       "This is a REST API application for Gigney made with Express and documented with Swagger UI",
     license: {
@@ -144,10 +150,9 @@ app.use(
   swaggerUi.setup(swaggerOptions, { explorer: true }),
 );
 
-
 //LAUNCH ---------------------------------------------------------------------------
 //Run the app. Listen on specified port
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   //Start the server only when not in test mode
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);

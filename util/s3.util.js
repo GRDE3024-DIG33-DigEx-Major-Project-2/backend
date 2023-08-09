@@ -18,7 +18,6 @@ const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 //AWS.config.update({ region: 'ap-southeast-2' });
 
-
 //AWS S3 Bucket file utilities
 class S3Utilities {
   /**
@@ -27,9 +26,9 @@ class S3Utilities {
   constructor() {
     //For live deployment
     this.s3 = new AWS.S3({
-      region: 'ap-southeast-2'
+      region: "ap-southeast-2",
     });
-//
+    //
 
     // //For Team members and assessors running on localhost
     // this.s3 = new AWS.S3({
@@ -109,17 +108,15 @@ class S3Utilities {
    */
   async deleteEventImage(filename) {
     //Don't delete seeded event images as they are shared
-    if (!filename.includes('seed-event-images')) {
-    return await this.deleteFile(filename).catch((err) => {
-      console.log("An error occured while deleting an Event Image");
-      console.log(err);
-    });      
-    }
-    else {
+    if (!filename.includes("seed-event-images")) {
+      return await this.deleteFile(filename).catch((err) => {
+        console.log("An error occured while deleting an Event Image");
+        console.log(err);
+      });
+    } else {
       console.log("Seeded event images cannot be deleted!");
       return;
     }
-
   }
 
   /**

@@ -145,7 +145,6 @@ router.delete(
   eventController.DeleteEvent,
 );
 
-
 /**
  * POST -- Finds if event is favourited already. True if favourited, else false
  */

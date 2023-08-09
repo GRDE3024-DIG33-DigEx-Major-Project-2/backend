@@ -54,7 +54,6 @@ class UpdateEventHandler {
     eventData.tags = await this.UpdateTaggedWith(data.tags, data.event.id, t);
     console.log("Tags Updated");
 
-
     //Update Act associations
     eventData.acts = await this.UpdateActs(
       data.acts,
@@ -73,14 +72,13 @@ class UpdateEventHandler {
       t,
     );
     console.log("TicketTypes Updated");
-console.log(eventData.ticketTypes);
+    console.log(eventData.ticketTypes);
 
     //Return the updated event db data
     console.log("Event update completed!");
     console.log(eventData);
     return eventData;
   }
-
 
   /**
    * Update Acts in Act table
@@ -111,38 +109,49 @@ console.log(eventData.ticketTypes);
             //Add updated record to array
             .then(async (updateResult) => {
               console.log("Updated act: ", updateResult[1]);
-              let updAct = await Act.findOne({where: {id:updatedAct.id},transaction:transaction});
+              let updAct = await Act.findOne({
+                where: { id: updatedAct.id },
+                transaction: transaction,
+              });
               values.push(updAct.dataValues);
             });
 
     //Add new acts to db
     if (Array.isArray(newActs))
       for (let newAct of newActs) {
-        await Act.create({
-          name: newAct.name,
-        }, {transaction: transaction})
+        await Act.create(
+          {
+            name: newAct.name,
+          },
+          { transaction: transaction },
+        )
           //Add created record to array
           .then((createResult) => {
-            console.log("Created act while updating: ", createResult.dataValues);
+            console.log(
+              "Created act while updating: ",
+              createResult.dataValues,
+            );
             values.push(createResult.dataValues);
           });
       }
-    try { 
-      
+    try {
       console.log("CHECKING ALL VALUES: ", values);
-    //Add junction for newly created acts
-    for (let val of values) {
-      let actObj = await EventAct.findOne(
-        { where: { ActId: val.id, EventId: eventId } },
-        { transaction: transaction },
-      );  
-    
-      //Act junction not found, add it in
+      //Add junction for newly created acts
+      for (let val of values) {
+        let actObj = await EventAct.findOne(
+          { where: { ActId: val.id, EventId: eventId } },
+          { transaction: transaction },
+        );
+
+        //Act junction not found, add it in
         if (actObj == null) {
-          await EventAct.create({
-            EventId: eventId,
-            ActId: val.id,
-          }, {transaction: transaction})
+          await EventAct.create(
+            {
+              EventId: eventId,
+              ActId: val.id,
+            },
+            { transaction: transaction },
+          )
             .then((createJuncResult) => {
               console.log("Created EventAct junction while updating Event");
               console.log(createJuncResult);
@@ -151,52 +160,53 @@ console.log(eventData.ticketTypes);
               console.log("EventAct junction error while creating");
               console.log(err);
             });
-        }      
-    }
-    //Append updated acts to array for return
-    for (let actObj of values) arr.push(actObj);
-    //Delete act and act associations that don't appear in request body
-    await EventAct.findAll(
-      {
-        where: {
-          EventId: eventId,
-        },
-      },
-      { transaction: transaction },
-    ).then(async (currRows) => {
-      let oldActIds = [];
-      let newActIds = [];
-
-      //Build array of old junction act ids
-      oldActIds = currRows.map((x) => x.dataValues.ActId);
-
-      //Build array of new junction act ids
-      newActIds = values.map((x) => x.id);
-
-      //Check if old act is found in new act ids
-      //Delete act-event junction and act from db if not found in new act ids
-      for (let oldId of oldActIds)
-        if (newActIds.includes(oldId) === false) {
-          console.log("deleting act and act-event junction rows");
-          await EventAct.destroy(
-            { where: { EventId: eventId, ActId: oldId } },
-            { transaction: transaction },
-          ).then(async () => {
-            console.log("ActEvent row destroyed");
-            await Act.destroy(
-              { where: { id: oldId } },
-              { transaction: transaction },
-            ).then(() => {
-              console.log("Act row destroyed");
-            });
-          });
         }
-    });
+      }
+      //Append updated acts to array for return
+      for (let actObj of values) arr.push(actObj);
+      //Delete act and act associations that don't appear in request body
+      await EventAct.findAll(
+        {
+          where: {
+            EventId: eventId,
+          },
+        },
+        { transaction: transaction },
+      ).then(async (currRows) => {
+        let oldActIds = [];
+        let newActIds = [];
 
-  } catch(error) {
-    console.log("An error occured when adding junctions for newly created acts");
-    console.log(error);
-  }
+        //Build array of old junction act ids
+        oldActIds = currRows.map((x) => x.dataValues.ActId);
+
+        //Build array of new junction act ids
+        newActIds = values.map((x) => x.id);
+
+        //Check if old act is found in new act ids
+        //Delete act-event junction and act from db if not found in new act ids
+        for (let oldId of oldActIds)
+          if (newActIds.includes(oldId) === false) {
+            console.log("deleting act and act-event junction rows");
+            await EventAct.destroy(
+              { where: { EventId: eventId, ActId: oldId } },
+              { transaction: transaction },
+            ).then(async () => {
+              console.log("ActEvent row destroyed");
+              await Act.destroy(
+                { where: { id: oldId } },
+                { transaction: transaction },
+              ).then(() => {
+                console.log("Act row destroyed");
+              });
+            });
+          }
+      });
+    } catch (error) {
+      console.log(
+        "An error occured when adding junctions for newly created acts",
+      );
+      console.log(error);
+    }
 
     //Return updated act array
     console.log("Finished updating act-related tables");
@@ -221,7 +231,7 @@ console.log(eventData.ticketTypes);
     let values = [];
 
     //Update ticket types in db
-    if (Array.isArray(updatedTicketTypes)) 
+    if (Array.isArray(updatedTicketTypes))
       for (let updatedTicketType of updatedTicketTypes) {
         let updateData = {};
         if (updatedTicketType.name) updateData.name = updatedTicketType.name;
@@ -235,8 +245,10 @@ console.log(eventData.ticketTypes);
           .then(async (updateResult) => {
             console.log("Updated ticket type");
             console.log(updateResult[1]);
-            let updTicket = await TicketType
-            .findOne({where:{id: updatedTicketType.id}, transaction: transaction});
+            let updTicket = await TicketType.findOne({
+              where: { id: updatedTicketType.id },
+              transaction: transaction,
+            });
             values.push(updTicket.dataValues);
           });
       }
@@ -252,8 +264,14 @@ console.log(eventData.ticketTypes);
             console.log("Created ticket type while updating event");
             console.log(createResult.dataValues);
             values.push(createResult.dataValues);
-            let newTicketJuncResponse = await EventTicket.create({EventId:eventId, TicketTypeId: createResult.dataValues.id}, {transaction:transaction});
-          console.log("New Ticket Junction response: ", newTicketJuncResponse);
+            let newTicketJuncResponse = await EventTicket.create(
+              { EventId: eventId, TicketTypeId: createResult.dataValues.id },
+              { transaction: transaction },
+            );
+            console.log(
+              "New Ticket Junction response: ",
+              newTicketJuncResponse,
+            );
           });
       }
 
@@ -289,12 +307,12 @@ console.log(eventData.ticketTypes);
           ).then(() => {
             console.log("EventTicket row destroyed");
           });
-            await TicketType.destroy(
-              { where: { id: oldId } },
-              { transaction: transaction },
-            ).then(() => {
-              console.log("TicketType row destroyed");
-            });
+          await TicketType.destroy(
+            { where: { id: oldId } },
+            { transaction: transaction },
+          ).then(() => {
+            console.log("TicketType row destroyed");
+          });
         }
     });
 
@@ -302,7 +320,6 @@ console.log(eventData.ticketTypes);
     console.log("Finished updating ticket type-related tables");
     return arr;
   }
-
 
   /**
    * Update Event table row
@@ -335,7 +352,7 @@ console.log(eventData.ticketTypes);
       transaction: transaction,
       where: {
         OrganizerId: currUser.id,
-        id:event.id
+        id: event.id,
       },
     }).then(async (numFieldsChanged) => {
       //Return the updated event row
@@ -476,8 +493,6 @@ console.log(eventData.ticketTypes);
     //Return updated tag associations array
     return arr;
   }
-
-
 }
 
 //Export handler

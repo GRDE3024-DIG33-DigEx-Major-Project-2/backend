@@ -66,63 +66,64 @@ class UserController {
     //S3 filename of image, excluding the extension
     let profileImgFilename = "";
 
-
     //Updated User data in db
     try {
       let newData;
       const result = await db.transaction(async (t) => {
+        //Upload profile image
+        if (req.file && req.file.buffer) {
+          profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
+          try {
+            //Upload new image
+            await s3Util.uploadProfileImage(
+              profileImgFilename,
+              req.file.buffer,
+              constantsUtil.IMG_EXT,
+            );
 
-    //Upload profile image
-    if (req.file && req.file.buffer) {
-      profileImgFilename = s3Util.generateUniqueFilename(req.body.filename);
-      try {
-        //Upload new image
-        await s3Util.uploadProfileImage(
-          profileImgFilename,
-          req.file.buffer,
-          constantsUtil.IMG_EXT,
-        );
-
-        //Existing profile image exists, delete it
-        if (tokenData.user.imgFilename != null && tokenData.user.imgFilename != "") {
-          await s3Util.deleteProfileImage(tokenData.user.imgFilename);
-          console.log("Old profile image deleted");
-        }
-      } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-          message: "Image deletion failed",
-        });
-      }
-    }
-
-
-    console.log("REQ BODY TEST: ", req.body);
-
-    //Remove image without replacement
-    try {
-      if ((req.body.imgFilename == "" || req.body.imgFilename == null || req.body.imgFilename == undefined) 
-      && tokenData.user.imgFilename != "") {
-
-        //If profile image is flagged for removal
-        if (req.body.removeImg == "true" || req.body.removeImg == true) {
-          console.log("Going to delete img without replacement");
-          await s3Util
-            .deleteProfileImage(tokenData.user.imgFilename)
-            .then((result) => {
-              console.log("Old profile image deleted without replacement");
-              console.log(result);
-              
+            //Existing profile image exists, delete it
+            if (
+              tokenData.user.imgFilename != null &&
+              tokenData.user.imgFilename != ""
+            ) {
+              await s3Util.deleteProfileImage(tokenData.user.imgFilename);
+              console.log("Old profile image deleted");
+            }
+          } catch (error) {
+            console.log(error);
+            return res.status(400).json({
+              message: "Image deletion failed",
             });
+          }
         }
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        message: "Profile Image removal without replacement failed",
-      });
-    }
 
+        console.log("REQ BODY TEST: ", req.body);
+
+        //Remove image without replacement
+        try {
+          if (
+            (req.body.imgFilename == "" ||
+              req.body.imgFilename == null ||
+              req.body.imgFilename == undefined) &&
+            tokenData.user.imgFilename != ""
+          ) {
+            //If profile image is flagged for removal
+            if (req.body.removeImg == "true" || req.body.removeImg == true) {
+              console.log("Going to delete img without replacement");
+              await s3Util
+                .deleteProfileImage(tokenData.user.imgFilename)
+                .then((result) => {
+                  console.log("Old profile image deleted without replacement");
+                  console.log(result);
+                });
+            }
+          }
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            message: "Profile Image removal without replacement failed",
+          });
+        }
 
         newData = await UpdateUserHandler.Update(
           req.body,

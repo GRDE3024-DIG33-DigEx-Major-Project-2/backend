@@ -10,8 +10,8 @@
   "production": {
     "username": "postgres",
     "password": "gignet2023$$",
-    "database": "",
-    "host": "",
+    "database": "gigney_a3",
+    "host": "database-1.cykjmvxaizxv.ap-southeast-2.rds.amazonaws.com",
     "dialect": "postgres",
     "multipleStatements": true
   }

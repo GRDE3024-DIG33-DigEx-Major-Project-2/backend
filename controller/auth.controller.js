@@ -31,8 +31,10 @@ class AuthController {
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
         //Set refresh token as HTTP Only cookie
-        res.cookie("refreshToken", refreshToken, { httpOnly: true });
-
+        console.clear();
+        console.log("REF TOKEN: ", refreshToken);
+        res.cookie("refreshToken", refreshToken);
+        console.log("COOKIES: ", req.cookies);
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
@@ -80,10 +82,13 @@ class AuthController {
    * @param {*} res
    */
   RefreshToken = async (req, res) => {
+    console.log("Inside refresh endpoint");
     try {
       const refreshToken = req.cookies.refreshToken;
-
+      console.log("REF TOKEN: ", refreshToken);
+      console.log("COOKIES: ", req.header("Cookie"));
       if (!refreshToken) {
+        console.log("Refresh token not found in cookies");
         return res
           .status(401)
           .json({ msg: "Refresh token not found in cookies" });
@@ -95,6 +100,8 @@ class AuthController {
       );
 
       let user = await GetUserHandler.GetUserByEmail(refreshTokenData.aud, res);
+      console.log("aud: ", refreshTokenData);
+      console.log("USER: ", user);
 
       //Generate the access token and refresh token
       const accessToken = authUtil.generateAccessToken(user);
@@ -106,10 +113,13 @@ class AuthController {
       return res.status(201).json({
         accessToken: accessToken,
         user: user,
+        value: true,
       });
     } catch (err) {
       console.log(err);
-      return res.status(400).json({ msg: "Failed to generate new JWT tokens" });
+      return res
+        .status(400)
+        .json({ msg: "Failed to generate new JWT tokens", value: false });
     }
   };
 }

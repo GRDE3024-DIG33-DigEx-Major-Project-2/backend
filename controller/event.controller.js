@@ -96,80 +96,75 @@ class EventController {
     console.log(req.body.newTicketTypes);
     console.log(req.body.newActs);
 
-
-    
-
     let count = 0;
-
 
     console.log(count++);
 
     //Updated Event-related tables
     try {
       const result = await db.transaction(async (t) => {
+        //Upload event image
+        if (req.file && req.file.buffer) {
+          eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
+          try {
+            //Upload new image
+            await s3Util.uploadEventImg(
+              eventImgFilename,
+              req.file.buffer,
+              constantsUtil.IMG_EXT,
+            );
 
-    //Upload event image
-    if (req.file && req.file.buffer) {
-      eventImgFilename = s3Util.generateUniqueFilename(req.body.filename);
-      try {
-        //Upload new image
-        await s3Util.uploadEventImg(
-          eventImgFilename,
-          req.file.buffer,
-          constantsUtil.IMG_EXT,
-        );
-
-        //Search for an old event image
-        await EventImage.findOne({
-          where: {
-            EventId: req.body.event.id,
-          },
-          transaction: t,
-        })
-          //Delete old event image if found
-          .then(async (oldEventImg) => {
-            if (oldEventImg != null) {
-              console.log("old event image exists!");
-              s3Util.deleteEventImage(oldEventImg.dataValues.filename);
-            }
-          });
-      } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-          message: "Image upload failed",
-        });
-      }
-    }
-    console.log(count++);
-    //Remove image without replacement
-    try {
-      await EventImage.findOne({
-        where: {
-          EventId: req.body.event.id,
-        },
-        transaction: t,
-      })
-        //Delete old event image and db row if found
-        .then(async (oldEventImg) => {
-          if (oldEventImg != null && req.body.eventImg == null) {
-            console.log("old event image exists!");
-            console.log("Flagged for event image removal");
-            //Delete from db
-            await EventImage.destroy({
-              where: { id: oldEventImg.dataValues.id },
+            //Search for an old event image
+            await EventImage.findOne({
+              where: {
+                EventId: req.body.event.id,
+              },
               transaction: t,
+            })
+              //Delete old event image if found
+              .then(async (oldEventImg) => {
+                if (oldEventImg != null) {
+                  console.log("old event image exists!");
+                  s3Util.deleteEventImage(oldEventImg.dataValues.filename);
+                }
+              });
+          } catch (error) {
+            console.log(error);
+            return res.status(400).json({
+              message: "Image upload failed",
             });
-            //Delete image from s3 bucket
-            s3Util.deleteEventImage(oldEventImg.dataValues.filename);
           }
-        });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        message: "Image removal failed",
-      });
-    }
-    console.log(count++);
+        }
+        console.log(count++);
+        //Remove image without replacement
+        try {
+          await EventImage.findOne({
+            where: {
+              EventId: req.body.event.id,
+            },
+            transaction: t,
+          })
+            //Delete old event image and db row if found
+            .then(async (oldEventImg) => {
+              if (oldEventImg != null && req.body.eventImg == null) {
+                console.log("old event image exists!");
+                console.log("Flagged for event image removal");
+                //Delete from db
+                await EventImage.destroy({
+                  where: { id: oldEventImg.dataValues.id },
+                  transaction: t,
+                });
+                //Delete image from s3 bucket
+                s3Util.deleteEventImage(oldEventImg.dataValues.filename);
+              }
+            });
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            message: "Image removal failed",
+          });
+        }
+        console.log(count++);
         const eventData = await UpdateEventHandler.Update(
           req.body,
           eventImgFilename,
@@ -414,8 +409,8 @@ class EventController {
             }
           });
 
-          console.log("YOUR EVENTS");
-          console.log(data);
+        console.log("YOUR EVENTS");
+        console.log(data);
         //Return 200 response with the event data array and page count
         return res.status(200).json({ events: data, pageCount: numPages });
       });
@@ -852,7 +847,7 @@ class EventController {
         });
 
         console.log("FINISHED BOTH QUERIES");
-        console.log("Number of Events Found: " + events);
+        console.log("Number of Events Found: " + events.length);
 
         //Events that are filtered by tag criteria
         let filteredData;
@@ -862,7 +857,6 @@ class EventController {
           filteredData = events.filter(
             (event) => event.tags.length === filterOptions.tags.length,
           );
-          console.log(filteredData);
 
           //Retrieve all table data for each of the found events
           for (let ev of filteredData) {
@@ -968,40 +962,32 @@ class EventController {
     }
   };
 
-
-
   /**
    * Finds if an event is favourited by the user already
-   * @param {*} req 
-   * @param {*} res 
-   * @returns 
+   * @param {*} req
+   * @param {*} res
+   * @returns
    */
   IsFavourited = async (req, res) => {
     let eventIds = req.body.eventIds;
     let tokenData = req.user.user;
-    
+
     let data = [];
 
     //Search if user has favourited the event already
     for (let eventId of eventIds) {
-      let result = await FavouritedBy.findOne({where: {EventId: eventId, AttendeeId: tokenData.id}});
-    //It is favourited, push to array as true
-    if (result != null) 
-      data.push({eventId: eventId, isFavourite: true});
+      let result = await FavouritedBy.findOne({
+        where: { EventId: eventId, AttendeeId: tokenData.id },
+      });
+      //It is favourited, push to array as true
+      if (result != null) data.push({ eventId: eventId, isFavourite: true });
       //It is not favourited, push to array as false
-      else 
-      data.push({eventId: eventId, isFavourite: false});
+      else data.push({ eventId: eventId, isFavourite: false });
     }
-    
 
-
-    
     //Send back 200 with result indicating if event is favourited
-    return res.status(200).json({favStatuses: data});
-    
-  }
-
-
+    return res.status(200).json({ favStatuses: data });
+  };
 }
 
 //Export the event controller
