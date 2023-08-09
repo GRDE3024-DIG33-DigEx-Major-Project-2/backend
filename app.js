@@ -24,6 +24,7 @@ app.use(
       "http://localhost:3456",
       "https:main.d27kan9z07m8v9.amplifyapp.com",
       "https:main.d2r6b1gwt7kgsa.amplifyapp.com",
+      "https://search-events-v1.d2r6b1gwt7kgsa.amplifyapp.com"
     ],
     credentials: true,
   }),
