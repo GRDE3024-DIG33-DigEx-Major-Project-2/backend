@@ -106,32 +106,59 @@ class DeleteEventHandler {
     let deleteResult;
     //Number of Acts deleted
     let count = 0;
-
-    //Find all Event-Act junctions
+    // Find all Event-Act junctions
     let junctions = await EventAct.findAll({
       where: { EventId: eventId },
       transaction: transaction,
     });
-    //Delete the Event-Act junctions
+
+    // Delete the Event-Act junctions
     await EventAct.destroy({
       where: { EventId: eventId },
       transaction: transaction,
-    }).then(async (result) => {
-      console.log("EventAct junctions deleted: " + result);
+    });
 
-      //Find and delete the Act rows after junctions were deleted
-      for (let junc of junctions)
+    // Check if there are any more junctions referencing each Act before trying to delete
+    for (let junc of junctions) {
+      const remainingJunctions = await EventAct.count({
+        where: { ActId: junc.dataValues.ActId },
+        transaction: transaction,
+      });
+
+      if (remainingJunctions === 0) {
         await Act.destroy({
           where: { id: junc.dataValues.ActId },
           transaction: transaction,
-        }).then((result) => {
-          console.log("Act ID: " + junc.dataValues.ActId);
-          console.log("Act deleted: " + result);
-          //Increment counter for act deletion
-          count++;
         });
-      deleteResult = "Acts Deleted: " + count;
-    });
+        count++;
+      }
+    }
+
+    // //Find all Event-Act junctions
+    // let junctions = await EventAct.findAll({
+    //   where: { EventId: eventId },
+    //   transaction: transaction,
+    // });
+    // //Delete the Event-Act junctions
+    // await EventAct.destroy({
+    //   where: { EventId: eventId },
+    //   transaction: transaction,
+    // }).then(async (result) => {
+    //   console.log("EventAct junctions deleted: " + result);
+
+    //   //Find and delete the Act rows after junctions were deleted
+    //   for (let junc of junctions)
+    //     await Act.destroy({
+    //       where: { id: junc.dataValues.ActId },
+    //       transaction: transaction,
+    //     }).then((result) => {
+    //       console.log("Act ID: " + junc.dataValues.ActId);
+    //       console.log("Act deleted: " + result);
+    //       //Increment counter for act deletion
+    //       count++;
+    //     });
+    //   deleteResult = "Acts Deleted: " + count;
+    // });
 
     //Return deletion result
     return deleteResult;

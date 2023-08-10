@@ -51,6 +51,7 @@ class UserController {
 
     //Create user in db
     let user = await CreateUserHandler.CreateUser(req.body, res);
+
     //Send back 201 status wih the newly created user instance
     return res.status(201).json({ user: user });
   };
@@ -167,7 +168,7 @@ class UserController {
     //The user row in the db
     let user;
     //User data from access token
-    let tokenData = req.user;
+    let tokenData = req.user.user;
 
     //Find the user in the db for password verification
     if (tokenData.userType == enumUtil.userTypes.attendee)

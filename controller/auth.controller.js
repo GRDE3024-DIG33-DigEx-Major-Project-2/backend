@@ -31,15 +31,12 @@ class AuthController {
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
         //Set refresh token as HTTP Only cookie
-        console.clear();
-        console.log("REF TOKEN: ", refreshToken);
         res.cookie("refreshToken", refreshToken);
-        console.log("COOKIES: ", req.cookies);
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
         });
-      }
+      } else return res.status(400).json({ msg: "Invalid credentials" });
     } else return res.status(400).json({ msg: "User does not exist" });
   };
 
@@ -82,11 +79,8 @@ class AuthController {
    * @param {*} res
    */
   RefreshToken = async (req, res) => {
-    console.log("Inside refresh endpoint");
     try {
       const refreshToken = req.cookies.refreshToken;
-      console.log("REF TOKEN: ", refreshToken);
-      console.log("COOKIES: ", req.header("Cookie"));
       if (!refreshToken) {
         console.log("Refresh token not found in cookies");
         return res
@@ -100,8 +94,6 @@ class AuthController {
       );
 
       let user = await GetUserHandler.GetUserByEmail(refreshTokenData.aud, res);
-      console.log("aud: ", refreshTokenData);
-      console.log("USER: ", user);
 
       //Generate the access token and refresh token
       const accessToken = authUtil.generateAccessToken(user);

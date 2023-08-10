@@ -51,7 +51,7 @@ class AuthUtils {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "10s",
+        expiresIn: "20m",
         issuer: "gigney",
         audience: user.email,
       },
@@ -92,8 +92,7 @@ class AuthUtils {
       }
       //Token is valid, return token data
       else {
-        console.log("valid");
-        console.log(tokenData);
+        console.log("decoded token -- valid");
         return tokenData;
       }
     });
