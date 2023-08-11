@@ -4,7 +4,19 @@
  */
 
 //Import dependencies
-require("dotenv").config();
+//Configure .env file support
+let envPath;
+switch (process.env.NODE_ENV) {
+  case "production":
+    envPath = ".env.production";
+    break;
+  case "development":
+  default:
+    envPath = ".env.development";
+    break;
+}
+require("dotenv").config({ path: envPath });
+
 const { Sequelize } = require("sequelize");
 const AdditionalSetup = require("../config/additional-setup");
 

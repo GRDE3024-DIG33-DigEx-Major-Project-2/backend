@@ -232,7 +232,7 @@ class EventController {
       });
     }
     //Send back 200 status with the retrieved event and related tables
-    return res.status(201).json(event);
+    return res.status(200).json(event);
   };
 
   /**

@@ -5,7 +5,18 @@
 
 //IMPORT DEPENDENCIES ---------------------------------------------------------------------------
 //Configure .env file support
-require("dotenv").config();
+let envPath;
+switch (process.env.NODE_ENV) {
+  case "production":
+    envPath = ".env.production";
+    break;
+  case "development":
+  default:
+    envPath = ".env.development";
+    break;
+}
+require("dotenv").config({ path: envPath });
+
 const express = require("express");
 //Enables CORS
 const cors = require("cors");
