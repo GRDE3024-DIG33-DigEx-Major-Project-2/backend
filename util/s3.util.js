@@ -3,6 +3,7 @@
  *
  */
 
+//Import dependencies
 require("dotenv").config();
 var AWS = require("aws-sdk");
 const sharp = require("sharp");
@@ -11,10 +12,9 @@ const constantsUtil = require("./constants.util");
 
 //Details required to connect to the S3 bucket
 const bucketName = process.env.BUCKET_NAME;
-const region = process.env.AWS_REGION;
-//These details are required for AWS SDK authentication for assessors
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+// const region = process.env.AWS_REGION;
+// const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+// const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 //AWS S3 Bucket file utilities
 class S3Utilities {

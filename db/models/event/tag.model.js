@@ -2,6 +2,7 @@
  * Tag model
  */
 
+//Import dependencies
 const { DataTypes } = require("sequelize");
 
 //Tag Model definition

@@ -16,7 +16,8 @@ class AdditionalSetup {
     //Organizer-Event
     Organizer.hasMany(Event, {
       onDelete: "cascade",
-    }); //No FK
+    });
+    //No FK
     Event.belongsTo(Organizer); //Has FK
 
     //Attendee-Event

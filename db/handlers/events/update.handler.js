@@ -3,8 +3,8 @@
  *
  */
 
-const { db } = require("../../../db/models/db");
 //Defined models in Sequelize instance
+const { db } = require("../../../db/models/db");
 const {
   Act,
   Event,
@@ -16,6 +16,9 @@ const {
   Tag,
 } = db.models;
 
+/**
+ * Update event handler for db querying
+ */
 class UpdateEventHandler {
   /**
    * Attempt to update event data in db
@@ -35,9 +38,7 @@ class UpdateEventHandler {
 
     //Update an Event
     eventData.event = await this.UpdateEvent(data.event, currUser, t);
-    console.log("Event Updated");
-
-    console.log(eventData.event);
+    console.log("Event table Updated");
 
     //Update Event Image
     if (eventImgFilename != "") {
@@ -47,7 +48,6 @@ class UpdateEventHandler {
         t,
       );
       console.log("EventImg Updated");
-      console.log(eventData.eventImg);
     }
 
     //Update Tag associations
@@ -62,7 +62,6 @@ class UpdateEventHandler {
       t,
     );
     console.log("Acts Updated");
-    console.log(eventData.acts);
 
     //Update Ticket Type associations
     eventData.ticketTypes = await this.UpdateTicketTypes(
@@ -72,11 +71,10 @@ class UpdateEventHandler {
       t,
     );
     console.log("TicketTypes Updated");
-    console.log(eventData.ticketTypes);
 
     //Return the updated event db data
     console.log("Event update completed!");
-    console.log(eventData);
+
     return eventData;
   }
 
@@ -108,7 +106,6 @@ class UpdateEventHandler {
           )
             //Add updated record to array
             .then(async (updateResult) => {
-              console.log("Updated act: ", updateResult[1]);
               let updAct = await Act.findOne({
                 where: { id: updatedAct.id },
                 transaction: transaction,
@@ -135,7 +132,6 @@ class UpdateEventHandler {
           });
       }
     try {
-      console.log("CHECKING ALL VALUES: ", values);
       //Add junction for newly created acts
       for (let val of values) {
         let actObj = await EventAct.findOne(
@@ -244,7 +240,6 @@ class UpdateEventHandler {
           //Add updated record to array
           .then(async (updateResult) => {
             console.log("Updated ticket type");
-            console.log(updateResult[1]);
             let updTicket = await TicketType.findOne({
               where: { id: updatedTicketType.id },
               transaction: transaction,
@@ -262,16 +257,12 @@ class UpdateEventHandler {
           //Add created record to array
           .then(async (createResult) => {
             console.log("Created ticket type while updating event");
-            console.log(createResult.dataValues);
             values.push(createResult.dataValues);
             let newTicketJuncResponse = await EventTicket.create(
               { EventId: eventId, TicketTypeId: createResult.dataValues.id },
               { transaction: transaction },
             );
-            console.log(
-              "New Ticket Junction response: ",
-              newTicketJuncResponse,
-            );
+            console.log("New Ticket Junction created");
           });
       }
 
@@ -356,7 +347,6 @@ class UpdateEventHandler {
       },
     }).then(async (numFieldsChanged) => {
       //Return the updated event row
-      console.log(event.id);
       await Event.findByPk(event.id).then((value) => {
         updatedEvent = value.dataValues;
       });
@@ -398,7 +388,7 @@ class UpdateEventHandler {
     }
     //If Event Image doesn't exist, create it
     else {
-      console.log("Creating new EventImage");
+      console.log("Creating new EventImage...");
       await EventImage.create(
         {
           EventId: eventId,
@@ -408,8 +398,7 @@ class UpdateEventHandler {
           transaction: transaction,
         },
       ).then(async (newEventImg) => {
-        console.log("CREATED EVENT IMAGE");
-        console.log(newEventImg);
+        console.log("Created EventImage");
         //Return the created event row
         updatedEventImg = await EventImage.findOne({
           where: { EventId: eventId },
@@ -452,8 +441,7 @@ class UpdateEventHandler {
               { where: { EventId: eventId, TagId: oldId } },
               { transaction: transaction },
             ).then((value) => {
-              console.log("Tag junction deleted");
-              console.log(value);
+              console.log("Tag junction deleted...", value);
             });
           }
         }
@@ -489,7 +477,6 @@ class UpdateEventHandler {
         });
       }
     });
-
     //Return updated tag associations array
     return arr;
   }

@@ -176,7 +176,6 @@ module.exports = {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      //Suburb of the event
       suburb: {
         type: DataTypes.STRING,
         allowNull: true,

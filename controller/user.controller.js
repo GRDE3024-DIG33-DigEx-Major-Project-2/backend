@@ -98,8 +98,6 @@ class UserController {
           }
         }
 
-        console.log("REQ BODY TEST: ", req.body);
-
         //Remove image without replacement
         try {
           if (
@@ -110,11 +108,11 @@ class UserController {
           ) {
             //If profile image is flagged for removal
             if (req.body.removeImg == "true" || req.body.removeImg == true) {
-              console.log("Going to delete img without replacement");
+              console.log("Deleting profile image without replacement");
               await s3Util
                 .deleteProfileImage(tokenData.user.imgFilename)
                 .then((result) => {
-                  console.log("Old profile image deleted without replacement");
+                  console.log("Profile image deleted without replacement");
                   console.log(result);
                 });
             }
@@ -132,7 +130,6 @@ class UserController {
           tokenData,
           t,
         );
-        console.log("User updated!");
 
         //Send back 201 status wih the newly updated access token
         const accessToken = authUtil.generateAccessToken(newData);

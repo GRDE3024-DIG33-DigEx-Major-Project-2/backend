@@ -3,9 +3,10 @@
  *
  */
 
+//Import dependencies
 const enumUtil = require("../../../util/enum.util");
-const { db } = require("../../../db/models/db");
 //Load required db models for querying
+const { db } = require("../../../db/models/db");
 const { Organizer, Attendee } = db.models;
 
 //Db update handler for Users (Organizer/Attendee)

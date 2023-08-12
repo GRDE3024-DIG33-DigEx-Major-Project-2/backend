@@ -16,7 +16,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 //Validation middleware
 const { validate, processTokenData } = require("../validation/base.validator");
-const userSchemas = require("../validation/user.schema");
+const { userSchemas } = require("../validation/user.schema");
 const { checkSchema } = require("express-validator");
 
 /**

@@ -2,6 +2,7 @@
  * Ticket type model
  */
 
+//Import dependencies
 const { DataTypes } = require("sequelize");
 
 //TicketType Model definition

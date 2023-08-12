@@ -63,8 +63,6 @@ class DeleteUserHandler {
             console.log("Profile image exists, deleting now");
             this.DeleteProfileImage(currUser.imgFilename);
           }
-
-          console.log(eventImgFilenames);
           console.log("Event Images to delete: " + eventImgFilenames.length);
 
           //Delete the event images of all deleted events

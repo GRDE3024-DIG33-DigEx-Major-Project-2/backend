@@ -127,12 +127,14 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
+- GIVE CHRIS THE AWS CREDENTIALS.txt file **IMPORTANT**
 - UX bugs and improvements
 - Loading and pagination bugs and improvements
     - Pagination bugs and improve their button UI/UX
 - A more responsive tag chip view. Maybe I will hardcode UUIDs so you don't have to fetch them and make them load. Alternatively I can add in a loading spinner for them.
 - Give assessors Attendee and Organizer credentials in frontend instructions that are accounts we have enough unique events in so they can test the pagination easier? Pagination functionality needs at least 11 events.
 - Minor scenario bugs
+- More efficient use of isFavourited endpoint
 - Update user assistance
 - A3 Independent report
 - Feature testing and debugging
@@ -142,6 +144,7 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 - Search event start date ordering
 - .env multiple environments setup
 - UX Bug Bounties
+- Backend unit testing
 
 
 # BACKLOG

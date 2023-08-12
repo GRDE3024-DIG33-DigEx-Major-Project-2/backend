@@ -2,6 +2,7 @@
  * Event endpoint request validation schemas
  */
 
+//Import dependencies
 const constantsUtil = require("../util/constants.util");
 var validUrl = require("valid-url");
 
@@ -593,4 +594,4 @@ const eventSchemas = {
 };
 
 //Export user-related schemas
-module.exports = eventSchemas;
+module.exports = { eventSchemas };

@@ -3,10 +3,8 @@
  */
 
 //Import dependencies
-const enumUtil = require("../util/enum.util");
 const constantsUtil = require("../util/constants.util");
 const { db } = require("../db/models/db");
-const authUtil = require("../util/auth.util");
 const s3Util = require("../util/s3.util");
 const { Sequelize, Op } = require("sequelize");
 //Defined models in Sequelize instance
@@ -20,6 +18,7 @@ const GetEventHandler = require("../db/handlers/events/get.handler");
 //Db delete event handler
 const DeleteEventHandler = require("../db/handlers/events/delete.handler");
 
+//Endpoint actions for event router
 class EventController {
   /**
    * Create a new event
@@ -27,8 +26,6 @@ class EventController {
    * @param {*} res
    */
   Create = async (req, res) => {
-    console.clear();
-    console.log("BEGIN CREATE");
     //User data from access token
     let tokenData = req.user;
     //S3 filename of image, excluding the extension
@@ -67,7 +64,6 @@ class EventController {
       //Delete file from S3 if it was uploaded in this instance
       if (eventImgFilename != "")
         s3Util.deleteEventImage(eventImgFilename).then((deleteResult) => {
-          console.log("Event Image deleted");
           console.log(deleteResult);
         });
       const msg = "Failed to create all event-related tables";
@@ -89,15 +85,6 @@ class EventController {
     let tokenData = req.user;
     //S3 filename of image, excluding the extension
     let eventImgFilename = "";
-
-    console.clear();
-    console.log("ABOUT TO UPDATE");
-    console.log(req.body.newTicketTypes);
-    console.log(req.body.newActs);
-
-    let count = 0;
-
-    console.log(count++);
 
     //Updated Event-related tables
     try {
@@ -134,7 +121,6 @@ class EventController {
             });
           }
         }
-        console.log(count++);
         //Remove image without replacement
         try {
           await EventImage.findOne({
@@ -146,8 +132,9 @@ class EventController {
             //Delete old event image and db row if found
             .then(async (oldEventImg) => {
               if (oldEventImg != null && req.body.eventImg == null) {
-                console.log("old event image exists!");
-                console.log("Flagged for event image removal");
+                console.log(
+                  "old event image exists! Flagged for event image removal",
+                );
                 //Delete from db
                 await EventImage.destroy({
                   where: { id: oldEventImg.dataValues.id },
@@ -163,7 +150,6 @@ class EventController {
             message: "Image removal failed",
           });
         }
-        console.log(count++);
         const eventData = await UpdateEventHandler.Update(
           req.body,
           eventImgFilename,
@@ -173,7 +159,6 @@ class EventController {
 
         //If EventImg exists and wasn't updated, find and assign it to response data
         if (eventData.eventImg == null) {
-          console.log(count++);
           await EventImage.findOne({
             where: { EventId: req.body.event.id },
             transaction: t,
@@ -181,7 +166,6 @@ class EventController {
             eventData.eventImg = result;
           });
         }
-        console.log("SENDING BACK UPDATE");
         //Send back 200 status wih the newly updated object
         return res.status(200).json(eventData);
       });
@@ -203,16 +187,17 @@ class EventController {
    * @param {any} res
    */
   GetById = async (req, res) => {
+    //The requested event's id
     let eventId = req.params.id;
+    //The event data to return
     let event;
-    console.log("Getting event");
+
     try {
       const result = await db.transaction(async (t) => {
         await GetEventHandler.FindOneById(eventId, res, t).then((data) => {
-          console.log("processing data");
-          console.log(data);
           //Found event
           if (data != null) {
+            console.log("Event found by id!");
             event = data;
           }
           //No event with that id found
@@ -254,21 +239,20 @@ class EventController {
     await FavouritedBy.findOne({
       where: { AttendeeId: tokenData.id, EventId: req.body.eventId },
     }).then(async (junction) => {
-      console.log("INSIDE AWAIT: " + junction);
       //Not favourited, therefore add new junction
       if (junction == null) {
         let result = await FavouritedBy.create({
           EventId: req.body.eventId,
           AttendeeId: tokenData.id,
         });
-        console.log("Favourited event: ", result);
+        console.log("Favourited event");
         //Send back 200 status after creating junction
         return res.status(200).json({ msg: "Favourited event" });
       }
       //Favourited, therefore remove associated junction
       else {
         let result = await FavouritedBy.destroy({ where: { id: junction.id } });
-        console.log("Unfavourited event: ", result);
+        console.log("Unfavourited event");
         //Send back 200 status after removing junction
         return res.status(200).json({ msg: "Unfavourited event" });
       }
@@ -323,9 +307,6 @@ class EventController {
         })
           //Find all data associated with the events across all tables
           .then(async (junctions) => {
-            console.log("Found favourited events");
-            //console.log(junctions);
-
             for (let junc of junctions) {
               let val = await GetEventHandler.FindOneById(
                 junc.dataValues.EventId,
@@ -408,8 +389,6 @@ class EventController {
             }
           });
 
-        console.log("YOUR EVENTS");
-        console.log(data);
         //Return 200 response with the event data array and page count
         return res.status(200).json({ events: data, pageCount: numPages });
       });
@@ -447,10 +426,6 @@ class EventController {
     const maxYear = currYear + 100;
     const maxDate = new Date(maxYear, 0, 1, 0, 0, 0);
     const minDate = "1950-01-01 00:00:00";
-
-    console.log("DATE RANGE TEST");
-    console.log(req.body.minDate);
-    console.log(req.body.maxDate);
 
     //Keyword sanitizer
     let kw = null;
@@ -499,9 +474,6 @@ class EventController {
           ? [req.body.city]
           : constantsUtil.CITIES,
     };
-
-    console.log("PRICE RANGE TEST");
-    console.log(filterOptions.priceRange);
 
     //Set priceRange to null if maxPrice is 0
     if (filterOptions.priceRange != null)
@@ -604,7 +576,6 @@ class EventController {
     }
     //Has keyword filter
     else {
-      console.log("SETTING KEYWORDS FILTER");
       countConditions.where = {
         [Op.or]: [
           {
@@ -786,7 +757,6 @@ class EventController {
       filterOptions.priceRange.maxPrice
     )
       if (filterOptions.priceRange.maxPrice > 0) {
-        console.log("ADDING TICKET PRICE FILTER");
         //TicketType table conditions
         countConditions.include.push({
           model: TicketType,
@@ -822,8 +792,6 @@ class EventController {
         countConditions.transaction = t;
         findConditions.transaction = t;
 
-        console.log("BEGINNING EVENT COUNT SEARCH");
-
         //Count number of Events in db that match the filter options
         rowCount = await Event.count(countConditions).catch((err) => {
           console.error("An error occured while counting events:", err);
@@ -838,14 +806,12 @@ class EventController {
           console.log("No Rows Found");
         }
 
-        console.log("BEGINNING EVENT PAGE SEARCH");
         //Find all events that match the filter criteria
         events = await Event.findAll(findConditions).catch((err) => {
           console.error("An error occured while finding events: ", err);
           throw err;
         });
 
-        console.log("FINISHED BOTH QUERIES");
         console.log("Number of Events Found: " + events.length);
 
         //Events that are filtered by tag criteria
@@ -962,7 +928,7 @@ class EventController {
   };
 
   /**
-   * Finds if an event is favourited by the user already
+   * Finds if the specified events are favourited by the user already
    * @param {*} req
    * @param {*} res
    * @returns
@@ -972,20 +938,24 @@ class EventController {
     let tokenData = req.user.user;
 
     let data = [];
+    try {
+      //Search if user has favourited the event already
+      for (let eventId of eventIds) {
+        let result = await FavouritedBy.findOne({
+          where: { EventId: eventId, AttendeeId: tokenData.id },
+        });
+        //It is favourited, push to array as true
+        if (result != null) data.push({ eventId: eventId, isFavourite: true });
+        //It is not favourited, push to array as false
+        else data.push({ eventId: eventId, isFavourite: false });
+      }
 
-    //Search if user has favourited the event already
-    for (let eventId of eventIds) {
-      let result = await FavouritedBy.findOne({
-        where: { EventId: eventId, AttendeeId: tokenData.id },
-      });
-      //It is favourited, push to array as true
-      if (result != null) data.push({ eventId: eventId, isFavourite: true });
-      //It is not favourited, push to array as false
-      else data.push({ eventId: eventId, isFavourite: false });
+      //Send back 200 with result indicating if event is favourited
+      return res.status(200).json({ favStatuses: data });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ err: err });
     }
-
-    //Send back 200 with result indicating if event is favourited
-    return res.status(200).json({ favStatuses: data });
   };
 }
 

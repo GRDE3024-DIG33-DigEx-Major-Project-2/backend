@@ -19,11 +19,14 @@
         }
       },
       "responses": {
-        "200": {
+        "201": {
           "description": "Event created"
         },
         "400": {
           "description": "A problem occurred when trying to create an event"
+        },
+        "500": {
+          "description": "Failed to create all event-related tables"
         }
       },
       "security": [
@@ -56,6 +59,9 @@
         },
         "400": {
           "description": "A problem occurred when trying to update an event"
+        },
+        "500": {
+          "description": "Failed to update all event-related tables"
         }
       },
       "security": [
@@ -102,7 +108,7 @@
         "200": {
           "description": "All tags"
         },
-        "400": {
+        "500": {
           "description": "A problem occurred when trying to get all tags"
         }
       }
@@ -120,10 +126,13 @@
       "tags": ["Event Route"],
       "responses": {
         "200": {
-          "description": "The event"
+          "description": "Event found by id"
         },
         "400": {
           "description": "A problem occurred when trying to get the event"
+        },
+        "500": {
+          "description": "Failed to find event by id"
         }
       }
     },
@@ -140,8 +149,11 @@
         "200": {
           "description": "The event deleted successfully"
         },
-        "400": {
-          "description": "A problem occurred when trying to delete the event"
+        "403": {
+          "description": "Organizer is not associated with the Event specified"
+        },
+        "500": {
+          "description": "Failed to delete all event-related tables"
         }
       },
       "security": [
@@ -169,8 +181,8 @@
         "200": {
           "description": "Page of events with the total page count"
         },
-        "400": {
-          "description": "A problem occurred when trying to search events"
+        "500": {
+          "description": "Failed to search events"
         }
       }
     }
@@ -194,7 +206,10 @@
           "description": "Page of events with the total page count"
         },
         "400": {
-          "description": "A problem occurred when trying to search events"
+          "description": "A problem occurred when trying to search favourited events"
+        },
+        "500": {
+          "description": "Failed to find favourited events page"
         }
       },
       "security": [
@@ -224,6 +239,9 @@
         },
         "400": {
           "description": "A problem occurred when trying to search events"
+        },
+        "500": {
+          "description": "Failed to find owned events page"
         }
       },
       "security": [
@@ -249,7 +267,10 @@
       },
       "responses": {
         "200": {
-          "description": "Page of events with the total page count"
+          "description": "Array of objects that denote the favourited status"
+        },
+        "500": {
+          "description": "Failed to check favourited status of events"
         }
       },
       "security": [

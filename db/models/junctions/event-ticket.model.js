@@ -2,6 +2,7 @@
  * Event-Ticket Junction Model
  */
 
+//Import dependencies
 const { DataTypes } = require("sequelize");
 
 //EventTicket junction model definition

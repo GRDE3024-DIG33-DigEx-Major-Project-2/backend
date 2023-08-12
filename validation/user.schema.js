@@ -4,11 +4,7 @@
 
 //Import dependencies
 const enumUtil = require("../util/enum.util");
-const {
-  isPossiblePhoneNumber,
-  isValidPhoneNumber,
-  validatePhoneNumberLength,
-} = require("libphonenumber-js");
+const { isValidPhoneNumber } = require("libphonenumber-js");
 
 /**
  * Custom validator that checks for identical old and new password
@@ -215,5 +211,4 @@ const userSchemas = {
   },
 };
 
-//Export user-related schemas
-module.exports = userSchemas;
+module.exports = { userSchemas };

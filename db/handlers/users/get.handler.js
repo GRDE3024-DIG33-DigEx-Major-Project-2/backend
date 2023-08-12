@@ -3,12 +3,13 @@
  *
  */
 
-const enumUtil = require("../../../util/enum.util");
-const authUtil = require("../../../util/auth.util");
-const { db } = require("../../../db/models/db");
 //Load required db models for querying
+const { db } = require("../../../db/models/db");
 const { Organizer, Attendee } = db.models;
 
+/**
+ * The get user handler for db querying
+ */
 class GetUserHandler {
   /**
    * Find user in database by email

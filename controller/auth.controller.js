@@ -6,10 +6,7 @@
 //Import dependencies
 const authUtil = require("../util/auth.util");
 const jwt = require("jsonwebtoken");
-const { db } = require("../db/models/db");
-//Load required db models for querying
-const { Organizer, Attendee } = db.models;
-
+//Db get user handler
 const GetUserHandler = require("../db/handlers/users/get.handler");
 
 //Endpoint actions for auth router
@@ -31,13 +28,13 @@ class AuthController {
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
         //Set refresh token as HTTP Only cookie
-        res.cookie("refreshToken", refreshToken);
+        res.cookie("refreshToken", refreshToken, { httpOnly: true });
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
         });
-      } else return res.status(400).json({ msg: "Invalid credentials" });
-    } else return res.status(400).json({ msg: "User does not exist" });
+      } else return res.status(400).json({ err: "Invalid credentials" });
+    } else return res.status(400).json({ err: "User does not exist" });
   };
 
   /**
@@ -85,7 +82,7 @@ class AuthController {
         console.log("Refresh token not found in cookies");
         return res
           .status(401)
-          .json({ msg: "Refresh token not found in cookies" });
+          .json({ err: "Refresh token not found in cookies" });
       }
 
       const refreshTokenData = authUtil.decodeJWT(
@@ -111,7 +108,7 @@ class AuthController {
       console.log(err);
       return res
         .status(400)
-        .json({ msg: "Failed to generate new JWT tokens", value: false });
+        .json({ err: "Failed to generate new JWT tokens", value: false });
     }
   };
 }

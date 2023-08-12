@@ -2,7 +2,7 @@
  * Sequelize CLI config options
  */
 
-//Configure .env file suppor
+//Configure .env file support
 let envPath;
 switch (process.env.NODE_ENV) {
   case "production":

@@ -3,8 +3,8 @@
  *
  */
 
-const { db } = require("../../../db/models/db");
 //Defined models in Sequelize instance
+const { db } = require("../../../db/models/db");
 const {
   Act,
   Event,
@@ -17,6 +17,9 @@ const {
   Organizer,
 } = db.models;
 
+/**
+ * Get event handler for db querying
+ */
 class GetEventHandler {
   /**
    * Find event-related tables for an event by event id
@@ -144,8 +147,7 @@ class GetEventHandler {
         })
         //Return successful response
         .then((getResult) => {
-          console.log("Event retrieved!");
-          console.log(getResult);
+          console.log(getResult ? "Event retrieved! " : "Event not retrieved!");
         });
     } catch (err) {
       const msg = "Failed to find event-related tables by id";

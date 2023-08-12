@@ -2,6 +2,7 @@
  * Event-Act Junction Model
  */
 
+//Import dependencies
 const { DataTypes } = require("sequelize");
 
 //EventAct junction model definition

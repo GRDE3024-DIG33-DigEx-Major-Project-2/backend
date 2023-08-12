@@ -3,9 +3,10 @@
  *
  */
 
+//Import dependencies
 const enumUtil = require("../../../util/enum.util");
 const { db } = require("../../../db/models/db");
-const e = require("cors");
+
 //Defined models in Sequelize instance
 const {
   Act,
@@ -18,6 +19,9 @@ const {
   Tag,
 } = db.models;
 
+/**
+ * Create event handler for db querying
+ */
 class CreateEventHandler {
   /**
    * Attempt to create event data in db
@@ -33,11 +37,11 @@ class CreateEventHandler {
       ticketTypes: [],
     };
     //Create an Event
-    console.log("Init Event");
+    console.log("Creating Event...");
     eventData.event = await this.CreateEvent(data.event, currUser, t);
     //Create Event Image
     if (eventImgFilename != "") {
-      console.log("Init Event Image");
+      console.log("Creating Event Image...");
       eventData.eventImg = await this.CreateEventImage(
         eventImgFilename,
         eventData.event.id,
@@ -45,17 +49,17 @@ class CreateEventHandler {
       );
     }
     //Create Tag associations
-    console.log("Init Tags");
+    console.log("Creating Tags...");
     eventData.tags = await this.CreateTaggedWith(
       data.tags,
       eventData.event.id,
       t,
     );
     //Create Act associations
-    console.log("Init Acts");
+    console.log("Creating Acts...");
     eventData.acts = await this.CreateActs(data.acts, eventData.event.id, t);
     //Create Ticket Type associations
-    console.log("Init Ticket Types");
+    console.log("Creating Ticket Types...");
     eventData.ticketTypes = await this.CreateTicketTypes(
       data.ticketTypes,
       eventData.event.id,

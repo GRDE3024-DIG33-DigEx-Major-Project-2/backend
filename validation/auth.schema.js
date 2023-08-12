@@ -25,5 +25,4 @@ const authSchemas = {
   },
 };
 
-//Export auth-related schemas
-module.exports = authSchemas;
+module.exports = { authSchemas };

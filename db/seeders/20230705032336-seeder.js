@@ -1,5 +1,5 @@
 /**
- * Seeding file
+ * Data seeding file
  */
 
 "use strict";

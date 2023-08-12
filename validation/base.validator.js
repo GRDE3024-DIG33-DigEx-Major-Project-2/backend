@@ -3,17 +3,9 @@
  */
 
 //Import the Express Validator middleware
-const {
-  body,
-  validationResult,
-  header,
-  query,
-  param,
-  cookie,
-} = require("express-validator");
+const { validationResult } = require("express-validator");
 require("dotenv").config();
 const enumUtil = require("../util/enum.util");
-const authUtil = require("../util/auth.util");
 const jwt = require("jsonwebtoken");
 
 /**
@@ -125,7 +117,6 @@ const isAttendee = (req, res, next) => {
  * @returns The request to the next handler
  */
 const validate = (req, res, next) => {
-  console.log("Assessing validation");
   //Collect the error instances from the validation check
   const errors = validationResult(req);
   //No errors found --> Validation succeeded, so perform next middleware
@@ -145,6 +136,7 @@ const validate = (req, res, next) => {
   });
 };
 
+//Export base request validation functions
 module.exports = {
   processTokenData,
   isAttendee,

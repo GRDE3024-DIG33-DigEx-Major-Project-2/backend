@@ -93,17 +93,21 @@ const swaggerOptions = {
     },
   },
   servers: [
+    //Development on localhost using the same host and port as the server
     {
-      url: "http://localhost:3000", // Development on localhost using the same host and port as the server
+      url: "http://localhost:3000",
     },
+    //A2 -- Live HTTPS API through the domain
     {
-      url: "https://a2.gigney.ryanriddiford.com", // A2 -- Live HTTPS API through the domain
+      url: "https://a2.gigney.ryanriddiford.com",
     },
+    //A2 -- Live HTTP API through the EC2 instance
     {
-      url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com", // A2 -- Live HTTP API through the EC2 instance
+      url: "http://gignet-api.ap-southeast-2.elasticbeanstalk.com",
     },
+    //A3 Live HTTPS API through the domain
     {
-      url: "https://a2.gigney.ryanriddiford.com", // A3 Live HTTPS API through the domain
+      url: "https://a2.gigney.ryanriddiford.com",
     },
   ],
   apis: ["./route/*.route.js"],

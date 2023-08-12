@@ -12,7 +12,7 @@ const AuthController = require("../controller/auth.controller");
 const authController = new AuthController();
 //Validation middleware
 const { validate, processTokenData } = require("../validation/base.validator");
-const authSchemas = require("../validation/auth.schema");
+const { authSchemas } = require("../validation/auth.schema");
 const { checkSchema } = require("express-validator");
 
 /**

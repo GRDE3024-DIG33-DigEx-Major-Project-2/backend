@@ -2,6 +2,7 @@
  * Event model
  */
 
+//Import dependencies
 const { DataTypes } = require("sequelize");
 const enumUtil = require("../../../util/enum.util");
 

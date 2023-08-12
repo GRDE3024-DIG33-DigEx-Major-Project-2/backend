@@ -20,9 +20,8 @@ const {
   processTokenData,
   isOrganizer,
   isAttendee,
-  checkUUID,
 } = require("../validation/base.validator");
-const eventSchemas = require("../validation/event.schema");
+const { eventSchemas } = require("../validation/event.schema");
 const { checkSchema, param } = require("express-validator");
 
 /**

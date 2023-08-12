@@ -3,8 +3,8 @@
  *
  */
 
-const { db } = require("../../../db/models/db");
 //Defined models in Sequelize instance
+const { db } = require("../../../db/models/db");
 const {
   Act,
   Event,
@@ -14,9 +14,11 @@ const {
   TaggedWith,
   EventAct,
   FavouritedBy,
-  Tag,
 } = db.models;
 
+/**
+ * Delete event handler for db querying
+ */
 class DeleteEventHandler {
   /**
    * Attempt to delete event data in db
@@ -133,32 +135,6 @@ class DeleteEventHandler {
         count++;
       }
     }
-
-    // //Find all Event-Act junctions
-    // let junctions = await EventAct.findAll({
-    //   where: { EventId: eventId },
-    //   transaction: transaction,
-    // });
-    // //Delete the Event-Act junctions
-    // await EventAct.destroy({
-    //   where: { EventId: eventId },
-    //   transaction: transaction,
-    // }).then(async (result) => {
-    //   console.log("EventAct junctions deleted: " + result);
-
-    //   //Find and delete the Act rows after junctions were deleted
-    //   for (let junc of junctions)
-    //     await Act.destroy({
-    //       where: { id: junc.dataValues.ActId },
-    //       transaction: transaction,
-    //     }).then((result) => {
-    //       console.log("Act ID: " + junc.dataValues.ActId);
-    //       console.log("Act deleted: " + result);
-    //       //Increment counter for act deletion
-    //       count++;
-    //     });
-    //   deleteResult = "Acts Deleted: " + count;
-    // });
 
     //Return deletion result
     return deleteResult;

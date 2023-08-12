@@ -18,7 +18,7 @@ class CreateUserHandler {
 
     //Create an Attendee
     if (data.userType == enumUtil.userTypes.attendee) {
-      console.log("Init Attendee");
+      console.log("Creating Attendee");
       user = await Attendee.create({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -39,7 +39,7 @@ class CreateUserHandler {
     }
     //Create an organizer
     else if (data.userType == enumUtil.userTypes.organizer) {
-      console.log("Init Organizer");
+      console.log("Creating Organizer");
       user = await Organizer.create({
         bio: data.bio,
         phoneNumber: data.phoneNumber,
@@ -57,7 +57,7 @@ class CreateUserHandler {
         });
       });
     }
-
+    //Return the created user
     return user;
   }
 
