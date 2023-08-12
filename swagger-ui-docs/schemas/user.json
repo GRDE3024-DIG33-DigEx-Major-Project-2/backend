@@ -53,7 +53,7 @@
       "phoneNumber": {
         "type": "string"
       },
-      "imgFilename": {
+      "filename": {
         "type": "string"
       },
       "firstName": {
