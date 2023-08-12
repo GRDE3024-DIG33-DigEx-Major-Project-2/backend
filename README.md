@@ -1,7 +1,15 @@
-# Backend Localhost Setup and Deployment Guide
+# GIGNEY BACKEND
+This is the backend REST API for Gigney
+
+
+# Backend Localhost Setup and Deployment Guide (Final Version)
 
 # Summary: 
-This is a setup guide on how to run the backend application on your localhost
+This is a setup guide on how to run the backend application on your localhost.
+It contains instructions predominantly about:
+-   Setting up AWS configuration through AWS CLI
+-   Localhost database configuration
+-   Backend local deployment
 
 
 # Pre-requisites:
@@ -10,27 +18,13 @@ This is a setup guide on how to run the backend application on your localhost
     - Node.js should be setup globally through the OS environment variables
 - PostgreSQL installed on OS (Make sure you install pgAdmin4 through this installer as well)
     - Installers: https://www.postgresql.org/download/
-- AWS SDK access key and secret key are provided in the backend project folder's .env file.
+- AWS CLI installed on OS
+    - Installers: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+- AWS SDK access key and secret key are provided in the backend project folder's "AWS CREDENTIALS.txt" file
     - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
-- AWS S3 object in the backend's src/util/s3.util.js constructor should look like the code snippet below:
-    - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
+    - If the credentials are lack policies for AWS S3 features, contact Team X via email ASAP so we can resolve the permissions issues
+        - Policy issues can occur if we accidentally upload the credentials to Github, which AWS then adds restrictive policies to the exposed credentials.
 
-/////////////////////////////////////////////
-
-  constructor() {
-    
-    //For live deployment
-    //this.s3 = new AWS.S3();
-
-    //For Team members and assessors running on localhost
-    this.s3 = new AWS.S3({
-			region,
-			accessKeyId,
-			secretAccessKey
-    });
-  }
-
-/////////////////////////////////////////////
 
 
 # Steps:
@@ -61,7 +55,13 @@ This is a setup guide on how to run the backend application on your localhost
     -   If not, right-click the database dropdown, navigate to Create->Database, specify the Database name as "postgres", then click "Save"
 10. Under the Database's Schema dropdown, the "public" schema should be listed
     -   If not, right click the Schema dropdown, navigate to Create->Schema, specify the Schema name as "public", then click "Save"
-11. Once the PostgreSQL database is set up, open a terminal in the backend's root directory
+11. Open a terminal in the backend's root directory
+    -   Execute the line "aws configure" and follow the prompts
+        -   Input the "AWS Access Key ID" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Input the "AWS Secret Access Key" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Input the "Default region name" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Leave the "Default output format" as is by inputting the "Enter" key. We have it set to "None"
+11. Once the PostgreSQL database is set up and AWS is configured, open a terminal in the backend's root directory
     -   Execute the line "npm install" to install package dependencies
     -   Execute the line "npm run migrate-dev-up" to migrate the code-first models to the localhost "postgres" database "public" schema
     -   Execute the line "npm run seed-dev-up" to seed the localhost "postgres" database tables with data
@@ -69,7 +69,7 @@ This is a setup guide on how to run the backend application on your localhost
 
 
 
-# Notes:
+# Localhost Deployment Notes:
 -   In case of AWS SDK credentials issues:
     -   If the AWS SDK runs into issues regarding credentials, it means that the source code doesn't have the AWS access key and secret key in it.
     -   As Github doesn't allow AWS credentials to be in repositories (and it is something you should never do), we intended to add temporary credentials into the source code for the A2/A3 submissions.
@@ -82,15 +82,17 @@ This is a setup guide on how to run the backend application on your localhost
 
 
 
-
-
-# GIGNEY BACKEND
-This is the backend REST API for Gigney
-
 # LIVE URLS
 A2: https://a2.gigney.ryanriddiford.com
-A3: TBD
+A3: https://a3.gigney.ryanriddiford.com
 
+
+# A3 CLIENT URLS
+Hosted by Ryan: https://main.d2r6b1gwt7kgsa.amplifyapp.com/
+Hosted by Jacopo: TBD
+
+# A2 CLIENT URL
+Hosted by Jacopo: https://main.d27kan9z07m8v9.amplifyapp.com/
 
 # RESOURCES
 Sequelize Docs for ORM:
@@ -125,58 +127,57 @@ https://sequelize.org/docs/v6/other-topics/migrations/
 
 
 # CURRENT TASKS
-- Searching events
-    - Tag filter UI
-    - Clear all filters
-    - Clear one filter
-    - Unique filter UI logic
-    - No date select as option
-    - Minor scenario bugs
-    - Search location revamp
-    - **Longitute latitude search**
-- Create event upload issue
-Other
-    - A3 Group and Independent report
-    - Code comments + cleanup
-    - Set up A3 api app
-    - Endpoint testing and debugging
-    - **IMPORTANT** NEW UPDATED METHOD OF AWS CREDENTIAL SETUP **IMPORTANT**
-
-
-# RYAN-FRONTEND TASKS
-- Fix frontend venue duplicates in filter
-- Endpoint handlers in frontend app
+- UX bugs and improvements
+- Loading and pagination bugs and improvements
+    - Pagination bugs and improve their button UI/UX
+- A more responsive tag chip view. Maybe I will hardcode UUIDs so you don't have to fetch them and make them load. Alternatively I can add in a loading spinner for them.
+- Give assessors Attendee and Organizer credentials in frontend instructions that are accounts we have enough unique events in so they can test the pagination easier? Pagination functionality needs at least 11 events.
+- Minor scenario bugs
+- Update user assistance
+- A3 Independent report
+- Feature testing and debugging
+- Backend comments and cleanup
+- Endpoint testing and debugging
 - Frontend comments and cleanup
-- Frontend search events functionality
-- Search event start date ordering (THINK ABOUT ENDED EVENTS)
+- Search event start date ordering
+- .env multiple environments setup
+- UX Bug Bounties
 
 
-# VALIDATION BACKLOG
-- Revamp validation error messages
-- Filename without file and vice versa
-- status validation once implemented
-
-
-# BACKEND BACKLOG
-- Make Suburb required, not nullable. Add Suburb seed data
-- ticketType generalAdmission flag (for display in event listing summary)
+# BACKLOG
 - Seed user profile images
-- Access Denied on S3 Bucket object delete (this was working prior)
-- Dynamic search with filter change
-
-- Finish off backend search event filters
 - Better security for secrets/credentials in dev and prod environments
 - Seed Data 
     - TicketPrice & EventTicket seed data rough version
 - Dynamic tag creation
 - Revamp location filter to use more than just the City field
 - Clean up image extension and resize handling
-
-
+- status validation once implemented
+- **Longitute latitude search**
+- Search location revamp
 
 
 # PREVIOUS TASKS
- 
+- Create event upload issue
+- Searching events
+    - Tag filter UI
+    - Clear all filters
+    - Clear one filter
+    - Unique filter UI logic
+    - No date select as option
+
+- NEW UPDATED METHOD OF AWS CREDENTIAL SETUP
+- Set up A3 api app
+- Frontend search events functionality
+- Fix frontend venue duplicates in filter
+- Endpoint handlers in frontend app
+- Revamp validation error messages
+- Filename without file and vice versa
+- Dynamic search with filter change
+- Access Denied on S3 Bucket object delete (this was working prior)
+- Make Suburb required, not nullable. Add Suburb seed data
+- ticketType generalAdmission flag (for display in event listing summary)
+- Finish off backend search event filters
 - Endpoint request body validation middleware
 - Ticket price filter
 - Finish connecting search event data in frontend

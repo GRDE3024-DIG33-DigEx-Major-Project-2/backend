@@ -1,7 +1,11 @@
-Backend Localhost Setup and Deployment Guide
+Backend Localhost Setup and Deployment Guide (Final Version)
 
 Summary: 
-This is a setup guide on how to run the backend application on your localhost
+This is a setup guide on how to run the backend application on your localhost.
+It contains instructions predominantly about:
+-   Setting up AWS configuration through AWS CLI
+-   Localhost database configuration
+-   Backend local deployment
 
 
 Pre-requisites:
@@ -10,27 +14,13 @@ Pre-requisites:
     - Node.js should be setup globally through the OS environment variables
 - PostgreSQL installed on OS (Make sure you install pgAdmin4 through this installer as well)
     - Installers: https://www.postgresql.org/download/
-- AWS SDK access key and secret key are provided in the backend project folder's .env file.
+- AWS CLI installed on OS
+    - Installers: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+- AWS SDK access key and secret key are provided in the backend project folder's "AWS CREDENTIALS.txt" file
     - If not, please contact Team X via email ASAP for the AWS credentials if we failed to add them in.
-- AWS S3 object in the backend's src/util/s3.util.js constructor should look like the code snippet below:
-    - If not, please uncomment the right one, or contact Team X via email ASAP so that we can uncomment the right one
+    - If the credentials are lack policies for AWS S3 features, contact Team X via email ASAP so we can resolve the permissions issues
+        - Policy issues can occur if we accidentally upload the credentials to Github, which AWS then adds restrictive policies to the exposed credentials.
 
-/////////////////////////////////////////////
-
-  constructor() {
-    
-    //For live deployment
-    //this.s3 = new AWS.S3();
-
-    //For Team members and assessors running on localhost
-    this.s3 = new AWS.S3({
-			region,
-			accessKeyId,
-			secretAccessKey
-    });
-  }
-
-/////////////////////////////////////////////
 
 
 Steps:
@@ -61,7 +51,13 @@ Steps:
     -   If not, right-click the database dropdown, navigate to Create->Database, specify the Database name as "postgres", then click "Save"
 10. Under the Database's Schema dropdown, the "public" schema should be listed
     -   If not, right click the Schema dropdown, navigate to Create->Schema, specify the Schema name as "public", then click "Save"
-11. Once the PostgreSQL database is set up, open a terminal in the backend's root directory
+11. Open a terminal in the backend's root directory
+    -   Execute the line "aws configure" and follow the prompts
+        -   Input the "AWS Access Key ID" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Input the "AWS Secret Access Key" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Input the "Default region name" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
+        -   Leave the "Default output format" as is by inputting the "Enter" key. We have it set to "None"
+11. Once the PostgreSQL database is set up and AWS is configured, open a terminal in the backend's root directory
     -   Execute the line "npm install" to install package dependencies
     -   Execute the line "npm run migrate-dev-up" to migrate the code-first models to the localhost "postgres" database "public" schema
     -   Execute the line "npm run seed-dev-up" to seed the localhost "postgres" database tables with data

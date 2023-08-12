@@ -16,8 +16,6 @@ const region = process.env.AWS_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
-//AWS.config.update({ region: 'ap-southeast-2' });
-
 //AWS S3 Bucket file utilities
 class S3Utilities {
   /**
@@ -28,14 +26,6 @@ class S3Utilities {
     this.s3 = new AWS.S3({
       region: "ap-southeast-2",
     });
-    //
-
-    // //For Team members and assessors running on localhost
-    // this.s3 = new AWS.S3({
-    // 	region,
-    // 	accessKeyId,
-    // 	secretAccessKey
-    // });
   }
 
   /**
