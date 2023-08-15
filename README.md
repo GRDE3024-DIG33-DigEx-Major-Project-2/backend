@@ -1,6 +1,8 @@
 # GIGNEY BACKEND
 This is the backend REST API for Gigney
 
+# AUTHORS
+- Team X
 
 # Backend Localhost Setup and Deployment Guide (Final Version)
 
@@ -89,7 +91,7 @@ A3: https://a3.gigney.ryanriddiford.com
 
 # A3 CLIENT URLS
 Hosted by Ryan: https://main.d2r6b1gwt7kgsa.amplifyapp.com/
-Hosted by Jacopo: TBD
+Hosted by Jacopo: https://main.d1cjrllt9walmy.amplifyapp.com/
 
 # A2 CLIENT URL
 Hosted by Jacopo: https://main.d27kan9z07m8v9.amplifyapp.com/

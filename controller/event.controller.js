@@ -317,6 +317,11 @@ class EventController {
             }
           });
 
+          console.log("Search faves results");
+          console.log(data);
+          console.log("Num events: " + data.length);
+          console.log("Num Pages: " + numPages);
+
         //Return 200 response with the event data array and page count
         return res.status(200).json({ events: data, pageCount: numPages });
       });
@@ -846,7 +851,7 @@ class EventController {
 
         console.log("Request Body: ", req.body);
         console.log("Number Of Events for the page: ", data.length);
-        console.log("Number of Total Events: ", rowCount);
+        console.log("Number of Total Events: ", rowCount.length);
         console.log("Number of Pages: ", numPages);
       });
     } catch (err) {

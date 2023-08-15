@@ -2454,103 +2454,104 @@ class SeedData {
   getTags() {
     return [
       {
-        id: uuidv4(),
+        id: "40e6215d-b5c6-4896-987c-f30f3678f608",
         name: enumUtil.genres.rock,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "6ecd8c99-4036-403d-bf84-c2c23a4de7ed",
         name: enumUtil.genres.blues,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "3d3d8cd6-58e7-452b-a17f-80b7958b3b5d",
         name: enumUtil.genres.hiphop,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "a4f1e8c8-8cfb-4a96-9cf3-a2c1e0f90f1b",
         name: enumUtil.genres.indie,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "e7cd5752-bc0d-4cc8-acdf-3aeadf5cb3e6",
         name: enumUtil.genres.country,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "1b2277e2-7c20-4ad6-99fd-253a15f3ca1f",
         name: enumUtil.genres.dance,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "1e6c706e-7fb1-4e4e-8e1f-0573f1dba088",
         name: enumUtil.genres.classical,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "e2dc8b34-314d-4098-9b2f-3f64fa5f7cda",
         name: enumUtil.genres.jazz,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "f7177163-14e8-4b54-845c-c0e2c2eeb9f9",
         name: enumUtil.genres.reggae,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "6fa459ea-ee8a-3ca4-894e-db77e160355e",
         name: enumUtil.genres.electronic,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "0a40017f-eddb-41b8-ae88-5abe027bf3b3",
         name: enumUtil.genres.pop,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "0f7d0d90-4b6b-4f8f-98d6-3c096f3e673a",
         name: enumUtil.genres.metal,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "1b3d6f7a-9b1f-4d5d-9257-12fa52a1ad63",
         name: enumUtil.genres.solo,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "32e7f9a4-75b8-45c6-a9d3-67b2e83a794a",
         name: enumUtil.genres.instrumental,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "82e5e124-8b10-401b-a5c9-177701090d21",
         name: enumUtil.genres.rap,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
       {
-        id: uuidv4(),
+        id: "6dfc3e23-ef20-414a-8cfe-1f57533e716a",
         name: enumUtil.genres.international,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
     ];
   }
+  
 
   /**
    * Acts to seed database with
