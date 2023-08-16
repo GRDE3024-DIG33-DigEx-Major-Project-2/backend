@@ -27,6 +27,7 @@ class AuthController {
         //Generate the access token and refresh token
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
+        console.log("REFRESH TOKEN GENERATED: " + refreshToken);
         //Set refresh token as HTTP Only cookie
         res.cookie("refreshToken", refreshToken, { httpOnly: false, path: '/' });
         return res.status(201).json({
