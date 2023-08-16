@@ -26,22 +26,22 @@ module.exports = (sequelize) => {
     },
     //The title of the event
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     //The venue name for the event
     venueName: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     //The description of the event
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     //The summary of the event
     summary: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     //Start date and time of the event (YYYY-MM-DD HH:MM:SS)

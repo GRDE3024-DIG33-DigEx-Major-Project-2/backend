@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
     },
     //The name of the ticket
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     //The price of the ticket

@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
     },
     //The Act's name
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   });
