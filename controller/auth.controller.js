@@ -28,7 +28,7 @@ class AuthController {
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
         //Set refresh token as HTTP Only cookie
-        res.cookie("refreshToken", refreshToken, { httpOnly: true });
+        res.cookie("refreshToken", refreshToken, { httpOnly: false, path: '/' });
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
@@ -77,6 +77,7 @@ class AuthController {
    */
   RefreshToken = async (req, res) => {
     try {
+      console.log("COOKIES", req.cookies);
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) {
         console.log("Refresh token not found in cookies");
@@ -97,7 +98,7 @@ class AuthController {
       const newRefreshToken = authUtil.generateRefreshToken(user);
 
       //Set refresh token as HTTP Only cookie
-      res.cookie("refreshToken", newRefreshToken, { httpOnly: true });
+      res.cookie("refreshToken", newRefreshToken, { httpOnly: false, path: '/' });
 
       return res.status(201).json({
         accessToken: accessToken,
