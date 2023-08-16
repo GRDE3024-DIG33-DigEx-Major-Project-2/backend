@@ -21,8 +21,6 @@ const express = require("express");
 //Enables CORS
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-//Enable cookies
-app.use(cookieParser());
 //Swagger docs
 const swaggerUi = require("swagger-ui-express");
 //Set port number for app to listen to
@@ -43,7 +41,8 @@ app.use(
     credentials: true,
   }),
 );
-
+//Enable cookies
+app.use(cookieParser());
 //Use defined static paths
 app.use(express.static("Public"));
 //Use body parsing middleware
