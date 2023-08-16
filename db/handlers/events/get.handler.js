@@ -52,10 +52,6 @@ class GetEventHandler {
             where: { id: data.event.OrganizerId },
             transaction: transaction,
           }).then(async (organizer) => {
-            console.log(
-              "Found the event's organizer: ",
-              organizer.dataValues.organizationName,
-            );
             data.event.organizationName = organizer.organizationName;
           });
 
@@ -168,7 +164,6 @@ class GetEventHandler {
    * @returns Array of Event rows data
    */
   async FindOrganizerEvents(organizerId, t) {
-    console.log("Finding Organizer events");
     //Array of event row data
     let arr = [];
     await Event.findAll({
