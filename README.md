@@ -63,7 +63,7 @@ It contains instructions predominantly about:
         -   Input the "AWS Secret Access Key" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
         -   Input the "Default region name" found in the "AWS CREDENTIALS.txt" file in the backend project folder.
         -   Leave the "Default output format" as is by inputting the "Enter" key. We have it set to "None"
-11. Once the PostgreSQL database is set up and AWS is configured, open a terminal in the backend's root directory
+12. Once the PostgreSQL database is set up and AWS is configured, open a terminal in the backend's root directory
     -   Execute the line "npm install" to install package dependencies
     -   Execute the line "npm run migrate-dev-up" to migrate the code-first models to the localhost "postgres" database "public" schema
     -   Execute the line "npm run seed-dev-up" to seed the localhost "postgres" database tables with data

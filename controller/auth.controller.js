@@ -27,10 +27,8 @@ class AuthController {
         //Generate the access token and refresh token
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
-        console.log("REFRESH TOKEN GENERATED: " + refreshToken);
         //Set refresh token as HTTP Only cookie
-        res.cookie("refreshToken", refreshToken);
-        res.cookie("test", "test");
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 900000, path: "/" });
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
@@ -79,7 +77,6 @@ class AuthController {
    */
   RefreshToken = async (req, res) => {
     try {
-      console.log("COOKIES", req.cookies);
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) {
         console.log("Refresh token not found in cookies");
@@ -87,12 +84,10 @@ class AuthController {
           .status(401)
           .json({ err: "Refresh token not found in cookies" });
       }
-
       const refreshTokenData = authUtil.decodeJWT(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
       );
-
       let user = await GetUserHandler.GetUserByEmail(refreshTokenData.aud, res);
 
       //Generate the access token and refresh token
@@ -100,7 +95,7 @@ class AuthController {
       const newRefreshToken = authUtil.generateRefreshToken(user);
 
       //Set refresh token as HTTP Only cookie
-      res.cookie("refreshToken", newRefreshToken, { httpOnly: false, path: '/' });
+      res.cookie("refreshToken", newRefreshToken, { httpOnly: true, maxAge: 900000, path: '/' });
 
       return res.status(201).json({
         accessToken: accessToken,

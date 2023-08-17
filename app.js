@@ -64,6 +64,7 @@ app.use("/user", userRouter);
 const eventRouter = require("./route/event.route");
 app.use("/event", eventRouter);
 
+
 //SWAGGER UI SETUP ---------------------------------------------------------------------------
 
 //Load Swagger UI JSON documentation
@@ -108,7 +109,7 @@ const swaggerOptions = {
     },
     //A3 Live HTTPS API through the domain
     {
-      url: "https://a2.gigney.ryanriddiford.com",
+      url: "https://a3.gigney.ryanriddiford.com",
     },
   ],
   apis: ["./route/*.route.js"],
