@@ -141,10 +141,6 @@ class GetEventHandler {
               console.log("No ticket type associations found for event");
             }
           });
-        })
-        //Return successful response
-        .then((getResult) => {
-          console.log(getResult ? "Event retrieved! " : "Event not retrieved!");
         });
     } catch (err) {
       const msg = "Failed to find event-related tables by id";

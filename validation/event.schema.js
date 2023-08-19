@@ -78,9 +78,6 @@ const eventSchemas = {
     },
     "event.startDate": {
       isISO8601: true,
-      custom: {
-        options: eventDateRange,
-      },
       errorMessage: "Invalid startDate field",
     },
     "event.endDate": {
@@ -119,9 +116,6 @@ const eventSchemas = {
     },
     "event.purchaseUrl": {
       optional: { options: { nullable: true } },
-      custom: {
-        options: uriCheck,
-      },
       isString: true,
       errorMessage: "Invalid purchaseUrl field",
     },
@@ -206,7 +200,7 @@ const eventSchemas = {
       errorMessage: "Invalid filename",
     },
   },
-  //Create Event validators
+  //Update Event validators
   updateEvent: {
     event: {
       in: ["body"],
@@ -292,9 +286,6 @@ const eventSchemas = {
     },
     "event.purchaseUrl": {
       optional: { options: { nullable: true } },
-      custom: {
-        options: uriCheck,
-      },
       isString: true,
       errorMessage: "Invalid purchaseUrl field",
     },
