@@ -438,7 +438,7 @@ class EventController {
       req.body.keywords &&
       req.body.keywords != null &&
       req.body.keywords != "" &&
-      typeof req.body.keywords === "String"
+      typeof req.body.keywords === "string"
     ) {
       console.log("Creating keywords string");
       kw = req.body.keywords.toLowerCase();
