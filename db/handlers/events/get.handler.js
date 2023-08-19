@@ -33,7 +33,7 @@ class GetEventHandler {
       tags: [],
       acts: [],
       ticketTypes: [],
-      eventImg: null,
+      eventImg: null
     };
 
     //Get all event-related rows
@@ -53,6 +53,7 @@ class GetEventHandler {
             transaction: transaction,
           }).then(async (organizer) => {
             data.event.organizationName = organizer.organizationName;
+            data.event.organizerImg = organizer.get("imgUrl");
           });
 
           //Find event image
