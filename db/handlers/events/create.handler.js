@@ -155,7 +155,6 @@ class CreateEventHandler {
         { transaction: transaction },
       ).then((associatedTag) => {
         if (associatedTag != null) {
-          console.log("");
           arr.push(associatedTag.dataValues);
         } else {
           let msg = "Associated tag not found!";

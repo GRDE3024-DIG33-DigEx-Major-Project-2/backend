@@ -21,12 +21,10 @@ class GetUserHandler {
     try {
       //Check Attendees for user
       let attendee = await this.GetAttendeeByEmail(email);
-      //console.log("Attendee search result: ", attendee);
       //Attendee was found, return it
       if (attendee) return attendee;
 
       let organizer = await this.GetOrganizerByEmail(email);
-      //console.log("Organizer search result: ", organizer);
       //Organizer was found, return it
       if (organizer) return organizer;
     } catch (reason) {

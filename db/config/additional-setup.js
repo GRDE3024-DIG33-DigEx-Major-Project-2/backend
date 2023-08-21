@@ -70,4 +70,5 @@ class AdditionalSetup {
   }
 }
 
+//Export new instance of AdditionalSetup
 module.exports = new AdditionalSetup();

@@ -30,7 +30,6 @@ class UpdateUserHandler {
   ) {
     let user;
     console.log("Beginning user update");
-    console.log("Profile image url " + profileImgFilename);
     //Update the Attendee
     if (currUser.user.userType == enumUtil.userTypes.attendee)
       user = await this.UpdateAttendee(
@@ -86,25 +85,12 @@ class UpdateUserHandler {
       unchangedImg == false &&
       (newData.removeImg == true || newData.removeImg == "true")
     ) {
-      console.log("Test. Should happen only if removing if no replacement");
-      console.log(
-        noReplacement,
-        newData.removeImg == true,
-        newData.removeImg == "true",
-      );
       updateData.imgFilename = "";
     } else if (
       noReplacement == false &&
       unchangedImg == false &&
       (profileImgFilename || profileImgFilename == "")
     ) {
-      console.log("Test. Should happen only if uploading new image");
-      console.log(
-        noReplacement,
-        profileImgFilename,
-        profileImgFilename === "",
-        profileImgFilename || profileImgFilename == "",
-      );
       updateData.imgFilename = profileImgFilename;
     } else if (
       profileImgFilename &&
@@ -112,17 +98,9 @@ class UpdateUserHandler {
       unchangedImg == false &&
       noReplacement == false
     ) {
-      console.log("Test. Should happen only if no changes");
-      console.log(
-        noReplacement,
-        profileImgFilename,
-        profileImgFilename === "",
-        profileImgFilename || profileImgFilename == "",
-      );
     } else if (
       (noReplacement == false, profileImgFilename, profileImgFilename != "")
     ) {
-      console.log("Should only happen if uploading from none");
       updateData.imgFilename = profileImgFilename;
     }
 
@@ -177,25 +155,12 @@ class UpdateUserHandler {
       unchangedImg == false &&
       (newData.removeImg == true || newData.removeImg == "true")
     ) {
-      console.log("Test. Should happen only if removing if no replacement");
-      console.log(
-        noReplacement,
-        newData.removeImg == true,
-        newData.removeImg == "true",
-      );
       updateData.imgFilename = "";
     } else if (
       noReplacement == false &&
       unchangedImg == false &&
       (profileImgFilename || profileImgFilename == "")
     ) {
-      console.log("Test. Should happen only if uploading new image");
-      console.log(
-        noReplacement,
-        profileImgFilename,
-        profileImgFilename === "",
-        profileImgFilename || profileImgFilename == "",
-      );
       updateData.imgFilename = profileImgFilename;
     } else if (
       profileImgFilename &&
@@ -203,17 +168,9 @@ class UpdateUserHandler {
       unchangedImg == false &&
       noReplacement == false
     ) {
-      console.log("Test. Should happen only if no changes");
-      console.log(
-        noReplacement,
-        profileImgFilename,
-        profileImgFilename === "",
-        profileImgFilename || profileImgFilename == "",
-      );
     } else if (
       (noReplacement == false, profileImgFilename, profileImgFilename != "")
     ) {
-      console.log("Should only happen if uploading from none");
       updateData.imgFilename = profileImgFilename;
     }
 

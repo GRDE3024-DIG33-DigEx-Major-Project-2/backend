@@ -74,10 +74,6 @@ class UserController {
     //Flags if profile image will see no changes
     let unchangedImg = true;
 
-    console.clear();
-    console.log("REQUEST BODY: ", req.body);
-    console.log("TOKEN DATA: ", tokenData.user);
-
     //Updated User data in db
     try {
       let newData;
@@ -101,12 +97,10 @@ class UserController {
               tokenData.user.imgFilename != null &&
               tokenData.user.imgFilename != ""
             ) {
-              console.log("One to new one");
               await s3Util.deleteProfileImage(tokenData.user.imgFilename);
               console.log("Old profile image deleted");
             } else {
               unchangedImg = false;
-              console.log("None to One");
             }
           } catch (error) {
             console.log(error);
@@ -123,7 +117,6 @@ class UserController {
             (req.body.removeImg == "true" || req.body.removeImg == true) &&
             !req.body.filename
           ) {
-            console.log("One to none");
             if (hasUploaded == false) {
               console.log("Setting profile image filename to empty string");
               noReplacement = true;
@@ -148,8 +141,6 @@ class UserController {
             message: "Profile Image removal without replacement failed",
           });
         }
-
-        console.log("NO REPLACEMENT: ", noReplacement);
 
         newData = await UpdateUserHandler.Update(
           req.body,

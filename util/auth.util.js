@@ -64,7 +64,6 @@ class AuthUtils {
    * @returns {String} JWT that identifies the user
    */
   generateRefreshToken(user) {
-    console.log("GENERATING REFRESH TOKEN");
     return jwt.sign(
       {
         user: user,
