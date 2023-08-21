@@ -70,7 +70,6 @@ It contains instructions predominantly about:
     -   Execute the line "npm run prod" to begin running the backend on your localhost in production mode
 
 
-
 # Localhost Deployment Notes:
 -   In case of AWS SDK credentials issues:
     -   If the AWS SDK runs into issues regarding credentials, it means that the source code doesn't have the AWS access key and secret key in it.
@@ -105,48 +104,12 @@ Sequelize Migrations and Seeding Docs:
 https://sequelize.org/docs/v6/other-topics/migrations/
 
 
-# FOLDERS -- OUTDATED
-- db
-    - Database ORM configurations.
-- db/models 
-    - Database ORM models. 
-- route 
-    - Contains files, each responsible for a route path (user, event...). 
-    - The endpoints it provides will call middleware, and end with an action method (found in the controller folder).
-- controller
-    - A controller file will mainly consist of HTTP request action handlers for route endpoints.
-- util
-    - Utility files are self-explanatory. Try and name them with the subextension .util (enum.util.js as an example).
-
-
-# FILES -- OUTDATED
-- .env 
-    - It holds database connection parameters and the app port number.
-- app.js 
-    - This is the startup file.
-- .sequelizeerc
-    - Used by Sequelize CLI in db folder for pointing to certain files
-
-
 # CURRENT TASKS
 - GIVE CHRIS THE AWS CREDENTIALS.txt file **IMPORTANT**
-- UX bugs and improvements
-- Loading and pagination bugs and improvements
-    - Pagination bugs and improve their button UI/UX
-- A more responsive tag chip view. Maybe I will hardcode UUIDs so you don't have to fetch them and make them load. Alternatively I can add in a loading spinner for them.
-- Give assessors Attendee and Organizer credentials in frontend instructions that are accounts we have enough unique events in so they can test the pagination easier? Pagination functionality needs at least 11 events.
-- Minor scenario bugs
-- More efficient use of isFavourited endpoint
-- Update user assistance
 - A3 Independent report
 - Feature testing and debugging
 - Backend comments and cleanup
-- Endpoint testing and debugging
 - Frontend comments and cleanup
-- Search event start date ordering
-- .env multiple environments setup
-- UX Bug Bounties
-- Backend unit testing
 
 
 # BACKLOG
@@ -156,13 +119,26 @@ https://sequelize.org/docs/v6/other-topics/migrations/
     - TicketPrice & EventTicket seed data rough version
 - Dynamic tag creation
 - Revamp location filter to use more than just the City field
-- Clean up image extension and resize handling
 - status validation once implemented
 - **Longitute latitude search**
 - Search location revamp
+- Backend unit testing
+- UX bugs and improvements
+- .env multiple environments setup
+- UX Bug Bounties
 
 
 # PREVIOUS TASKS
+- Clean up image extension and resize handling
+- Endpoint testing and debugging
+- Loading and pagination bugs and improvements
+    - Pagination bugs and improve their button UI/UX
+- Minor scenario bugs
+- Search event start date ordering
+- More efficient use of isFavourited endpoint
+- Give assessors Attendee and Organizer credentials in frontend instructions that are accounts we have enough unique events in so they can test the pagination easier? Pagination functionality needs at least 11 events.
+- A more responsive tag chip view. Maybe I will hardcode UUIDs so you don't have to fetch them and make them load. Alternatively I can add in a loading spinner for them.
+- Update user assistance
 - Create event upload issue
 - Searching events
     - Tag filter UI
