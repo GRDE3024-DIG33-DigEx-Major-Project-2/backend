@@ -2628,7 +2628,6 @@ class SeedData {
       },
     ];
   }
-  
 
   /**
    * Acts to seed database with

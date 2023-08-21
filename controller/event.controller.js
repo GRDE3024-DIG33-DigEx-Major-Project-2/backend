@@ -317,10 +317,10 @@ class EventController {
             }
           });
 
-          console.log("Search faves results");
-          console.log(data);
-          console.log("Num events: " + data.length);
-          console.log("Num Pages: " + numPages);
+        console.log("Search faves results");
+        console.log(data);
+        console.log("Num events: " + data.length);
+        console.log("Num Pages: " + numPages);
 
         //Return 200 response with the event data array and page count
         return res.status(200).json({ events: data, pageCount: numPages });

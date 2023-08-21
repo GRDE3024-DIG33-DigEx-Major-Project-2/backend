@@ -36,7 +36,7 @@ app.use(
       "https://main.d27kan9z07m8v9.amplifyapp.com",
       "https://main.d2r6b1gwt7kgsa.amplifyapp.com",
       "https://search-events-v1.d2r6b1gwt7kgsa.amplifyapp.com",
-      "https://main.d1cjrllt9walmy.amplifyapp.com/"
+      "https://main.d1cjrllt9walmy.amplifyapp.com/",
     ],
     credentials: true,
   }),
@@ -63,7 +63,6 @@ app.use("/user", userRouter);
 //Setup event router
 const eventRouter = require("./route/event.route");
 app.use("/event", eventRouter);
-
 
 //SWAGGER UI SETUP ---------------------------------------------------------------------------
 

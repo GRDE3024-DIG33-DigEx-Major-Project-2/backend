@@ -28,11 +28,13 @@ class AuthController {
         const accessToken = authUtil.generateAccessToken(user);
         const refreshToken = authUtil.generateRefreshToken(user);
         //Set refresh token as HTTP Only cookie
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, 
-          maxAge: 900000, 
-          path: "/", 
-          sameSite: 'none', 
-          secure:true });
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 900000,
+          path: "/",
+          sameSite: "none",
+          secure: true,
+        });
         return res.status(201).json({
           accessToken: accessToken,
           user: user,
@@ -99,13 +101,12 @@ class AuthController {
       const newRefreshToken = authUtil.generateRefreshToken(user);
 
       //Set refresh token as HTTP Only cookie
-      res.cookie("refreshToken", 
-      newRefreshToken, 
-      { httpOnly: true, 
-        maxAge: 900000, 
-        path: '/',
-        sameSite: 'none', 
-        secure:true
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        maxAge: 900000,
+        path: "/",
+        sameSite: "none",
+        secure: true,
       });
 
       return res.status(201).json({

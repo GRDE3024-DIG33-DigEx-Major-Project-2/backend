@@ -31,7 +31,7 @@ module.exports = {
   //   dialect: process.env.PGDIALECT,
   //   multipleStatements: process.env.PGMULTISTATEMENTS,
   // },
-    development: {
+  development: {
     username: "postgres",
     password: "localhost",
     database: "postgres",

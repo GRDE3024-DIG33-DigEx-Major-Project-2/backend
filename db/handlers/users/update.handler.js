@@ -20,7 +20,14 @@ class UpdateUserHandler {
    * @param {boolean} noReplacement Flags if profile image filename should be updated
    * @returns
    */
-  async Update(newData, profileImgFilename, currUser, t, noReplacement, unchangedImg) {
+  async Update(
+    newData,
+    profileImgFilename,
+    currUser,
+    t,
+    noReplacement,
+    unchangedImg,
+  ) {
     let user;
     console.log("Beginning user update");
     console.log("Profile image url " + profileImgFilename);
@@ -32,7 +39,7 @@ class UpdateUserHandler {
         currUser.user,
         t,
         noReplacement,
-        unchangedImg
+        unchangedImg,
       );
     //Update the Organizer
     else if (currUser.user.userType == enumUtil.userTypes.organizer)
@@ -42,7 +49,7 @@ class UpdateUserHandler {
         currUser.user,
         t,
         noReplacement,
-        unchangedImg
+        unchangedImg,
       );
 
     return user;
@@ -56,7 +63,14 @@ class UpdateUserHandler {
    * @param {boolean} noReplacement Flags if profile image filename should be updated
    * @returns The updated attendee in db
    */
-  async UpdateAttendee(newData, profileImgFilename, currUser, transaction, noReplacement, unchangedImg) {
+  async UpdateAttendee(
+    newData,
+    profileImgFilename,
+    currUser,
+    transaction,
+    noReplacement,
+    unchangedImg,
+  ) {
     let updatedUser;
     console.log("Updating Attendee");
 
@@ -67,25 +81,50 @@ class UpdateUserHandler {
     if (newData.dob) updateData.dob = newData.dob;
     if (newData.bio) updateData.bio = newData.bio;
 
-    if (noReplacement == true && unchangedImg == false && (newData.removeImg == true || newData.removeImg == "true")) {
+    if (
+      noReplacement == true &&
+      unchangedImg == false &&
+      (newData.removeImg == true || newData.removeImg == "true")
+    ) {
       console.log("Test. Should happen only if removing if no replacement");
-      console.log(noReplacement, newData.removeImg == true, newData.removeImg == "true");
+      console.log(
+        noReplacement,
+        newData.removeImg == true,
+        newData.removeImg == "true",
+      );
       updateData.imgFilename = "";
-    }
-    else if (noReplacement == false && unchangedImg == false && (profileImgFilename || profileImgFilename == "")) {
+    } else if (
+      noReplacement == false &&
+      unchangedImg == false &&
+      (profileImgFilename || profileImgFilename == "")
+    ) {
       console.log("Test. Should happen only if uploading new image");
-      console.log(noReplacement, profileImgFilename, profileImgFilename === "", (profileImgFilename || profileImgFilename == ""));
+      console.log(
+        noReplacement,
+        profileImgFilename,
+        profileImgFilename === "",
+        profileImgFilename || profileImgFilename == "",
+      );
       updateData.imgFilename = profileImgFilename;
-    }
-    else if (profileImgFilename && profileImgFilename != "" && unchangedImg == false && noReplacement == false) {
+    } else if (
+      profileImgFilename &&
+      profileImgFilename != "" &&
+      unchangedImg == false &&
+      noReplacement == false
+    ) {
       console.log("Test. Should happen only if no changes");
-      console.log(noReplacement, profileImgFilename, profileImgFilename === "", (profileImgFilename || profileImgFilename == ""));
-    }
-    else if (noReplacement == false, profileImgFilename, profileImgFilename != "") {
+      console.log(
+        noReplacement,
+        profileImgFilename,
+        profileImgFilename === "",
+        profileImgFilename || profileImgFilename == "",
+      );
+    } else if (
+      (noReplacement == false, profileImgFilename, profileImgFilename != "")
+    ) {
       console.log("Should only happen if uploading from none");
       updateData.imgFilename = profileImgFilename;
     }
-
 
     //Update user
     await Attendee.update(updateData, {
@@ -115,7 +154,14 @@ class UpdateUserHandler {
    * @param {boolean} noReplacement Flags if profile image filename should be updated
    * @returns The updated organizer in db
    */
-  async UpdateOrganizer(newData, profileImgFilename, currUser, transaction, noReplacement, unchangedImg) {
+  async UpdateOrganizer(
+    newData,
+    profileImgFilename,
+    currUser,
+    transaction,
+    noReplacement,
+    unchangedImg,
+  ) {
     let updatedUser;
     console.log("Updating Organizer");
 
@@ -126,25 +172,50 @@ class UpdateUserHandler {
     if (newData.phoneNumber) updateData.phoneNumber = newData.phoneNumber;
     if (newData.bio) updateData.bio = newData.bio;
 
-    if (noReplacement == true && unchangedImg == false && (newData.removeImg == true || newData.removeImg == "true")) {
+    if (
+      noReplacement == true &&
+      unchangedImg == false &&
+      (newData.removeImg == true || newData.removeImg == "true")
+    ) {
       console.log("Test. Should happen only if removing if no replacement");
-      console.log(noReplacement, newData.removeImg == true, newData.removeImg == "true");
+      console.log(
+        noReplacement,
+        newData.removeImg == true,
+        newData.removeImg == "true",
+      );
       updateData.imgFilename = "";
-    }
-    else if (noReplacement == false && unchangedImg == false && (profileImgFilename || profileImgFilename == "")) {
+    } else if (
+      noReplacement == false &&
+      unchangedImg == false &&
+      (profileImgFilename || profileImgFilename == "")
+    ) {
       console.log("Test. Should happen only if uploading new image");
-      console.log(noReplacement, profileImgFilename, profileImgFilename === "", (profileImgFilename || profileImgFilename == ""));
+      console.log(
+        noReplacement,
+        profileImgFilename,
+        profileImgFilename === "",
+        profileImgFilename || profileImgFilename == "",
+      );
       updateData.imgFilename = profileImgFilename;
-    }
-    else if (profileImgFilename && profileImgFilename != "" && unchangedImg == false && noReplacement == false) {
+    } else if (
+      profileImgFilename &&
+      profileImgFilename != "" &&
+      unchangedImg == false &&
+      noReplacement == false
+    ) {
       console.log("Test. Should happen only if no changes");
-      console.log(noReplacement, profileImgFilename, profileImgFilename === "", (profileImgFilename || profileImgFilename == ""));
-    }
-    else if (noReplacement == false, profileImgFilename, profileImgFilename != "") {
+      console.log(
+        noReplacement,
+        profileImgFilename,
+        profileImgFilename === "",
+        profileImgFilename || profileImgFilename == "",
+      );
+    } else if (
+      (noReplacement == false, profileImgFilename, profileImgFilename != "")
+    ) {
       console.log("Should only happen if uploading from none");
       updateData.imgFilename = profileImgFilename;
     }
-
 
     await Organizer.update(updateData, {
       transaction: transaction,
