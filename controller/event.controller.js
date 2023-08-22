@@ -473,11 +473,11 @@ class EventController {
       maxDate: req.body.maxDate ? req.body.maxDate : maxDate,
       //The price range for the event tickets -- If defined, assign request content, else null
       priceRange: priceRange,
-      //Set up for matching the city -- If defined and doesn't equal null, assign request content, else array of all cities
-      cities:
-        req.body.city && req.body.city != null
-          ? [req.body.city]
-          : constantsUtil.CITIES,
+      //Set up for matching the suburb -- If defined and doesn't equal null, assign request content, else array of all suburbs
+      suburbs:
+        req.body.suburb && req.body.suburb != null
+          ? [req.body.suburb]
+          : constantsUtil.SUBURBS(),
     };
 
     //Set priceRange to null if maxPrice is 0
@@ -551,9 +551,9 @@ class EventController {
             },
           },
           {
-            //Is in one of the specified cities
+            //Is in one of the specified suburbs
             city: {
-              [Op.or]: filterOptions.cities,
+              [Op.or]: filterOptions.suburbs,
             },
           },
         ],
@@ -571,9 +571,9 @@ class EventController {
             },
           },
           {
-            //Is in one of the specified cities
+            //Is in one of the specified suburbs
             city: {
-              [Op.or]: filterOptions.cities,
+              [Op.or]: filterOptions.suburbs,
             },
           },
         ],
@@ -600,7 +600,7 @@ class EventController {
                 },
                 //Is in one of the specified cities
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
@@ -620,9 +620,9 @@ class EventController {
                 endDate: {
                   [Op.lte]: filterOptions.maxDate,
                 },
-                //Is in one of the specified cities
+                //Is in one of the specified suburbs
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
@@ -646,10 +646,10 @@ class EventController {
                   [Op.lte]: filterOptions.maxDate,
                 },
               },
-              //Is in one of the specified cities
+              //Is in one of the specified suburbs
               {
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
@@ -672,9 +672,9 @@ class EventController {
                 endDate: {
                   [Op.lte]: filterOptions.maxDate,
                 },
-                //Is in one of the specified cities
+                //Is in one of the specified suburbs
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
@@ -694,9 +694,9 @@ class EventController {
                 endDate: {
                   [Op.lte]: filterOptions.maxDate,
                 },
-                //Is in one of the specified cities
+                //Is in one of the specified suburbs
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
@@ -720,10 +720,10 @@ class EventController {
                   [Op.lte]: filterOptions.maxDate,
                 },
               },
-              //Is in one of the specified cities
+              //Is in one of the specified suburbs
               {
                 city: {
-                  [Op.or]: filterOptions.cities,
+                  [Op.or]: filterOptions.suburbs,
                 },
               },
             ],
